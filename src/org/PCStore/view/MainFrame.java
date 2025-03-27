@@ -21,59 +21,40 @@ public class MainFrame extends JFrame{
         setSize(1440, 810 );
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout());
 
         titleBar = TitleBar();
         menuPanel = MenuPanel();
         contentPanel = ContentPanel.getContentPanel();
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.ipadx = 1440;
-        gbc.ipady = 100;
-        gbc.gridwidth = 2;
-        add(titleBar, gbc);
-
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.ipadx = 360;
-        gbc.ipady = 770;
-        gbc.gridwidth = 1;
-        add(menuPanel, gbc);
-
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.ipadx = 1080;
-        gbc.ipady = 770;
-        gbc.gridwidth = 1;
-        add(contentPanel, gbc);
+        add(titleBar, BorderLayout.NORTH);
+        add(menuPanel, BorderLayout.WEST);
+        add(contentPanel, BorderLayout.CENTER);
 
         setVisible(true);
     }
 
     public JPanel TitleBar() {
         JPanel titleBar = new JPanel();
-        titleBar.setPreferredSize(new Dimension(1440, 600));
-//        titleBar.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        titleBar.setPreferredSize(new Dimension(1440, 40));
+        titleBar.setBorder(BorderFactory.createEmptyBorder());
         titleBar.setBackground(Color.BLUE);
         return titleBar;
     }
 
     public JPanel MenuPanel() {
         JPanel menuPanel = new JPanel();
-        menuPanel.setPreferredSize(new Dimension(480, 1026));
-//        menuPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        menuPanel.setPreferredSize(new Dimension(360,500));
+        menuPanel.setBorder(BorderFactory.createEmptyBorder(-5, -200, -5, -200));
         menuPanel.setBackground(Color.RED);
-        menuPanel.setLayout(new FlowLayout(FlowLayout.CENTER,5, 38));
+        menuPanel.setLayout(null);
+
+//        menuPanel.setLayout(new FlowLayout(FlowLayout.CENTER,5, 38));
 
         class menuButton extends JButton {
             menuButton(String title) {
                 super(title);
-                setPreferredSize(new Dimension(330,60));
+                setPreferredSize(new Dimension(226,60));
                 setMargin(new Insets(0,0,0,0));
             }
         }
@@ -93,14 +74,28 @@ public class MainFrame extends JFrame{
         menuTab.addTab("Khach hang", bKhachHang);
         menuTab.addTab("Nhap hang", bNhapHang);
 
-        
+        JPanel component = new JPanel();
+        component.setPreferredSize(new Dimension(360, 6 * 60 + 7 * 38));
+        component.setBackground(Color.GREEN);
+        component.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 38));
+        component.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 
-        menuPanel.add(bNhapHang);
-        menuPanel.add(bBanHang);
-        menuPanel.add(bKhachHang);
-        menuPanel.add(bNhanVien);
-        menuPanel.add(bSanPham);
-        menuPanel.add(bKhuyenMaiUuDai);
+        component.add(bNhapHang);
+        component.add(bBanHang);
+        component.add(bKhachHang);
+        component.add(bNhanVien);
+        component.add(bSanPham);
+        component.add(bKhuyenMaiUuDai);
+
+        JScrollPane scrollPane = new JScrollPane(component, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBounds(0,270,360,500);
+
+        JPanel Avatar = new JPanel();
+        Avatar.setBounds(0,0,360,270);
+        Avatar.setPreferredSize(new Dimension(360, 270));
+
+        menuPanel.add(Avatar);
+        menuPanel.add(scrollPane);
 
 
 
