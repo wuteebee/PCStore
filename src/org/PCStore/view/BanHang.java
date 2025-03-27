@@ -1,4 +1,6 @@
 package org.PCStore.view;
 
-public class BanHang {
+import javax.swing.*;
+
+public class BanHang extends JPanel {
 }
