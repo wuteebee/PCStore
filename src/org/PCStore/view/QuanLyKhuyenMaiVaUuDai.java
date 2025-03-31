@@ -14,7 +14,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-public class QuanLyKhuyenMaiGiaoDienMoi extends JFrame {
+public class QuanLyKhuyenMaiVaUuDai extends JFrame {
 
     // Khai báo các thành phần giao diện và dữ liệu
     private JTable tableKhuyenMai;
