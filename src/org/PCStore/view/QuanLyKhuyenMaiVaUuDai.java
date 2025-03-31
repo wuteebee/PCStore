@@ -24,7 +24,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
     private JLabel jlbTenKM;
     private JPanel buttonPanel;
     private JPanel inputPanel;
-    private Map<String, Object> khuyenMaiMap; 
+    private Map<String, Object> khuyenMaiMap;
     private JDialog comboDialog, createCombo;
     private boolean isAddingMode = false; // Trạng thái: đang ở chế độ thêm sản phẩm
     private boolean isEditingMode = false; // Trạng thái: đang ở chế độ sửa sản phẩm
@@ -35,10 +35,10 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
     private DefaultTableModel selectedProductsTableModelDialog; // Tham chiếu đến table model
 
     // Constructor: Khởi tạo giao diện
-    public QuanLyKhuyenMaiGiaoDienMoi() {   
+    public QuanLyKhuyenMaiVaUuDai() {
         khuyenMaiMap = new HashMap<>();
         khoiTaoSanPhamMau(); // Khởi tạo danh sách sản phẩm mẫu
-        
+
         setTitle("Quản lý khuyến mãi - Giao diện mới");
         setSize(1080, 770);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,7 +56,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
         btnTaoCombo = new JButton("Tạo combo");
 
         Dimension buttonSize = new Dimension(187, 40);
-        
+
         for (JButton btn : new JButton[]{btnThemMaKM, btnXoaMaKM, btnSuaMaKM, btnTaoCombo}) {
             btn.setPreferredSize(buttonSize);
             buttonPanel.add(btn);
@@ -114,10 +114,10 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
         tableModel = new DefaultTableModel(columnNames, 0);
         tableKhuyenMai = new JTable(tableModel);
         tableKhuyenMai.setPreferredScrollableViewportSize(new Dimension(930, 525));
-        
+
         // Áp dụng renderer tùy chỉnh cho cột "Loại"
         tableKhuyenMai.getColumnModel().getColumn(5).setCellRenderer(new TypeColumnRenderer());
-        
+
         // Thêm sự kiện nhấp chuột vào bảng để mở dialog khi nhấp vào ô "Combo"
         tableKhuyenMai.addMouseListener(new MouseAdapter() {
             @Override
@@ -157,7 +157,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, 
+        public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
             JPanel panel = new JPanel(new BorderLayout());
             JLabel textLabel = new JLabel((String) value);
@@ -278,14 +278,14 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                     boolean isEmpty = txtMaKM.getText().isEmpty() && txtTenKM.getText().isEmpty() &&
                             txtPhanTramKM.getText().isEmpty() && txtNgayBD.getText().isEmpty() &&
                             txtNgayKT.getText().isEmpty() && txtLoai.getText().isEmpty();
-                    
-                    if (isEmpty) {
-                        JOptionPane.showMessageDialog(QuanLyKhuyenMaiGiaoDienMoi.this, 
-                            "Muốn thêm sản phẩm? Hãy ấn nút Thêm sản phẩm.");
-                    } else {
-                        JOptionPane.showMessageDialog(QuanLyKhuyenMaiGiaoDienMoi.this, 
-                            "Muốn sửa sản phẩm? Hãy ấn nút Sửa sản phẩm.");
-                    }
+
+//                    if (isEmpty) {
+//                        JOptionPane.showMessageDialog(this,
+//                            "Muốn thêm sản phẩm? Hãy ấn nút Thêm sản phẩm.");
+//                    } else {
+//                        JOptionPane.showMessageDialog(this,
+//                            "Muốn sửa sản phẩm? Hãy ấn nút Sửa sản phẩm.");
+//                    }
                 }
             }
         };
@@ -312,7 +312,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
     private void showCompleteCancelButtons(boolean isEditMode) {
         buttonPanel.removeAll();
         buttonPanel.setLayout(new GridLayout(2, 1, 10, 10));
-        
+
         JButton btnHoanTat = new JButton("Hoàn tất");
         JButton btnHuy = new JButton("Hủy");
         Dimension buttonSize = new Dimension(187, 40);
@@ -373,18 +373,18 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
         buttonPanel.repaint();
     }
 
-    
-    
+
+
     private void showComboDialog() {
         if (comboDialog == null) { // Chỉ tạo dialog một lần
             comboDialog = new JDialog(this, "Danh sách Combo", true);
             comboDialog.setSize(593, 666); // Kích thước giống showCreateComboDialog
             comboDialog.setLocationRelativeTo(this);
             comboDialog.setLayout(new BorderLayout());
-    
+
             JPanel mainPanel = new JPanel(new BorderLayout());
             mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-    
+
             // 1. Thanh mã KM ban đầu là JTextField
             JPanel comboTopPanel = new JPanel(new BorderLayout(10, 0));
             JLabel lblTenKM = new JLabel("Tên KM:");
@@ -395,14 +395,14 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
             comboTopPanel.add(lblTenKM, BorderLayout.WEST);
             comboTopPanel.add(txtMaKMDialog, BorderLayout.CENTER);
             mainPanel.add(comboTopPanel, BorderLayout.NORTH);
-    
+
             // 2. Phần bên dưới chia đôi
             JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 20, 0));
-    
+
             // 2.1. Bên trái: Các ô nhập liệu và bảng sản phẩm đã chọn
             JPanel leftPanel = new JPanel(new BorderLayout());
             leftPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-    
+
             JPanel leftFieldsPanel = new JPanel(new GridLayout(4, 1, 0, 20));
             txtTenKMComboDialog = new JTextField(); // Khởi tạo tham chiếu
             txtTenKMComboDialog.setPreferredSize(new Dimension(206, 41));
@@ -410,43 +410,43 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
             txtTenKMComboDialog.setFont(new Font("Arial", Font.PLAIN, 13));
             txtTenKMComboDialog.setBorder(BorderFactory.createTitledBorder("Tên KM"));
             txtTenKMComboDialog.setEditable(false); // Khóa ban đầu
-    
+
             txtMaKMComboDialog = new JTextField(); // Khởi tạo tham chiếu
             txtMaKMComboDialog.setPreferredSize(new Dimension(206, 41));
             txtMaKMComboDialog.setBackground(Color.LIGHT_GRAY);
             txtMaKMComboDialog.setFont(new Font("Arial", Font.PLAIN, 13));
             txtMaKMComboDialog.setBorder(BorderFactory.createTitledBorder("Mã KM"));
             txtMaKMComboDialog.setEditable(false); // Khóa ban đầu
-    
+
             txtGiaTriKMComboDialog = new JTextField(); // Khởi tạo tham chiếu
             txtGiaTriKMComboDialog.setPreferredSize(new Dimension(206, 41));
             txtGiaTriKMComboDialog.setBackground(Color.LIGHT_GRAY);
             txtGiaTriKMComboDialog.setFont(new Font("Arial", Font.PLAIN, 13));
             txtGiaTriKMComboDialog.setBorder(BorderFactory.createTitledBorder("Giá trị khuyến mãi"));
             txtGiaTriKMComboDialog.setEditable(false); // Khóa ban đầu
-    
+
             JButton btnChonSanPham = new JButton("Chọn sản phẩm");
             btnChonSanPham.setPreferredSize(new Dimension(206, 41));
             btnChonSanPham.setVisible(false); // Ẩn nút ban đầu
-    
+
             leftFieldsPanel.add(txtTenKMComboDialog);
             leftFieldsPanel.add(txtMaKMComboDialog);
             leftFieldsPanel.add(txtGiaTriKMComboDialog);
             leftFieldsPanel.add(btnChonSanPham);
-    
+
             String[] columnNames = {"Mã sản phẩm", "Tên sản phẩm"};
             selectedProductsTableModelDialog = new DefaultTableModel(columnNames, 0); // Khởi tạo tham chiếu
             JTable selectedProductsTable = new JTable(selectedProductsTableModelDialog);
             JScrollPane selectedProductsScrollPane = new JScrollPane(selectedProductsTable);
-    
+
             leftPanel.add(leftFieldsPanel, BorderLayout.NORTH);
             leftPanel.add(selectedProductsScrollPane, BorderLayout.CENTER);
             bottomPanel.add(leftPanel);
-    
+
             // 2.2. Bên phải: Ngày BĐ, Ngày KT và nút Sửa combo
             JPanel rightPanel = new JPanel(new BorderLayout());
             rightPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-    
+
             JPanel rightFieldsPanel = new JPanel(new GridLayout(2, 1, 0, 20));
             txtNgayBDComboDialog = new JTextField(); // Khởi tạo tham chiếu
             txtNgayBDComboDialog.setPreferredSize(new Dimension(206, 41));
@@ -454,35 +454,35 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
             txtNgayBDComboDialog.setFont(new Font("Arial", Font.PLAIN, 13));
             txtNgayBDComboDialog.setBorder(BorderFactory.createTitledBorder("Ngày BĐ"));
             txtNgayBDComboDialog.setEditable(false); // Khóa ban đầu
-    
+
             txtNgayKTComboDialog = new JTextField(); // Khởi tạo tham chiếu
             txtNgayKTComboDialog.setPreferredSize(new Dimension(206, 41));
             txtNgayKTComboDialog.setBackground(Color.LIGHT_GRAY);
             txtNgayKTComboDialog.setFont(new Font("Arial", Font.PLAIN, 13));
             txtNgayKTComboDialog.setBorder(BorderFactory.createTitledBorder("Ngày KT"));
             txtNgayKTComboDialog.setEditable(false); // Khóa ban đầu
-    
+
             rightFieldsPanel.add(txtNgayBDComboDialog);
             rightFieldsPanel.add(txtNgayKTComboDialog);
-    
+
             JButton btnSuaCombo = new JButton("Sửa combo");
             btnSuaCombo.setPreferredSize(new Dimension(100, 40));
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
             buttonPanel.add(btnSuaCombo);
-    
+
             rightPanel.add(rightFieldsPanel, BorderLayout.NORTH);
             rightPanel.add(buttonPanel, BorderLayout.SOUTH);
             bottomPanel.add(rightPanel);
-    
+
             mainPanel.add(bottomPanel, BorderLayout.CENTER); // Thêm bottomPanel vào mainPanel
-    
+
             // Sự kiện nút "Chọn sản phẩm"
             btnChonSanPham.addActionListener(e -> {
                 JDialog selectProductDialog = new JDialog(comboDialog, "Chọn sản phẩm", true);
                 selectProductDialog.setSize(500, 500);
                 selectProductDialog.setLocationRelativeTo(comboDialog);
                 selectProductDialog.setLayout(new BorderLayout());
-    
+
                 String[] productColumns = {"Mã sản phẩm", "Tên sản phẩm"};
                 DefaultTableModel productTableModel = new DefaultTableModel(productColumns, 0);
                 for (Map<String, String> product : danhSachSanPham) {
@@ -491,15 +491,15 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                 JTable productTable = new JTable(productTableModel);
                 productTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 JScrollPane productScrollPane = new JScrollPane(productTable);
-    
+
                 JPanel selectButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
                 JButton btnHoanTatChonSP = new JButton("Hoàn tất");
                 btnHoanTatChonSP.setPreferredSize(new Dimension(100, 30));
                 selectButtonPanel.add(btnHoanTatChonSP);
-    
+
                 selectProductDialog.add(selectButtonPanel, BorderLayout.NORTH);
                 selectProductDialog.add(productScrollPane, BorderLayout.CENTER);
-    
+
                 btnHoanTatChonSP.addActionListener(e1 -> {
                     selectedProductsTableModelDialog.setRowCount(0);
                     int[] selectedRows = productTable.getSelectedRows();
@@ -510,15 +510,15 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                     }
                     selectProductDialog.dispose();
                 });
-    
+
                 selectProductDialog.setVisible(true);
             });
-    
+
             // Sự kiện nút "Sửa combo"
             btnSuaCombo.addActionListener(e -> {
                 if (btnSuaCombo.getText().equals("Sửa combo")) {
                     btnSuaCombo.setText("Hoàn tất");
-    
+
                     // Thay JTextField bằng JComboBox
                     comboTopPanel.remove(txtMaKMDialog);
                     DefaultComboBoxModel<String> comboModel = new DefaultComboBoxModel<>();
@@ -535,7 +535,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                     maKMComboBox.setBackground(Color.LIGHT_GRAY);
                     maKMComboBox.setFont(new Font("Arial", Font.PLAIN, 13));
                     comboTopPanel.add(maKMComboBox, BorderLayout.CENTER);
-    
+
                     // Bật chỉnh sửa các ô nhập liệu
                     txtTenKMComboDialog.setEditable(true);
                     txtMaKMComboDialog.setEditable(true);
@@ -543,7 +543,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                     txtNgayBDComboDialog.setEditable(true);
                     txtNgayKTComboDialog.setEditable(true);
                     btnChonSanPham.setVisible(true); // Hiện nút chọn sản phẩm
-    
+
                     // Sự kiện khi chọn mã từ JComboBox
                     maKMComboBox.addActionListener(e1 -> {
                         String selectedMaKM = (String) maKMComboBox.getSelectedItem();
@@ -569,14 +569,14 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                             }
                         }
                     });
-    
+
                 } else { // Nút "Hoàn tất"
                     String maKM = txtMaKMComboDialog.getText();
                     if (maKM.isEmpty()) {
                         JOptionPane.showMessageDialog(comboDialog, "Vui lòng nhập mã KM!");
                         return;
                     }
-    
+
                     // Lưu thông tin đã chỉnh sửa
                     String[] newComboData = {
                         maKM, txtTenKMComboDialog.getText(), txtGiaTriKMComboDialog.getText(),
@@ -601,7 +601,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                             .map(p -> p.get("idSanPham") + "|" + p.get("tenSanPham"))
                             .collect(Collectors.joining(";")));
                     tableModel.addRow(newComboData);
-    
+
                     // Quay lại trạng thái ban đầu
                     btnSuaCombo.setText("Sửa combo");
                     comboTopPanel.removeAll();
@@ -615,16 +615,16 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                     txtNgayKTComboDialog.setEditable(false);
                     btnChonSanPham.setVisible(false);
                 }
-    
+
                 comboTopPanel.revalidate();
                 comboTopPanel.repaint();
                 comboDialog.revalidate();
                 comboDialog.repaint();
             });
-    
+
             comboDialog.add(mainPanel);
         }
-    
+
         // Điền thông tin từ dòng được chọn trong bảng
         int selectedRow = tableKhuyenMai.getSelectedRow();
         if (selectedRow >= 0) {
@@ -649,30 +649,30 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                 }
             }
         }
-    
+
         comboDialog.setVisible(true);
     }
-    
+
 
     private void showCreateComboDialog() {
         createCombo = new JDialog(this, "Tạo Combo", true);
         createCombo.setSize(593, 666);
         createCombo.setLocationRelativeTo(this);
         createCombo.setLayout(new BorderLayout());
-    
+
         // Panel chính bao quanh với padding 20px
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-    
+
         // 1. Thanh JComboBox (dropdown) chứa danh sách mã khuyến mãi
         JPanel comboTopPanel = new JPanel(new BorderLayout(10, 0)); // Sử dụng BorderLayout với khoảng cách 10px
         JLabel lblTenKM = new JLabel("Tên KM:");
         lblTenKM.setPreferredSize(new Dimension(50, 41));
-    
+
         // Tạo JComboBox chỉ hiển thị mã "Đơn lẻ"
         DefaultComboBoxModel<String> comboModel = new DefaultComboBoxModel<>();
         comboModel.addElement("-- Chọn mã khuyến mãi --"); // Mặc định không chọn mã
-    
+
         // Kiểm tra và thêm dữ liệu vào JComboBox
         boolean hasDonLe = false;
         System.out.println("khuyenMaiMap: " + khuyenMaiMap); // Debug dữ liệu
@@ -687,38 +687,38 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                 }
             }
         }
-    
+
         // Nếu không có mã "Đơn lẻ" nào, hiển thị thông báo
         if (!hasDonLe) {
             JOptionPane.showMessageDialog(this, "Không có mã khuyến mãi 'Đơn lẻ' nào để tạo combo. Vui lòng thêm mã khuyến mãi 'Đơn lẻ' trước!");
             createCombo.dispose();
             return;
         }
-    
+
         JComboBox<String> maKMComboBox = new JComboBox<>(comboModel);
         maKMComboBox.setPreferredSize(new Dimension(510, 41));
         maKMComboBox.setBackground(Color.LIGHT_GRAY);
         maKMComboBox.setFont(new Font("Arial", Font.PLAIN, 13));
         maKMComboBox.setEditable(false); // Không cho phép nhập tay
-    
+
         // Debug số lượng phần tử trong comboModel
         System.out.println("Số lượng phần tử trong comboModel: " + comboModel.getSize());
-    
+
         comboTopPanel.add(lblTenKM, BorderLayout.WEST);
         comboTopPanel.add(maKMComboBox, BorderLayout.CENTER);
         mainPanel.add(comboTopPanel, BorderLayout.NORTH);
-    
+
         // Làm mới comboTopPanel
         comboTopPanel.revalidate();
         comboTopPanel.repaint();
-    
+
         // 2. Phần bên dưới chia đôi
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 20, 0));
-    
+
         // 2.1. Bên trái: Các ô nhập liệu và bảng hiển thị sản phẩm đã chọn
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-    
+
         // Panel chứa các ô nhập liệu và nút "Chọn sản phẩm"
         JPanel leftFieldsPanel = new JPanel(new GridLayout(4, 1, 0, 20));
         JTextField txtTenKMCombo = new JTextField();
@@ -726,41 +726,41 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
         txtTenKMCombo.setBackground(Color.LIGHT_GRAY);
         txtTenKMCombo.setFont(new Font("Arial", Font.PLAIN, 13));
         txtTenKMCombo.setBorder(BorderFactory.createTitledBorder("Tên KM"));
-    
+
         JTextField txtMaKMCombo = new JTextField();
         txtMaKMCombo.setPreferredSize(new Dimension(206, 41));
         txtMaKMCombo.setBackground(Color.LIGHT_GRAY);
         txtMaKMCombo.setFont(new Font("Arial", Font.PLAIN, 13));
         txtMaKMCombo.setBorder(BorderFactory.createTitledBorder("Mã KM"));
-    
+
         JTextField txtGiaTriKMCombo = new JTextField();
         txtGiaTriKMCombo.setPreferredSize(new Dimension(206, 41));
         txtGiaTriKMCombo.setBackground(Color.LIGHT_GRAY);
         txtGiaTriKMCombo.setFont(new Font("Arial", Font.PLAIN, 13));
         txtGiaTriKMCombo.setBorder(BorderFactory.createTitledBorder("Giá trị khuyến mãi"));
-    
+
         JButton btnChonSanPham = new JButton("Chọn sản phẩm");
         btnChonSanPham.setPreferredSize(new Dimension(206, 41));
-    
+
         leftFieldsPanel.add(txtTenKMCombo);
         leftFieldsPanel.add(txtMaKMCombo);
         leftFieldsPanel.add(txtGiaTriKMCombo);
         leftFieldsPanel.add(btnChonSanPham);
-    
+
         // Bảng hiển thị sản phẩm đã chọn
         String[] columnNames = {"Mã sản phẩm", "Tên sản phẩm"};
         DefaultTableModel selectedProductsTableModel = new DefaultTableModel(columnNames, 0);
         JTable selectedProductsTable = new JTable(selectedProductsTableModel);
         JScrollPane selectedProductsScrollPane = new JScrollPane(selectedProductsTable);
         selectedProductsScrollPane.setViewportView(selectedProductsTable); // Đảm bảo bảng được thêm vào JScrollPane
-    
+
         // Sự kiện khi nhấn nút "Chọn sản phẩm"
         btnChonSanPham.addActionListener(e -> {
             JDialog selectProductDialog = new JDialog(createCombo, "Chọn sản phẩm", true);
             selectProductDialog.setSize(500, 500);
             selectProductDialog.setLocationRelativeTo(createCombo);
             selectProductDialog.setLayout(new BorderLayout());
-    
+
             String[] productColumns = {"Mã sản phẩm", "Tên sản phẩm"};
             DefaultTableModel productTableModel = new DefaultTableModel(productColumns, 0);
             for (Map<String, String> product : danhSachSanPham) {
@@ -769,15 +769,15 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
             JTable productTable = new JTable(productTableModel);
             productTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
             JScrollPane productScrollPane = new JScrollPane(productTable);
-    
+
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
             JButton btnHoanTatChonSP = new JButton("Hoàn tất");
             btnHoanTatChonSP.setPreferredSize(new Dimension(100, 30));
             buttonPanel.add(btnHoanTatChonSP);
-    
+
             selectProductDialog.add(buttonPanel, BorderLayout.NORTH);
             selectProductDialog.add(productScrollPane, BorderLayout.CENTER);
-    
+
             btnHoanTatChonSP.addActionListener(e1 -> {
                 selectedProductsTableModel.setRowCount(0);
                 int[] selectedRows = productTable.getSelectedRows();
@@ -788,54 +788,54 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                 }
                 selectProductDialog.dispose();
             });
-    
+
             selectProductDialog.setVisible(true);
         });
-    
+
         leftPanel.add(leftFieldsPanel, BorderLayout.NORTH);
         leftPanel.add(selectedProductsScrollPane, BorderLayout.CENTER);
         bottomPanel.add(leftPanel);
-    
+
         // 2.2. Bên phải: 2 ô JTextField (Ngày BĐ, Ngày KT) và nút Hoàn tất
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-    
+
         JPanel rightFieldsPanel = new JPanel(new GridLayout(2, 1, 0, 20));
         JTextField txtNgayBDCombo = new JTextField();
         txtNgayBDCombo.setPreferredSize(new Dimension(206, 41));
         txtNgayBDCombo.setBackground(Color.LIGHT_GRAY);
         txtNgayBDCombo.setFont(new Font("Arial", Font.PLAIN, 13));
         txtNgayBDCombo.setBorder(BorderFactory.createTitledBorder("Ngày BĐ"));
-    
+
         JTextField txtNgayKTCombo = new JTextField();
         txtNgayKTCombo.setPreferredSize(new Dimension(206, 41));
         txtNgayKTCombo.setBackground(Color.LIGHT_GRAY);
         txtNgayKTCombo.setFont(new Font("Arial", Font.PLAIN, 13));
         txtNgayKTCombo.setBorder(BorderFactory.createTitledBorder("Ngày KT"));
-    
+
         rightFieldsPanel.add(txtNgayBDCombo);
         rightFieldsPanel.add(txtNgayKTCombo);
-    
+
         JButton btnHoanTatCombo = new JButton("Hoàn tất");
         btnHoanTatCombo.setPreferredSize(new Dimension(100, 40));
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(btnHoanTatCombo);
-    
+
         rightPanel.add(rightFieldsPanel, BorderLayout.NORTH);
         rightPanel.add(buttonPanel, BorderLayout.SOUTH);
-    
+
         bottomPanel.add(rightPanel);
-    
+
         // Thêm bottomPanel vào mainPanel
         mainPanel.add(bottomPanel, BorderLayout.CENTER); // Sửa lỗi: Thay customPanel bằng bottomPanel
         createCombo.add(mainPanel);
-    
+
         // Làm mới giao diện
         mainPanel.revalidate();
         mainPanel.repaint();
         createCombo.revalidate();
         createCombo.repaint();
-    
+
         // Tự động điền thông tin khi chọn mã khuyến mãi
         maKMComboBox.addActionListener(e -> {
             String selectedMaKM = (String) maKMComboBox.getSelectedItem();
@@ -861,7 +861,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                 txtNgayKTCombo.setText("");
             }
         });
-    
+
         // Xử lý sự kiện cho nút Hoàn tất
         btnHoanTatCombo.addActionListener(e -> {
             String maKM = txtMaKMCombo.getText();
@@ -869,12 +869,12 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
             String giaTriKM = txtGiaTriKMCombo.getText();
             String ngayBD = txtNgayBDCombo.getText();
             String ngayKT = txtNgayKTCombo.getText();
-    
+
             if (maKM.isEmpty() || tenKM.isEmpty() || giaTriKM.isEmpty() || ngayBD.isEmpty() || ngayKT.isEmpty()) {
                 JOptionPane.showMessageDialog(createCombo, "Vui lòng nhập đầy đủ thông tin!");
                 return;
             }
-    
+
             List<Map<String, String>> selectedProducts = new ArrayList<>();
             for (int i = 0; i < selectedProductsTableModel.getRowCount(); i++) {
                 Map<String, String> product = new HashMap<>();
@@ -882,30 +882,30 @@ public class QuanLyKhuyenMaiVaUuDai extends JFrame {
                 product.put("tenSanPham", (String) selectedProductsTableModel.getValueAt(i, 1));
                 selectedProducts.add(product);
             }
-    
+
             if (selectedProducts.isEmpty()) {
                 JOptionPane.showMessageDialog(createCombo, "Vui lòng chọn ít nhất một sản phẩm cho combo!");
                 return;
             }
-    
+
             String[] newComboData = {maKM, tenKM, giaTriKM, ngayBD, ngayKT, "Combo"};
             khuyenMaiMap.put(maKM, newComboData);
-    
+
             khuyenMaiMap.put(maKM + "_products", selectedProducts.stream()
                     .map(product -> product.get("idSanPham") + "|" + product.get("tenSanPham"))
                     .collect(Collectors.joining(";")));
-    
+
             tableModel.addRow(newComboData);
             createCombo.dispose();
         });
-    
+
         createCombo.setVisible(true);
     }
 
     // Hàm main
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            QuanLyKhuyenMaiGiaoDienMoi frame = new QuanLyKhuyenMaiGiaoDienMoi();
+            QuanLyKhuyenMaiVaUuDai frame = new QuanLyKhuyenMaiVaUuDai();
             frame.setVisible(true);
         });
     }
