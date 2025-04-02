@@ -144,7 +144,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
 
         public TypeColumnRenderer() {
             eyeLabel = new JLabel();
-            ImageIcon originalIcon = new ImageIcon("img//eye_icon.png");
+            ImageIcon originalIcon = new ImageIcon("resources//eye_icon.png");
             Image scaledImage = originalIcon.getImage().getScaledInstance(16, 20, Image.SCALE_SMOOTH);
             eyeIcon = new ImageIcon(scaledImage);
             eyeLabel.setIcon(eyeIcon);
