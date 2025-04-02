@@ -51,7 +51,7 @@ public class Database {
         String createDanhMucCon = "CREATE TABLE IF NOT EXISTS DanhMucCon (" +
                 "idDanhMucCon VARCHAR(20) PRIMARY KEY, " +
                 "idDanhMuc VARCHAR(20) NOT NULL, " +
-                "tenLoai VARCHAR(50) NOT NULL, " +
+                "tenDanhMucCon VARCHAR(50) NOT NULL, " +
                 "FOREIGN KEY (idDanhMuc) REFERENCES DanhMuc(idDanhMuc)" +
                 ");";
 
