@@ -17,11 +17,12 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
     // Khai báo các thành phần giao diện và dữ liệu
     private JTable tableKhuyenMai;
     private DefaultTableModel tableModel;
-    private JButton btnThemMaKM, btnXoaMaKM, btnSuaMaKM, btnTaoCombo;
+    private RoundedButton  btnThemMaKM, btnXoaMaKM, btnSuaMaKM, btnTaoCombo;
     private JTextField txtMaKM, txtTenKM, txtPhanTramKM, txtNgayBD, txtNgayKT, txtLoai;
     private JLabel jlbTenKM;
     private JPanel buttonPanel;
     private JPanel inputPanel;
+    private Icon icon1,icon2,icon3,icon4,icon5,icon6;
     private Map<String, Object> khuyenMaiMap;
     private JDialog comboDialog, createCombo;
     private boolean isAddingMode = false;
@@ -46,10 +47,31 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
         buttonPanel.setPreferredSize(new Dimension(404, 120));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20));
 
-        btnThemMaKM = new JButton("Thêm mã KM");
-        btnXoaMaKM = new JButton("Xóa mã KM");
-        btnSuaMaKM = new JButton("Sửa mã KM");
-        btnTaoCombo = new JButton("Tạo combo");
+        // Tạo các Icon cho các nút chức năng
+        icon1 = new ImageIcon("src//resources//add.png");
+        icon2= new ImageIcon("src//resources//edit.png");
+        icon3 = new ImageIcon("src//resources//delete.png");
+        icon4= new ImageIcon("src//resources//createcombo.png");
+
+
+
+
+        btnThemMaKM = new RoundedButton("Thêm mã KM",20,icon1);
+        btnThemMaKM.setBackground(new Color(0,255,255));
+        btnThemMaKM.setForeground(Color.BLACK);
+        btnThemMaKM.setFocusPainted(false);
+
+        btnXoaMaKM = new RoundedButton("Xóa mã KM",20,icon2);
+        btnXoaMaKM.setBackground(new Color(0,255,255));
+        btnXoaMaKM.setForeground(Color.BLACK);
+
+        btnSuaMaKM = new RoundedButton("Sửa mã KM",20,icon3);
+        btnSuaMaKM.setBackground(new Color(0,255,255));
+        btnSuaMaKM.setForeground(Color.BLACK);
+
+        btnTaoCombo = new RoundedButton("Tạo combo",20,icon4);
+        btnTaoCombo.setBackground(new Color(0,255,255));
+        btnTaoCombo.setForeground(Color.BLACK);
 
         Dimension buttonSize = new Dimension(187, 40);
 
@@ -110,6 +132,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
         tableModel = new DefaultTableModel(columnNames, 0);
         tableKhuyenMai = new JTable(tableModel);
         tableKhuyenMai.setPreferredScrollableViewportSize(new Dimension(930, 525));
+        tableKhuyenMai.getTableHeader().setReorderingAllowed(false);
 
         // Áp dụng renderer tùy chỉnh cho cột "Loại"
         tableKhuyenMai.getColumnModel().getColumn(5).setCellRenderer(new TypeColumnRenderer());
@@ -144,7 +167,7 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
 
         public TypeColumnRenderer() {
             eyeLabel = new JLabel();
-            ImageIcon originalIcon = new ImageIcon("resources//eye_icon.png");
+            ImageIcon originalIcon = new ImageIcon("src//resources//eye_icon.png");
             Image scaledImage = originalIcon.getImage().getScaledInstance(16, 20, Image.SCALE_SMOOTH);
             eyeIcon = new ImageIcon(scaledImage);
             eyeLabel.setIcon(eyeIcon);
@@ -308,11 +331,37 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
         buttonPanel.removeAll();
         buttonPanel.setLayout(new GridLayout(2, 1, 10, 10));
 
-        JButton btnHoanTat = new JButton("Hoàn tất");
-        JButton btnHuy = new JButton("Hủy");
+        //Tạo icon cho nút hoàn tất và hủy
+        icon5= new ImageIcon("src//resources//complete.png");
+        icon6 = new ImageIcon("src//resources//exit.png");
+
+        
+
+        RoundedButton btnHoanTat = new RoundedButton("Hoàn tất",20,icon5);
+        btnHoanTat.setBackground(new Color(0,255,255));
+        btnHoanTat.setForeground(Color.BLACK);
+        btnHoanTat.setFocusPainted(false);
+        btnHoanTat.setHorizontalAlignment(SwingConstants.CENTER);
+        btnHoanTat.setIconTextGap(10);
+        
+
+
+
+        RoundedButton btnHuy = new RoundedButton("Hủy",20,icon6);
+        btnHuy.setBackground(new Color(0,255,255));
+        btnHuy.setForeground(Color.BLACK);
+        btnHuy.setFocusPainted(false);
+        btnHuy.setHorizontalAlignment(SwingConstants.CENTER);
+        btnHuy.setIconTextGap(30);
+
+
         Dimension buttonSize = new Dimension(187, 40);
         btnHoanTat.setPreferredSize(buttonSize);
         btnHuy.setPreferredSize(buttonSize);
+
+
+
+
 
         btnHoanTat.addActionListener(e -> {
             String maKM = txtMaKM.getText();
@@ -430,7 +479,9 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
             String[] columnNames = {"Mã sản phẩm", "Tên sản phẩm"};
             selectedProductsTableModelDialog = new DefaultTableModel(columnNames, 0);
             JTable selectedProductsTable = new JTable(selectedProductsTableModelDialog);
+            selectedProductsTable.getTableHeader().setReorderingAllowed(false);
             JScrollPane selectedProductsScrollPane = new JScrollPane(selectedProductsTable);
+           
     
             leftPanel.add(leftFieldsPanel, BorderLayout.NORTH);
             leftPanel.add(selectedProductsScrollPane, BorderLayout.CENTER);
@@ -458,8 +509,17 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
             rightFieldsPanel.add(txtNgayBDComboDialog);
             rightFieldsPanel.add(txtNgayKTComboDialog);
     
-            JButton btnSuaCombo = new JButton("Sửa combo");
-            btnSuaCombo.setPreferredSize(new Dimension(100, 40));
+            RoundedButton btnSuaCombo = new RoundedButton("Sửa combo",20,icon2);
+            btnSuaCombo.setBackground(new Color(0,255,255));
+            btnSuaCombo.setForeground(Color.BLACK);
+            btnSuaCombo.setFocusPainted(false);
+            // btnSuaCombo.setHorizontalAlignment(SwingConstants.CENTER);
+            // btnSuaCombo.setIconTextGap(10);
+
+
+
+            btnSuaCombo.setPreferredSize(new Dimension(187, 40));
+
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
             buttonPanel.add(btnSuaCombo);
     
@@ -486,8 +546,22 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
                 JScrollPane productScrollPane = new JScrollPane(productTable);
     
                 JPanel selectButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-                JButton btnHoanTatChonSP = new JButton("Hoàn tất");
-                btnHoanTatChonSP.setPreferredSize(new Dimension(100, 30));
+
+                //Hoàn tất của show combo
+                
+                RoundedButton btnHoanTatChonSP = new RoundedButton("Hoàn tất",20,icon5);
+                btnHoanTatChonSP.setBackground(new Color(0,255,255));
+                btnHoanTatChonSP.setForeground(Color.BLACK);
+                btnHoanTatChonSP.setFocusPainted(false);
+                //btnHoanTatChonSP.setHorizontalAlignment(SwingConstants.CENTER);
+                //btnHoanTatChonSP.setIconTextGap(10);
+
+
+
+
+
+
+                btnHoanTatChonSP.setPreferredSize(new Dimension(180, 40));
                 selectButtonPanel.add(btnHoanTatChonSP);
     
                 selectProductDialog.add(selectButtonPanel, BorderLayout.NORTH);
@@ -715,10 +789,13 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
             for (Map<String, String> product : danhSachSanPham) {
                 productTableModel.addRow(new Object[]{product.get("idSanPham"), product.get("tenSanPham")});
             }
+
             JTable productTable = new JTable(productTableModel);
+            productTable.getTableHeader().setReorderingAllowed(false);
             productTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
             JScrollPane productScrollPane = new JScrollPane(productTable);
-    
+            
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
             JButton btnHoanTatChonSP = new JButton("Hoàn tất");
             btnHoanTatChonSP.setPreferredSize(new Dimension(100, 30));
@@ -841,6 +918,20 @@ public class QuanLyKhuyenMaiVaUuDai extends JPanel {
     
         createCombo.setVisible(true);
     }
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        // Đặt màu nền và bo góc
+        g2.setColor(getBackground());
+        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
+        
+        super.paintComponent(g);
+        g2.dispose();
+    }
+
+    
 
     // Hàm main
     public static void main(String[] args) {
