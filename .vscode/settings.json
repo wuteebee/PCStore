@@ -1,0 +1,14 @@
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar",
+            "d:\\java\\projects\\project\\lib\\mysql-connector-j-9.2.0.jar",
+            "c:\\Users\\ADMIN\\Downloads\\org.eclipse.wb.swing.MigLayout.lib_1.9.1.202210231159.jar"
+        ],
+        "exclude": [
+            "lib/JdbcInterface.jar"
+        ]
+    }
+}
