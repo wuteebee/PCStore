@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.*;
 
+import GUI.BanHang;
 import GUI.Main;
 import GUI.Panel.EmployeePanel;
 import GUI.Panel.QuanLyKhuyenMaiVaUuDai;
@@ -100,6 +101,9 @@ public class MenuLeft extends JPanel {
                 mainFrame.setMainPanel(new Trangchu());
                 break;
             case "Sản phẩm":
+            case "Phiếu xuất":
+                mainFrame.setMainPanel(new BanHang());
+                break;
             case "Laptop":
             case "PC":
                 // case "Linh kiện máy tính":
