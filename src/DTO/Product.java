@@ -1,6 +1,7 @@
 package DTO;
 
 import java.util.*;
+import java.util.Locale.Category;
 
 public class Product {
     private String MaSp;
@@ -13,6 +14,18 @@ public class Product {
     private List<Variant> DanhSachPhienBan;
     
 
+
+    public Product(){}
+    public Product(String MaSp,String TenSp,Catalog DanhMuc,Brand ThuongHieu,String moTaSanPham,String anhSanPham,boolean trangThai){
+        this.MaSp=MaSp;
+        this.TenSp=TenSp;
+        this.DanhMuc=DanhMuc;
+        this.ThuongHieu=ThuongHieu;
+        this.motaSanPham=moTaSanPham;
+        this.anhSanPham=anhSanPham;
+        this.trangThai=trangThai;
+
+    }
   public void setAnhSanPham(String anhSanPham) {
       this.anhSanPham = anhSanPham;
   }

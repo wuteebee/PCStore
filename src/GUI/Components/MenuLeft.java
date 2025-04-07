@@ -14,6 +14,7 @@ import javax.swing.*;
 import GUI.Main;
 import GUI.Panel.CustomerPanel;
 import GUI.Panel.EmployeePanel;
+import GUI.Panel.ProductPanel;
 import GUI.Panel.QuanLyKhuyenMaiVaUuDai;
 import GUI.Panel.Trangchu;
 import GUI.Components.MenuChucNang;
@@ -101,11 +102,13 @@ public class MenuLeft extends JPanel {
             case "Trang chủ":
                 mainFrame.setMainPanel(new Trangchu());
                 break;
-            case "Sản phẩm":
+                case "Sản phẩm":
+                mainFrame.setMainPanel(new ProductPanel());
+                break;
             case "Phiếu xuất":
                 // mainFrame.setMainPanel(new BanHang());
                 break;
-            case "Laptop":
+   
             case "PC":
                 // case "Linh kiện máy tính":
                 //     mainFrame.setMainPanel(new ProductPanel()); // Tạo class ProductPanel để hiển thị danh sách sản phẩm
