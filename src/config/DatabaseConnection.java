@@ -9,6 +9,8 @@ public class DatabaseConnection {
     private static final String USER = "root"; 
     private static final String PASSWORD = "507061";
 
+    // Password 507061
+
     public static Connection getConnection() {
         try {
             // Đăng ký MySQL JDBC Driver

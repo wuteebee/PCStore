@@ -102,17 +102,17 @@ public class EmployeePanel extends JPanel {
         System.out.println("Hihihihihi");
     }
 
-    public void searchEmployee() {
-        throw new UnsupportedOperationException("Unimplemented method 'searchEmployee'");
-    }
+    // public void searchEmployee() {
+    //     throw new UnsupportedOperationException("Unimplemented method 'searchEmployee'");
+    // }
 
-    public void deleteEmployee() {
-        throw new UnsupportedOperationException("Unimplemented method 'deleteEmployee'");
-    }
+    // public void deleteEmployee() {
+    //     throw new UnsupportedOperationException("Unimplemented method 'deleteEmployee'");
+    // }
 
-    public void ExportExcel() {
-        throw new UnsupportedOperationException("Unimplemented method 'ExportExcel'");
-    }
+    // public void ExportExcel() {
+    //     throw new UnsupportedOperationException("Unimplemented method 'ExportExcel'");
+    // }
 
     public void openAddEmployeeDialog() {
         ThemNhanVien nvmoi = new ThemNhanVien(employeeBUS, this);

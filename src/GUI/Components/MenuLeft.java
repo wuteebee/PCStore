@@ -10,8 +10,9 @@ import java.util.Map;
 
 import javax.swing.*;
 
-import GUI.BanHang;
+// import GUI.BanHang;
 import GUI.Main;
+import GUI.Panel.CustomerPanel;
 import GUI.Panel.EmployeePanel;
 import GUI.Panel.QuanLyKhuyenMaiVaUuDai;
 import GUI.Panel.Trangchu;
@@ -102,7 +103,7 @@ public class MenuLeft extends JPanel {
                 break;
             case "Sản phẩm":
             case "Phiếu xuất":
-                mainFrame.setMainPanel(new BanHang());
+                // mainFrame.setMainPanel(new BanHang());
                 break;
             case "Laptop":
             case "PC":
@@ -111,6 +112,9 @@ public class MenuLeft extends JPanel {
                 break;
             case "Nhân viên":
                 mainFrame.setMainPanel(new EmployeePanel());
+                break;
+            case "Khách hàng":
+                mainFrame.setMainPanel(new CustomerPanel());
                 break;
             case "Quản lí":
                 // case "Bán hàng":
