@@ -58,7 +58,7 @@ public class ProductPanel extends JPanel{
             String tenSP = product.getTenSp();
             String tenLoai = product.getDanhMuc() != null ? product.getDanhMuc().getTenDanhMuc() : "N/A";
             String thuongHieu = product.getThuongHieu() != null ? product.getThuongHieu().getTenThuongHieu() : "N/A";
-            String moTa = product.getMotaSanPham();
+            String moTa = product.getMoTaSanPham();
     
             Object[] row = {maSP, tenSP, tenLoai, thuongHieu, moTa};
             tableModel.addRow(row);

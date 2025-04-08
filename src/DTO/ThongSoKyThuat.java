@@ -1,27 +1,43 @@
 package DTO;
 
 public class ThongSoKyThuat {
-    private String IDThongSo;
-    private String IDDanhMuc;
-    private String TenThongSo;
+    private String idThongSo;
+    private String idDanhMuc;
+    private String tenThongSo;
 
+    // Default constructor
+    public ThongSoKyThuat() {
+    }
 
-    public void setIDDanhMuc(String iDDanhMuc) {
-        IDDanhMuc = iDDanhMuc;
+    // Constructor with parameters
+    public ThongSoKyThuat(String idThongSo, String idDanhMuc, String tenThongSo) {
+        this.idThongSo = idThongSo;
+        this.idDanhMuc = idDanhMuc;
+        this.tenThongSo = tenThongSo;
     }
-    public void setIDThongSo(String iDThongSo) {
-        IDThongSo = iDThongSo;
+
+    // Getters and Setters
+    public void setIdDanhMuc(String idDanhMuc) {
+        this.idDanhMuc = idDanhMuc;
     }
+
+    public void setIdThongSo(String idThongSo) {
+        this.idThongSo = idThongSo;
+    }
+
     public void setTenThongSo(String tenThongSo) {
-        TenThongSo = tenThongSo;
+        this.tenThongSo = tenThongSo;
     }
-    public String getIDDanhMuc() {
-        return IDDanhMuc;
+
+    public String getIdDanhMuc() {
+        return idDanhMuc;
     }
-    public String getIDThongSo() {
-        return IDThongSo;
+
+    public String getIdThongSo() {
+        return idThongSo;
     }
+
     public String getTenThongSo() {
-        return TenThongSo;
+        return tenThongSo;
     }
 }

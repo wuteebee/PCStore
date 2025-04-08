@@ -1,24 +1,42 @@
 package DTO;
 
 public class ProductDetail {
-    private String SerialNumber;
-    private Variant SanPham;
+    private String serialNumber;
+    private Variant sanPham;
     private boolean trangThai;
 
+
+    public ProductDetail() {
+    }
+
+
+    public ProductDetail(String serialNumber, Variant sanPham, boolean trangThai) {
+        this.serialNumber = serialNumber;
+        this.sanPham = sanPham;
+        this.trangThai = trangThai;
+    }
+
     public void setSanPham(Variant sanPham) {
-        SanPham = sanPham;
+        this.sanPham = sanPham;
     }
+
     public void setSerialNumber(String serialNumber) {
-        SerialNumber = serialNumber;
+        this.serialNumber = serialNumber;
     }
+
     public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
     }
+
     public Variant getSanPham() {
-        return SanPham;
+        return sanPham;
     }
+
     public String getSerialNumber() {
-        return SerialNumber;
+        return serialNumber;
     }
-    
+
+    public boolean isTrangThai() {
+        return trangThai;
+    }
 }

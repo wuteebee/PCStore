@@ -1,49 +1,63 @@
 package DTO;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Catalog {
-   private String MaDanhMuc;
-   private String TenDanhMuc;
-   private Catalog DanhMucCha;
-   private boolean trangThai;
-public Catalog(){
-
-}
+    private String maDanhMuc;
+    private String tenDanhMuc;
+    private Catalog danhMucCha;
+    private boolean trangThai;
 
 
-public Catalog(String MaDanhMuc,String TenDanhMuc,String idDanhMucCha,boolean trangThai){
-    this.MaDanhMuc=MaDanhMuc;
-    this.TenDanhMuc=TenDanhMuc;
-    Catalog tmp= new Catalog();
-
-    if(idDanhMucCha!=""){
-        tmp.setMaDanhMuc(idDanhMucCha);
-        this.DanhMucCha=tmp;
-    }
-    else{
-        this.DanhMucCha=null;
+    public Catalog() {
+        maDanhMuc = "";
+        tenDanhMuc = "";
+        danhMucCha = null;
+        trangThai = true;
     }
 
-    this.trangThai=trangThai;
-}
-public void setDanhMucCha(Catalog danhMucCha) {
-    DanhMucCha = danhMucCha;
-}
-public void setMaDanhMuc(String maDanhMuc) {
-    MaDanhMuc = maDanhMuc;
-}
-public void setTenDanhMuc(String tenDanhMuc) {
-    TenDanhMuc = tenDanhMuc;
-}
-public Catalog getDanhMucCha() {
-    return DanhMucCha;
-}
-public String getMaDanhMuc() {
-    return MaDanhMuc;
-}
-public String getTenDanhMuc() {
-    return TenDanhMuc;
-}
+    public Catalog(String maDanhMuc, String tenDanhMuc, String idDanhMucCha, boolean trangThai) {
+        this.maDanhMuc = maDanhMuc;
+        this.tenDanhMuc = tenDanhMuc;
+
+        if (!idDanhMucCha.equals("")) {
+            Catalog tmp = new Catalog();
+            tmp.setMaDanhMuc(idDanhMucCha);
+            this.danhMucCha = tmp;
+        } else {
+            this.danhMucCha = null;
+        }
+
+        this.trangThai = trangThai;
+    }
+
+    public void setDanhMucCha(Catalog danhMucCha) {
+        this.danhMucCha = danhMucCha;
+    }
+
+    public void setMaDanhMuc(String maDanhMuc) {
+        this.maDanhMuc = maDanhMuc;
+    }
+
+    public void setTenDanhMuc(String tenDanhMuc) {
+        this.tenDanhMuc = tenDanhMuc;
+    }
+
+    public Catalog getDanhMucCha() {
+        return danhMucCha;
+    }
+
+    public String getMaDanhMuc() {
+        return maDanhMuc;
+    }
+
+    public String getTenDanhMuc() {
+        return tenDanhMuc;
+    }
+
+    public boolean isTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(boolean trangThai) {
+        this.trangThai = trangThai;
+    }
 }
