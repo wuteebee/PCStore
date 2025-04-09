@@ -1,42 +1,55 @@
 package DTO;
 
 public class Brand {
-    private String MaThuongHieu;
-    private String TenThuongHieu;
-    private Catalog Danhmuc;
+    private String maThuongHieu;
+    private String tenThuongHieu;
+    private Catalog danhMuc;
     private boolean trangThai;
 
-    public Brand (){
 
+
+    public Brand(String tenThuongHieu, Catalog danhMuc, boolean trangThai) {
+        this.tenThuongHieu = tenThuongHieu;
+        this.danhMuc = danhMuc;
+        this.trangThai = trangThai;
     }
-    public Brand(String MaThuongHieu,String TenThuongHieu,Catalog Danhmuc,boolean trangThai){
-        this.MaThuongHieu=MaThuongHieu;
-        this.TenThuongHieu=TenThuongHieu;
-        this.Danhmuc=Danhmuc;
-        this.trangThai=trangThai;
+
+    public Brand(String maThuongHieu, String tenThuongHieu, Catalog danhMuc, boolean trangThai) {
+        this.maThuongHieu = maThuongHieu;
+        this.tenThuongHieu = tenThuongHieu;
+        this.danhMuc = danhMuc;
+        this.trangThai = trangThai;
     }
+
     public void setMaThuongHieu(String maThuongHieu) {
-        MaThuongHieu = maThuongHieu;
+        this.maThuongHieu = maThuongHieu;
     }
-    public void setTenThuongHieu(String tenThuongHieu) {
-        TenThuongHieu = tenThuongHieu;
-    }
+
     public String getMaThuongHieu() {
-        return MaThuongHieu;
+        return maThuongHieu;
     }
+
+    public void setTenThuongHieu(String tenThuongHieu) {
+        this.tenThuongHieu = tenThuongHieu;
+    }
+
     public String getTenThuongHieu() {
-        return TenThuongHieu;
+        return tenThuongHieu;
     }
-    public void setDanhmuc(Catalog danhmuc) {
-        Danhmuc = danhmuc;
+
+    public void setDanhMuc(Catalog danhMuc) {
+        this.danhMuc = danhMuc;
     }
+
+    public Catalog getDanhMuc() {
+        return danhMuc;
+    }
+
     public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
     }
-    public Catalog getDanhmuc() {
-        return Danhmuc;
-    }
-    
 
-    
+    public boolean isTrangThai() {
+        return trangThai;
+    }
 }

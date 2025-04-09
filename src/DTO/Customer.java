@@ -20,7 +20,6 @@ public class Customer {
         this.email = email;
         this.dateOfJoining = dateOfJoining;
         this.trangThai = trangThai;
-
     }
 
     public Customer(String name, String phoneNumber, String email,LocalDate dateOfJoining , boolean trangThai) {
