@@ -5,7 +5,14 @@ public class ThongSoKyThuat {
     private String IDDanhMuc;
     private String TenThongSo;
 
+    public ThongSoKyThuat(){
 
+    }
+    public ThongSoKyThuat(String IDThongSo,String IDDanhMuc,String TenThongSo){
+        this.IDDanhMuc=IDDanhMuc;
+        this.IDThongSo=IDThongSo;
+        this.TenThongSo=TenThongSo;
+    }
     public void setIDDanhMuc(String iDDanhMuc) {
         IDDanhMuc = iDDanhMuc;
     }

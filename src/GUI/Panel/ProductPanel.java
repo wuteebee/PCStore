@@ -12,9 +12,10 @@ import GUI.Components.MenuChucNang;
 public class ProductPanel extends JPanel{
     private DefaultTableModel tableModel;
     private JTable customerTable;
-
+    private String selectedCustomerId="-1";
     public ProductPanel(){
         initComponent();
+        addTableSelectionListener();
     }
 
     private void initComponent(){
@@ -80,5 +81,20 @@ public class ProductPanel extends JPanel{
         panel.add(scrollPane, BorderLayout.CENTER);
     
         return panel;
-    }}
+    }
+    public String getSelectedCustomerId() {
+        return selectedCustomerId;
+    }
+    public void addTableSelectionListener(){
+        customerTable.getSelectionModel().addListSelectionListener(e->{
+
+            if(!e.getValueIsAdjusting()){
+                int selectedRow=customerTable.getSelectedRow();
+                if (selectedRow!=-1){
+                    selectedCustomerId=(String) tableModel.getValueAt(selectedRow, 0);
+                }
+            }
+        });
+    }
+}
     

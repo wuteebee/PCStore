@@ -8,6 +8,7 @@ import java.util.Map;
 
 import DTO.Brand;
 import DTO.Catalog;
+import DTO.ThongSoKyThuat;
 import config.DatabaseConnection;
 
 public class AtributeDAO {
@@ -85,5 +86,27 @@ public class AtributeDAO {
         return brands;
         
     }
+ 
+    public List<ThongSoKyThuat>getAllTechnicalParameter(){
+        List<ThongSoKyThuat>danhsach=new ArrayList<>();
+        String sql="SELECT * FROM thongtinkythuat";
+        try {
+            Statement stmt=conn.createStatement();
+            ResultSet rs=stmt.executeQuery(sql);
+            while (rs.next()) {
+                String idThongSo=rs.getString("thongtinkythuat");
+                String idDanhMuc=rs.getString("idDanhMuc");
+                String tenThongTin=rs.getString("tenThongTin");
+                
+                ThongSoKyThuat tmp=new ThongSoKyThuat(idThongSo,idDanhMuc,tenThongTin);
+                danhsach.add(tmp);
+                
+            }
+        } catch (Exception e) {
+        
+        }
+        return danhsach;
+    }
 
+    
 }

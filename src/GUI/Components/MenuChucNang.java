@@ -14,8 +14,10 @@ import javax.swing.border.TitledBorder;
 
 import GUI.ActionListener.CustomerActionListener;
 import GUI.ActionListener.EmployeeActionListener;
+import GUI.ActionListener.ProductActionListener;
 import GUI.Panel.CustomerPanel;
 import GUI.Panel.EmployeePanel;
+import GUI.Panel.ProductPanel;
 
 public class MenuChucNang {
     private static Color color = Color.WHITE;
@@ -31,6 +33,7 @@ public class MenuChucNang {
         JButton btnEdit = buttonFactory.createStyledButton("Sửa", "./resources/icon/edit.svg");
         JButton btnDelete = buttonFactory.createStyledButton("Xóa", "./resources/icon/delete.svg");
         JButton btnExport = buttonFactory.createStyledButton("Xuất Excel", "./resources/icon/export.svg");
+        JButton btnDetail=new JButton("Chi tiết");
 
 // Nếu panel là EmployeePanel, gán sự kiện cho các nút
         if (panel instanceof EmployeePanel) {
@@ -40,6 +43,7 @@ public class MenuChucNang {
             addActionListenerToButton(btnEdit, actionListener);
             addActionListenerToButton(btnDelete, actionListener);
             addActionListenerToButton(btnExport, actionListener);
+           
 
             // Thêm các nút vào actionPanel
             actionPanel.add(btnAdd);
@@ -59,7 +63,30 @@ public class MenuChucNang {
             actionPanel.add(btnEdit);
             actionPanel.add(btnDelete);
             actionPanel.add(btnExport);
-        } else {
+        } 
+        else if(panel instanceof ProductPanel){
+            ProductPanel productPanel = (ProductPanel) panel; 
+            ProductActionListener actionListener = new ProductActionListener(productPanel); // Truyền đúng kiểu vào ActionListener
+            
+            btnAdd.addActionListener(actionListener);
+            btnEdit.addActionListener(actionListener);  
+            btnDelete.addActionListener(actionListener);
+            btnExport.addActionListener(actionListener);
+            btnDetail.addActionListener(actionListener);
+            actionPanel.add(btnAdd);
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnDelete);
+            actionPanel.add(btnExport);
+            actionPanel.add(btnDetail);
+
+            // Thêm các nút vào actionPanel
+            actionPanel.add(btnAdd);
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnDelete);
+            actionPanel.add(btnExport);
+            actionPanel.add(btnDetail);
+        }
+        else {
             // Nếu không phải là EmployeePanel hoặc CustomerPanel, không thêm nút nào
 
         }
@@ -71,7 +98,6 @@ public class MenuChucNang {
         return actionPanel;
     }
 
-    // Phương thức hỗ trợ gán ActionListener vào nút
     private void addActionListenerToButton(JButton button, EmployeeActionListener actionListener) {
         button.addActionListener(actionListener);
     }
