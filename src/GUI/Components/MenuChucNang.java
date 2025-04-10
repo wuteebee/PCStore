@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
+import GUI.Main;
 import GUI.ActionListener.CustomerActionListener;
 import GUI.ActionListener.EmployeeActionListener;
 import GUI.ActionListener.ProductActionListener;
@@ -23,10 +24,10 @@ public class MenuChucNang {
     private static Color color = Color.WHITE;
 
     // Tạo ActionPanel cho các chức năng
-    public JPanel createActionPanel(JPanel panel) {
+    public JPanel createActionPanel(JPanel panel,Main MainFrame) {
         JPanel actionPanel = new JPanel(new GridLayout(1, 4, 10, 10)); 
         actionPanel.setPreferredSize(new Dimension(475, 100));  
-        actionPanel.setBackground(Color.LIGHT_GRAY);  
+        actionPanel.setBackground(Color.WHITE);  
         // System.out.println("MenuChucNang: " + panel.getClass().getSimpleName()); 
         Button buttonFactory = new Button();  
         JButton btnAdd = buttonFactory.createStyledButton("Thêm", "./resources/icon/add.svg");
@@ -66,7 +67,7 @@ public class MenuChucNang {
         } 
         else if(panel instanceof ProductPanel){
             ProductPanel productPanel = (ProductPanel) panel; 
-            ProductActionListener actionListener = new ProductActionListener(productPanel); // Truyền đúng kiểu vào ActionListener
+            ProductActionListener actionListener = new ProductActionListener(productPanel,MainFrame); 
             
             btnAdd.addActionListener(actionListener);
             btnEdit.addActionListener(actionListener);  

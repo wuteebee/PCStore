@@ -21,6 +21,7 @@ public class AtributeDAO {
     }
 
     public List<Catalog> getAllCatalogs() {
+       
         List<Catalog> catalogs = new ArrayList<>();
         String sql = "SELECT * FROM danhmuc";
         Map<String, Catalog> catalogMap = new HashMap<>();
@@ -32,7 +33,6 @@ public class AtributeDAO {
                 String tenDanhMuc = rs.getString("tenDanhMuc");
                 String idDanhMucCha = rs.getString("idDanhMucCha");
                 boolean trangThai = rs.getBoolean("trangThai");
-
                 Catalog danhmuc = new Catalog(idDanhMuc, tenDanhMuc, idDanhMucCha, trangThai);
                 catalogs.add(danhmuc);
                 catalogMap.put(idDanhMuc, danhmuc);

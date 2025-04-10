@@ -1,24 +1,18 @@
 package DTO;
 
-public class CauHinhLaptop implements ChiTietCauHinh {
-    private String tenThongTin; 
-    private String giaTri;      
-
-    public CauHinhLaptop(String tenThongTin, String giaTri) {
-        this.tenThongTin = tenThongTin;
-        this.giaTri = giaTri;
+public class CauHinhLaptop extends ChiTietCauHinh {
+    private String thongTin;
+    public CauHinhLaptop(){}
+    public CauHinhLaptop(String idSanPham,String idThongTin,int phienBan ,String thongTin){
+        super(idSanPham, idThongTin, phienBan);
+        this.thongTin=thongTin;
+    }
+    public void setThongTin(String thongTin) {
+        this.thongTin = thongTin;
+    }
+    public String getThongTin() {
+        return thongTin;
     }
 
-    @Override
-    public String getTenThongTin() {
-        return tenThongTin;
-    }
-
-    public String getGiaTri() {
-        return giaTri;
-    }
-
-    public void setGiaTri(String giaTri) {
-        this.giaTri = giaTri;
-    }
+   
 }

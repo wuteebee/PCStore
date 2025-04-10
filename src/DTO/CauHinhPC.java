@@ -1,17 +1,11 @@
 package DTO;
 
-public class CauHinhPC implements ChiTietCauHinh {
-    private String tenThongTin;   
+public class CauHinhPC extends ChiTietCauHinh {  
     private Product linhKien;   
-
-    public CauHinhPC(String tenThongTin, Product linhKien) {
-        this.tenThongTin = tenThongTin;
-        this.linhKien = linhKien;
-    }
-
-    @Override
-    public String getTenThongTin() {
-        return tenThongTin;
+    
+    public CauHinhPC(String idSanPham,String idThongTin,int phienBan,Product linhKien ){
+        super(idSanPham, idThongTin, phienBan);
+        this.linhKien=linhKien;
     }
 
     public Product getLinhKien() {

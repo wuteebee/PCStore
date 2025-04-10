@@ -18,13 +18,8 @@ public class Catalog {
         this.maDanhMuc = maDanhMuc;
         this.tenDanhMuc = tenDanhMuc;
 
-        if (!idDanhMucCha.equals("")) {
-            Catalog tmp = new Catalog();
-            tmp.setMaDanhMuc(idDanhMucCha);
-            this.danhMucCha = tmp;
-        } else {
-            this.danhMucCha = null;
-        }
+        this.danhMucCha = (idDanhMucCha == null || idDanhMucCha.isEmpty()) ? null : new Catalog(idDanhMucCha, "", "", true);
+
 
         this.trangThai = trangThai;
     }

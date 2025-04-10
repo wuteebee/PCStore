@@ -103,7 +103,7 @@ public class MenuLeft extends JPanel {
                 mainFrame.setMainPanel(new Trangchu());
                 break;
                 case "Sản phẩm":
-                mainFrame.setMainPanel(new ProductPanel());
+                mainFrame.setMainPanel(new ProductPanel(mainFrame));
                 break;
             case "Phiếu xuất":
                 // mainFrame.setMainPanel(new BanHang());
@@ -114,10 +114,10 @@ public class MenuLeft extends JPanel {
                 //     mainFrame.setMainPanel(new ProductPanel()); // Tạo class ProductPanel để hiển thị danh sách sản phẩm
                 break;
             case "Nhân viên":
-                mainFrame.setMainPanel(new EmployeePanel());
+                mainFrame.setMainPanel(new EmployeePanel(mainFrame));
                 break;
             case "Khách hàng":
-                mainFrame.setMainPanel(new CustomerPanel());
+                mainFrame.setMainPanel(new CustomerPanel(mainFrame));
                 break;
             case "Quản lí":
                 // case "Bán hàng":

@@ -12,6 +12,7 @@ import DAO.CustomerDAO;
 import DAO.EmployeeDAO;
 import DTO.Customer;
 import DTO.Employee;
+import GUI.Main;
 import GUI.Components.MenuChucNang;
 import GUI.Dialog.ThemKhachHang;
 import GUI.Dialog.ThemNhanVien;
@@ -23,10 +24,14 @@ public class CustomerPanel extends JPanel{
     private DefaultTableModel tableModel;
     private JTable customerTable;
     private String selectedCustomerId="-1";
-    public CustomerPanel() {
-       initComponents();
-         addTableSelectionListener(); 
+    private Main mainFrame;
+
+    public CustomerPanel(Main mainFrame) {
+        this.mainFrame = mainFrame;
+        initComponents();
+        addTableSelectionListener();
     }
+
      
     private void initComponents() {
 
@@ -64,7 +69,7 @@ public class CustomerPanel extends JPanel{
         toolbar.setPreferredSize(new Dimension(950, 110));
         
         MenuChucNang menu = new MenuChucNang();
-        toolbar.add(menu.createActionPanel(this));  
+        toolbar.add(menu.createActionPanel(this,mainFrame));  
         toolbar.add(MenuChucNang.createSearchPanel()); 
         
         return toolbar;

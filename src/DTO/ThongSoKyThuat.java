@@ -1,13 +1,23 @@
 package DTO;
 
 public class ThongSoKyThuat {
-    private String IDThongSo;
-    private String IDDanhMuc;
-    private String TenThongSo;
+    private String idThongSo;
+    private String idDanhMuc;
+    private String tenThongSo;
 
 
+
+
+    public  ThongSoKyThuat(){
+
+    }
+    public ThongSoKyThuat(String idThongSo,String idDanhMuc,String tenThongSo){
+        this.idDanhMuc=idDanhMuc;
+        this.idThongSo=idThongSo;
+        this.tenThongSo=tenThongSo;
+    }
     public void setIDDanhMuc(String iDDanhMuc) {
-        IDDanhMuc = iDDanhMuc;
+        idDanhMuc = iDDanhMuc;
     }
 
     public void setIdThongSo(String idThongSo) {

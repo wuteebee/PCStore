@@ -5,16 +5,18 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
+import GUI.Main;
+import GUI.Panel.ProductDetailPanel;
 import GUI.Panel.ProductPanel;
 
 public class ProductActionListener implements ActionListener{
     private ProductPanel panel;
+    private Main MainFrame;
 
-    public ProductActionListener(){
-
-    }
-    public ProductActionListener(ProductPanel panel){
+    public ProductActionListener(ProductPanel panel,Main MainFrame){
+        System.out.println("h");
         this.panel=panel;
+        this.MainFrame=MainFrame;
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -65,12 +67,13 @@ public class ProductActionListener implements ActionListener{
             case "Chi tiết":
                 System.out.println("Chi tiết nè");
                      String id = panel.getSelectedCustomerId();
-                     if(id=="-1"){
+                     if(id.equals("-1")){
                           JOptionPane.showMessageDialog(panel, "Vui lòng chọn sản phẩm cần xem chi tiết!", "Thông báo", JOptionPane.WARNING_MESSAGE);
                      }
                      else{
-                        
+                        MainFrame.setMainPanel(new ProductDetailPanel(MainFrame,id));
                      }
+                break;
             case "Xuất Excel":
                 System.out.println("Xuất Excel khách hàng nè");
                 break;
