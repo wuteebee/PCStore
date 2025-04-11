@@ -19,6 +19,7 @@ import GUI.ActionListener.ProductActionListener;
 import GUI.Panel.CustomerPanel;
 import GUI.Panel.EmployeePanel;
 import GUI.Panel.ProductPanel;
+import GUI.Panel.SupplierPanel;
 
 public class MenuChucNang {
     private static Color color = Color.WHITE;
@@ -86,6 +87,23 @@ public class MenuChucNang {
             actionPanel.add(btnDelete);
             actionPanel.add(btnExport);
             actionPanel.add(btnDetail);
+        }
+        else if(panel instanceof SupplierPanel) {
+            SupplierPanel supplierPanel = (SupplierPanel) panel;
+            btnAdd.addActionListener(e -> supplierPanel.openAddSupplierDialog());
+            btnEdit.addActionListener(e -> {
+                String id = supplierPanel.getSelectedSupplierId();
+                if (!id.equals("-1")) supplierPanel.openEditSupplierDialog(id);
+            });
+            btnDelete.addActionListener(e -> {
+                String id = supplierPanel.getSelectedSupplierId();
+                if (!id.equals("-1")) supplierPanel.openRemoveSupplierDialog(id);
+            });
+
+            actionPanel.add(btnAdd);
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnDelete);
+            actionPanel.add(btnExport);
         }
         else {
             // Nếu không phải là EmployeePanel hoặc CustomerPanel, không thêm nút nào

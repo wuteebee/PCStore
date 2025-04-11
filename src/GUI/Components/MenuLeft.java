@@ -16,6 +16,7 @@ import GUI.Panel.CustomerPanel;
 import GUI.Panel.EmployeePanel;
 import GUI.Panel.ProductPanel;
 import GUI.Panel.QuanLyKhuyenMaiVaUuDai;
+import GUI.Panel.SupplierPanel;
 import GUI.Panel.Trangchu;
 import GUI.Components.MenuChucNang;
 import net.miginfocom.swing.MigLayout;
@@ -118,6 +119,9 @@ public class MenuLeft extends JPanel {
                 break;
             case "Khách hàng":
                 mainFrame.setMainPanel(new CustomerPanel(mainFrame));
+                break;
+            case "Nhà cung cấp":
+                mainFrame.setMainPanel(new SupplierPanel(mainFrame));
                 break;
             case "Quản lí":
                 // case "Bán hàng":
