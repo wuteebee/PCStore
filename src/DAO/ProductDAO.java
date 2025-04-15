@@ -123,6 +123,7 @@ public class ProductDAO {
         return product;
     }
 
+    
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
 
@@ -175,10 +176,12 @@ public class ProductDAO {
                     while (rs.next()) {
                         String idThongTin = rs.getString("idThongTin");
                         String thongTin = rs.getString("ThongTin");
+                    //    System.out.println("ID: " + idThongTin + ", Thong Tin: " + thongTin + "Phiên bản: "+ phienBan); ;
                         ctch.add(new CauHinhLaptop(idSP, idThongTin, Integer.parseInt(phienBan), thongTin));
+                        // System.out.println("ID: " + idThongTin + ", Thong Tin: " + thongTin);
                     }
                 }
-            } else if (maDanhMuc.equals("PC")) {
+            } else if (maDanhMuc.equals("DM002")) {
                 sql = "SELECT * FROM cauhinhpc WHERE idSanPham = ? AND STTPL = ?";
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                     pstmt.setString(1, idSP);
@@ -230,4 +233,45 @@ public class ProductDAO {
         }
         return null;
     }
+
+
+    public List<ProductDetail> getAllProductDetails(Integer id) {
+        List<ProductDetail> productDetails = new ArrayList<>();
+    
+        String sql = (id == null)
+            ? "SELECT * FROM chitietsp"
+            : "SELECT * FROM chitietsp WHERE idPhanLoai = ?";
+    
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+    
+            if (id != null) {
+                ps.setInt(1, id);
+            }
+    
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String serialNumber = rs.getString("SerialNumber");
+                    String idSP = rs.getString("idPhanLoai");
+                    double giaNhap = rs.getDouble("giaNhap");
+                    boolean trangThai = rs.getBoolean("trangThai");
+    
+                    ProductDetail tmp = new ProductDetail(serialNumber, idSP, giaNhap, trangThai);
+                    productDetails.add(tmp);
+                }
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        Map<String, ProductDetail> productMap = new HashMap<>();
+        for (ProductDetail p : productDetails) {
+             productMap.put(p.getSerialNumber(), p);
+        }
+
+        
+        return productDetails;
+    }
+    
 }

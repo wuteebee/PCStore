@@ -63,6 +63,7 @@ public class ProductActionListener implements ActionListener{
                 break;
             case "Tìm":
                 System.out.println("Tìm khách hàng nè");
+                
                 break;
             case "Chi tiết":
                 System.out.println("Chi tiết nè");
@@ -80,6 +81,7 @@ public class ProductActionListener implements ActionListener{
             case "Nhập Excel":  
                 System.out.println("Nhập Excel khách hàng nè");
                 break;
+            
             default:
                 break;
         } 

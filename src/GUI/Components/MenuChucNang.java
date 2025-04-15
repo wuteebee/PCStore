@@ -16,8 +16,10 @@ import GUI.Main;
 import GUI.ActionListener.CustomerActionListener;
 import GUI.ActionListener.EmployeeActionListener;
 import GUI.ActionListener.ProductActionListener;
+import GUI.ActionListener.ProductDetailActionListener;
 import GUI.Panel.CustomerPanel;
 import GUI.Panel.EmployeePanel;
+import GUI.Panel.ProductDetailPanel;
 import GUI.Panel.ProductPanel;
 
 public class MenuChucNang {
@@ -30,11 +32,12 @@ public class MenuChucNang {
         actionPanel.setBackground(Color.WHITE);  
         // System.out.println("MenuChucNang: " + panel.getClass().getSimpleName()); 
         Button buttonFactory = new Button();  
-        JButton btnAdd = buttonFactory.createStyledButton("Thêm", "./resources/icon/add.svg");
-        JButton btnEdit = buttonFactory.createStyledButton("Sửa", "./resources/icon/edit.svg");
-        JButton btnDelete = buttonFactory.createStyledButton("Xóa", "./resources/icon/delete.svg");
+        JButton btnAdd = buttonFactory.createStyledButton("Thêm", "./resources/icon/add.png");
+        JButton btnEdit = buttonFactory.createStyledButton("Sửa", "./resources/icon/edit.png");
+        JButton btnDelete = buttonFactory.createStyledButton("Xóa", "./resources/icon/delete.png");
         JButton btnExport = buttonFactory.createStyledButton("Xuất Excel", "./resources/icon/export.svg");
         JButton btnDetail=new JButton("Chi tiết");
+        JButton btnDS=buttonFactory.createStyledButton("Xem DS", null);
 
 // Nếu panel là EmployeePanel, gán sự kiện cho các nút
         if (panel instanceof EmployeePanel) {
@@ -87,10 +90,29 @@ public class MenuChucNang {
             actionPanel.add(btnExport);
             actionPanel.add(btnDetail);
         }
-        else {
+        else if (panel instanceof ProductDetailPanel){
+            ProductDetailPanel productPanel = (ProductDetailPanel) panel; 
+            ProductDetailActionListener actionListener = new ProductDetailActionListener(productPanel,MainFrame); 
+            
+            btnAdd.addActionListener(actionListener);
+            btnEdit.addActionListener(actionListener);  
+            btnDelete.addActionListener(actionListener);
+            btnExport.addActionListener(actionListener);
+            btnDS.addActionListener(actionListener);
+            actionPanel.add(btnAdd);
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnDelete);
+            actionPanel.add(btnDS);
+
+            // Thêm các nút vào actionPanel
+            actionPanel.add(btnAdd);
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnDelete);
+            actionPanel.add(btnDS);
+        }
             // Nếu không phải là EmployeePanel hoặc CustomerPanel, không thêm nút nào
 
-        }
+        
 
 
         // Gán border cho actionPanel
@@ -105,30 +127,37 @@ public class MenuChucNang {
 
     // Tạo panel tìm kiếm
     public static JPanel createSearchPanel() {
+
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10)); 
         searchPanel.setPreferredSize(new Dimension(475, 100));  
         searchPanel.setBackground(Color.WHITE); 
 
+        JButton btnReset=new JButton("Làm mới");
+        btnReset.setPreferredSize(new Dimension(90,30 ));
+        btnReset.setFont(new Font("Arial", Font.BOLD, 12));
+
+
         JTextField searchField = new JTextField(20); 
         searchField.setFont(new Font("Arial", Font.PLAIN, 16)); 
-        searchField.setPreferredSize(new Dimension(300, 40)); 
-        searchField.setBorder(BorderFactory.createLineBorder(new Color(100, 149, 237), 2)); 
+        searchField.setPreferredSize(new Dimension(250, 40)); 
+        searchField.setBorder(BorderFactory.createLineBorder(new Color(100, 149, 237), 1)); 
 
         Button buttonFactory = new Button();
         JButton btnSearch = buttonFactory.createStyledButton("Tìm kiếm", "./resources/icon/find.svg");
 
         btnSearch.setHorizontalTextPosition(SwingConstants.RIGHT); 
         btnSearch.setVerticalTextPosition(SwingConstants.CENTER);
-        btnSearch.setPreferredSize(new Dimension(120, 40)); 
-        btnSearch.setFont(new Font("Arial", Font.BOLD, 16)); 
+        btnSearch.setPreferredSize(new Dimension(100,40)); 
+        btnSearch.setFont(new Font("Arial", Font.BOLD, 12)); 
 
+        searchPanel.add(btnReset);
         searchPanel.add(searchField);
         searchPanel.add(btnSearch);
         searchPanel.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(100, 149, 237), 2),
+            BorderFactory.createLineBorder(new Color(100, 149, 237), 1),
             "Tìm kiếm", 
             TitledBorder.LEFT, TitledBorder.TOP, 
-            new Font("Arial", Font.BOLD, 14), 
+            new Font("Arial", Font.BOLD, 12), 
             new Color(100, 149, 237) 
         ));
 

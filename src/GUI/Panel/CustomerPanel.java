@@ -102,7 +102,7 @@ public class CustomerPanel extends JPanel{
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
-        // Đổ dữ liệu vào bảng
+
         loadCustomerTable();
 
         // Áp dụng căn giữa cho tất cả các cột

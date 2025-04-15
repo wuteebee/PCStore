@@ -88,26 +88,29 @@ public class AtributeDAO {
 
     }
  
-    public List<ThongSoKyThuat>getAllTechnicalParameter(){
-        List<ThongSoKyThuat>danhsach=new ArrayList<>();
-        String sql="SELECT * FROM thongtinkythuat";
+    public List<ThongSoKyThuat> getAllTechnicalParameter(String id) {
+        List<ThongSoKyThuat> danhsach = new ArrayList<>();
+        String sql = "SELECT * FROM thongtinkythuat WHERE idDanhMuc = ?";
+    
         try {
-            Statement stmt=conn.createStatement();
-            ResultSet rs=stmt.executeQuery(sql);
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, id); // Gán giá trị id vào dấu hỏi chấm
+            ResultSet rs = stmt.executeQuery();
+    
             while (rs.next()) {
-                String idThongSo=rs.getString("thongtinkythuat");
-                String idDanhMuc=rs.getString("idDanhMuc");
-                String tenThongTin=rs.getString("tenThongTin");
-                
-                ThongSoKyThuat tmp=new ThongSoKyThuat(idThongSo,idDanhMuc,tenThongTin);
+                String idThongSo = rs.getString("idThongtin");
+                String idDanhMuc = rs.getString("idDanhMuc");
+                String tenThongTin = rs.getString("tenThongTin");
+    
+                ThongSoKyThuat tmp = new ThongSoKyThuat(idThongSo, idDanhMuc, tenThongTin);
                 danhsach.add(tmp);
-                
             }
         } catch (Exception e) {
-        
+            e.printStackTrace(); // Debug lỗi nếu có
         }
+    
         return danhsach;
     }
-
+    
     
 }
