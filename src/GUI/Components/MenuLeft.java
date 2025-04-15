@@ -111,6 +111,7 @@ public class MenuLeft extends JPanel {
                 // mainFrame.setMainPanel(new BanHang());
                 break;
             case "Phiếu nhập":
+            System.out.println("Phiếu nhập nè");
                 mainFrame.setMainPanel(new PhieuNhapPanel(mainFrame));
                 break;
             case "PC":
