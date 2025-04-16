@@ -17,14 +17,9 @@ public class Catalog {
     public Catalog(String maDanhMuc, String tenDanhMuc, String idDanhMucCha, boolean trangThai) {
         this.maDanhMuc = maDanhMuc;
         this.tenDanhMuc = tenDanhMuc;
-        Catalog tmp = new Catalog();
 
-        if (!idDanhMucCha.equals("")) {
-            tmp.setMaDanhMuc(idDanhMucCha);
-            this.danhMucCha = tmp;
-        } else {
-            this.danhMucCha = null;
-        }
+        this.danhMucCha = (idDanhMucCha == null || idDanhMucCha.isEmpty()) ? null : new Catalog(idDanhMucCha, "", "", true);
+
 
         this.trangThai = trangThai;
     }

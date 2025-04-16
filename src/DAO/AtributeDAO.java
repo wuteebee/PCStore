@@ -10,6 +10,7 @@ import java.util.Map;
 
 import DTO.Brand;
 import DTO.Catalog;
+import DTO.ThongSoKyThuat;
 import config.DatabaseConnection;
 
 public class AtributeDAO {
@@ -20,6 +21,7 @@ public class AtributeDAO {
     }
 
     public List<Catalog> getAllCatalogs() {
+       
         List<Catalog> catalogs = new ArrayList<>();
         String sql = "SELECT * FROM danhmuc";
         Map<String, Catalog> catalogMap = new HashMap<>();
@@ -31,7 +33,6 @@ public class AtributeDAO {
                 String tenDanhMuc = rs.getString("tenDanhMuc");
                 String idDanhMucCha = rs.getString("idDanhMucCha");
                 boolean trangThai = rs.getBoolean("trangThai");
-
                 Catalog danhmuc = new Catalog(idDanhMuc, tenDanhMuc, idDanhMucCha, trangThai);
                 catalogs.add(danhmuc);
                 catalogMap.put(idDanhMuc, danhmuc);
@@ -86,5 +87,30 @@ public class AtributeDAO {
         return brands;
 
     }
-
+ 
+    public List<ThongSoKyThuat> getAllTechnicalParameter(String id) {
+        List<ThongSoKyThuat> danhsach = new ArrayList<>();
+        String sql = "SELECT * FROM thongtinkythuat WHERE idDanhMuc = ?";
+    
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, id); // Gán giá trị id vào dấu hỏi chấm
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                String idThongSo = rs.getString("idThongtin");
+                String idDanhMuc = rs.getString("idDanhMuc");
+                String tenThongTin = rs.getString("tenThongTin");
+    
+                ThongSoKyThuat tmp = new ThongSoKyThuat(idThongSo, idDanhMuc, tenThongTin);
+                danhsach.add(tmp);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Debug lỗi nếu có
+        }
+    
+        return danhsach;
+    }
+    
+    
 }

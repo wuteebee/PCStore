@@ -3,6 +3,7 @@ package GUI.Panel;
 import BUS.EmployeeBUS;
 import DAO.EmployeeDAO;
 import DTO.Employee;
+import GUI.Main;
 import GUI.Components.MenuChucNang;
 import GUI.Dialog.ThemNhanVien;
 
@@ -19,12 +20,15 @@ public class EmployeePanel extends JPanel {
     private List<Employee> employees;
     private EmployeeBUS employeeBUS;
     private String selectedEmployeeId = "-1"; 
+    private Main mainFrame;
 
-    public EmployeePanel() {
+
+    public EmployeePanel(Main mainFrame) {
         this.employeeBUS = new EmployeeBUS(new EmployeeDAO());
+        this.mainFrame=mainFrame;
         initComponent();
     }
-
+    
     private void initComponent() {
         this.setLayout(new BorderLayout(10, 10));
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -92,7 +96,7 @@ public class EmployeePanel extends JPanel {
         toolbar.setPreferredSize(new Dimension(950, 110));
         
         MenuChucNang menu = new MenuChucNang();
-        toolbar.add(menu.createActionPanel(this));  
+        toolbar.add(menu.createActionPanel(this, mainFrame));  
         toolbar.add(MenuChucNang.createSearchPanel()); 
         
         return toolbar;

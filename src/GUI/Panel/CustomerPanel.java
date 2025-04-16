@@ -12,22 +12,26 @@ import DAO.CustomerDAO;
 import DAO.EmployeeDAO;
 import DTO.Customer;
 import DTO.Employee;
+import GUI.Main;
 import GUI.Components.MenuChucNang;
 import GUI.Dialog.ThemKhachHang;
 import GUI.Dialog.ThemNhanVien;
 
-public class CustomerPanel extends JPanel {
-    private List<Customer> customers;
+public class CustomerPanel extends JPanel{
+    private List <Customer> customers;
     private CustomerBUS customerBUS;
     private CustomerDAO customerDAO;
     private DefaultTableModel tableModel;
     private JTable customerTable;
-    private String selectedCustomerId = "-1";
+    private String selectedCustomerId="-1";
+    private Main mainFrame;
 
-    public CustomerPanel() {
+    public CustomerPanel(Main mainFrame) {
+        this.mainFrame = mainFrame;
         initComponents();
         addTableSelectionListener();
     }
+
 
     private void initComponents() {
 
@@ -38,15 +42,15 @@ public class CustomerPanel extends JPanel {
         add(createCustomToolbar(), BorderLayout.NORTH);
         add(createTablePanel(), BorderLayout.CENTER);
     }
-
     public String getSelectedCustomerId() {
         return selectedCustomerId;
     }
 
 
+    
     public void openAddCustomerDialog() {
-        ThemKhachHang khmoi = new ThemKhachHang(customerBUS, this);
-        khmoi.FormThemKhachHang("Thêm khách hàng mới", "Thêm", null);
+        ThemKhachHang khmoi=new ThemKhachHang(customerBUS, this);
+        khmoi.FormThemKhachHang("Thêm khách hàng mới","Thêm",null);
         loadCustomerTable();
     }
 
@@ -56,23 +60,22 @@ public class CustomerPanel extends JPanel {
         customerDAO = new CustomerDAO();
         Customer customer = customerDAO.getCustomerbyId(id);
         // System.out.println("Hiii"+customer.getId());
-        khmoi.FormThemKhachHang("Chỉnh sửa thông tin nhân viên", "Cập nhật", customer);
+        khmoi.FormThemKhachHang("Chỉnh sửa thông tin nhân viên","Cập nhật",customer);
         loadCustomerTable();
     }
-
-    public JPanel createCustomToolbar() {
+        public JPanel createCustomToolbar() {
         JPanel toolbar = new JPanel(new GridLayout(1, 2, 10, 10));
         toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         toolbar.setPreferredSize(new Dimension(950, 110));
-
+        
         MenuChucNang menu = new MenuChucNang();
-        toolbar.add(menu.createActionPanel(this));
-        toolbar.add(MenuChucNang.createSearchPanel());
-
+        toolbar.add(menu.createActionPanel(this,mainFrame));
+        toolbar.add(MenuChucNang.createSearchPanel()); 
+        
         return toolbar;
     }
 
-    private JPanel createTablePanel() {
+       private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
@@ -80,7 +83,7 @@ public class CustomerPanel extends JPanel {
         customers = customerBUS.getAllCustomers();
 
         // Tiêu đề cột
-        String[] columnNames = {"ID", "Họ Tên", "Số Điện Thoại", "Email", "Ngày tham gia"};
+        String[] columnNames = {"ID", "Họ Tên","Số Điện Thoại", "Email", "Ngày tham gia"};
         tableModel = new DefaultTableModel(columnNames, 0);
         customerTable = new JTable(tableModel) {
             @Override
@@ -99,7 +102,7 @@ public class CustomerPanel extends JPanel {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
-        // Đổ dữ liệu vào bảng
+
         loadCustomerTable();
 
         // Áp dụng căn giữa cho tất cả các cột
@@ -126,7 +129,7 @@ public class CustomerPanel extends JPanel {
         customerTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = customerTable.getSelectedRow();
-                if (selectedRow != -1) {
+                if (selectedRow != -1) {          
                     selectedCustomerId = (String) tableModel.getValueAt(selectedRow, 0);
                 }
             }
@@ -139,21 +142,22 @@ public class CustomerPanel extends JPanel {
         for (Customer customer : customers) {
             System.out.println(customer.getName());
             Object[] rowData = {
-                    customer.getId(),
-                    customer.getName(),
-                    customer.getPhoneNumber(),
-                    customer.getEmail(),
-                    customer.getDateOfJoining()
+                customer.getId(),
+                customer.getName(),
+                customer.getPhoneNumber(),
+                customer.getEmail(),
+                customer.getDateOfJoining()
             };
             tableModel.addRow(rowData);
         }
     }
 
-    public void openRemoveEmployeeDialog(String id) {
-        CustomerBUS cs = new CustomerBUS();
+    public void openRemoveEmployeeDialog(String id){
+        CustomerBUS cs=new CustomerBUS();
         cs.deleteCustomer(id);
         loadCustomerTable();
     }
 
+ 
 
 }

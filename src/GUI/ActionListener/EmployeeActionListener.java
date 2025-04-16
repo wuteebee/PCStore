@@ -40,9 +40,22 @@ public class EmployeeActionListener implements ActionListener {
             case "Xóa":
             id = panel.getSelectedEmployeeId();
             // System.out.println("id nè"+ id);
-            if (id != "-1") {
+            if (id == "-1") {
                 JOptionPane.showMessageDialog(panel, "Vui lòng chọn nhân viên cần xoá!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             }
+            else{
+                int result = JOptionPane.showConfirmDialog(
+                    panel,
+                    "Bạn có chắc chắn muốn xoá thông tin nhân viên " + id + "?",
+                    "Xác nhận xoá",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (result == JOptionPane.YES_OPTION) {
+                    panel.openRemoveEmployeeDialog(id);
+                }
+            }
+            
                 break;
             case "Tìm":
                 System.out.println("Tìm");

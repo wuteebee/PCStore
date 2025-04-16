@@ -14,8 +14,10 @@ import javax.swing.*;
 import GUI.Main;
 import GUI.Panel.CustomerPanel;
 import GUI.Panel.EmployeePanel;
+import GUI.Panel.PhieuNhapPanel;
 import GUI.Panel.ProductPanel;
 import GUI.Panel.QuanLyKhuyenMaiVaUuDai;
+import GUI.Panel.SupplierPanel;
 import GUI.Panel.Trangchu;
 import GUI.Components.MenuChucNang;
 import net.miginfocom.swing.MigLayout;
@@ -103,21 +105,27 @@ public class MenuLeft extends JPanel {
                 mainFrame.setMainPanel(new Trangchu());
                 break;
                 case "Sản phẩm":
-                mainFrame.setMainPanel(new ProductPanel());
+                mainFrame.setMainPanel(new ProductPanel(mainFrame));
                 break;
             case "Phiếu xuất":
                 // mainFrame.setMainPanel(new BanHang());
                 break;
-   
+            case "Phiếu nhập":
+            System.out.println("Phiếu nhập nè");
+                mainFrame.setMainPanel(new PhieuNhapPanel(mainFrame));
+                break;
             case "PC":
                 // case "Linh kiện máy tính":
                 //     mainFrame.setMainPanel(new ProductPanel()); // Tạo class ProductPanel để hiển thị danh sách sản phẩm
                 break;
             case "Nhân viên":
-                mainFrame.setMainPanel(new EmployeePanel());
+                mainFrame.setMainPanel(new EmployeePanel(mainFrame));
                 break;
             case "Khách hàng":
-                mainFrame.setMainPanel(new CustomerPanel());
+                mainFrame.setMainPanel(new CustomerPanel(mainFrame));
+                break;
+            case "Nhà cung cấp":
+                mainFrame.setMainPanel(new SupplierPanel(mainFrame));
                 break;
             case "Quản lí":
                 // case "Bán hàng":

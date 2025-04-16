@@ -27,6 +27,7 @@ public class Product {
         this.trangThai = trangThai;
         this.danhSachPhienBan = new ArrayList<>();
     }
+    
 
     public void setAnhSanPham(String anhSanPham) {
         this.anhSanPham = anhSanPham;
