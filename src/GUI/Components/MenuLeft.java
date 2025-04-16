@@ -16,7 +16,7 @@ import GUI.Panel.CustomerPanel;
 import GUI.Panel.EmployeePanel;
 import GUI.Panel.PhieuNhapPanel;
 import GUI.Panel.ProductPanel;
-import GUI.Panel.QuanLyKhuyenMaiVaUuDai;
+import GUI.Panel.PromotionPanel;
 import GUI.Panel.SupplierPanel;
 import GUI.Panel.Trangchu;
 import GUI.Components.MenuChucNang;
@@ -138,7 +138,7 @@ public class MenuLeft extends JPanel {
                 //     mainFrame.setMainPanel(new StatisticsPanel());
                 //     break;
             case "Khuyến mãi và ưu đãi":
-                mainFrame.setMainPanel(new QuanLyKhuyenMaiVaUuDai());
+                mainFrame.setMainPanel(new PromotionPanel());
                 break;
             case "Đăng xuất":
                 JOptionPane.showMessageDialog(mainFrame, "Đăng xuất thành công!");
