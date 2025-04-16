@@ -186,3 +186,36 @@ org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "KEY_SEQ" not found [42122-232]
 	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetViewer$ResultSetDataPumpJob.run(ResultSetViewer.java:5112)
 	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:119)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+2025-04-16 19:48:02.560025+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "KEY_SEQ" not found [42122-232]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.jdbc.JdbcResultSet.getColumnIndex(JdbcResultSet.java:3492)
+	at org.h2.jdbc.JdbcResultSet.getInt(JdbcResultSet.java:337)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCResultSetImpl.getInt(JDBCResultSetImpl.java:510)
+	at org.jkiss.dbeaver.model.impl.jdbc.JDBCUtils.safeGetInt(JDBCUtils.java:117)
+	at org.jkiss.dbeaver.ext.generic.model.GenericUtils.safeGetInt(GenericUtils.java:84)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.createConstraintColumnsImpl(GenericMetaModel.java:949)
+	at org.jkiss.dbeaver.ext.h2.model.H2MetaModel.createConstraintColumnsImpl(H2MetaModel.java:179)
+	at org.jkiss.dbeaver.ext.generic.model.ConstraintKeysCache.fetchObjectRow(ConstraintKeysCache.java:98)
+	at org.jkiss.dbeaver.ext.generic.model.ConstraintKeysCache.fetchObjectRow(ConstraintKeysCache.java:1)
+	at org.jkiss.dbeaver.model.impl.jdbc.cache.JDBCCompositeCache.loadObjects(JDBCCompositeCache.java:369)
+	at org.jkiss.dbeaver.model.impl.jdbc.cache.JDBCCompositeCache.getObjects(JDBCCompositeCache.java:123)
+	at org.jkiss.dbeaver.ext.generic.model.GenericTableBase.getConstraints(GenericTableBase.java:251)
+	at org.jkiss.dbeaver.ext.generic.model.GenericTableBase.getConstraints(GenericTableBase.java:1)
+	at org.jkiss.dbeaver.model.exec.DBExecUtils.getBestIdentifier(DBExecUtils.java:538)
+	at org.jkiss.dbeaver.model.exec.DBExecUtils.bindAttributes(DBExecUtils.java:875)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataReceiver.fetchEnd(ResultSetDataReceiver.java:166)
+	at org.jkiss.dbeaver.model.impl.jdbc.struct.JDBCTable.readData(JDBCTable.java:228)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetJobDataRead.lambda$0(ResultSetJobDataRead.java:128)
+	at org.jkiss.dbeaver.model.exec.DBExecUtils.tryExecuteRecover(DBExecUtils.java:189)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetJobDataRead.run(ResultSetJobDataRead.java:126)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetViewer$ResultSetDataPumpJob.run(ResultSetViewer.java:5112)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:119)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+2025-04-16 19:53:04.048787+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-232]
+2025-04-16 19:54:02.268143+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-232]

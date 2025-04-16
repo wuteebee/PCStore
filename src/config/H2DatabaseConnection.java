@@ -1,3 +1,5 @@
+import org.h2.tools.Server;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,6 +12,7 @@ public class H2DatabaseConnection {
 
     static public void main (String[] args) {
         Connection a = getConnection();
+        insertSampleData(a);
     }
 
     public static Connection getConnection() {
@@ -44,7 +47,8 @@ public class H2DatabaseConnection {
                 }
                 System.out.println("Tables created successfully.");
             }
-            insertSampleData(conn);
+            Server webServer = Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082").start();
+            System.out.println("Web server started on port: " + "http://localhost:" + webServer.getPort());
             return conn;
         } catch (SQLException e) {
             System.err.println("Error creating H2 database: " + e.getMessage());
