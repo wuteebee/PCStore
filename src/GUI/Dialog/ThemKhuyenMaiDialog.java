@@ -242,5 +242,3 @@ public class ThemKhuyenMaiDialog extends JDialog {
         // Cập nhật lại layout
         contentPanel.revalidate();
         contentPanel.repaint();
-    }
-}
