@@ -2,7 +2,6 @@ package GUI.Dialog;
 
 import BUS.PromotionBUS;
 import DTO.ComboProduct;
-import GUI.Components.Button;
 import GUI.Panel.PromotionPanel;
 import java.awt.*;
 import java.util.List;
@@ -18,7 +17,7 @@ public class ComboDetailDialog extends JDialog {
         super((Frame) SwingUtilities.getWindowAncestor(parent), "Chi tiết Combo - " + idKhuyenMai, true);
         this.promotionBUS = new PromotionBUS();
         initComponents(idKhuyenMai);
-        setSize(400, 300);
+        setSize(500, 400);
         setLocationRelativeTo(parent);
         setAlwaysOnTop(true); // Đảm bảo dialog luôn ở trên cùng
     }
@@ -51,15 +50,6 @@ public class ComboDetailDialog extends JDialog {
         JScrollPane scrollPane = new JScrollPane(comboTable);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Nút Đóng
-        Button buttonFactory = new Button();
-        JButton btnClose = buttonFactory.createStyledButton("Đóng", "./resources/icon/exit.png");
-        btnClose.setPreferredSize(new Dimension(100, 30));
-        btnClose.setFont(new Font("Arial", Font.PLAIN, 12));
-        btnClose.addActionListener(e -> dispose());
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.add(btnClose);
-        add(buttonPanel, BorderLayout.SOUTH);
+        
     }
 }

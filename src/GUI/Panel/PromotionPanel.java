@@ -9,6 +9,7 @@ import GUI.Main;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -95,6 +96,45 @@ public class PromotionPanel extends JPanel {
         tableKhuyenMai.setRowHeight(30);
         tableKhuyenMai.setSelectionBackground(new Color(173, 216, 230));
         tableKhuyenMai.setSelectionForeground(Color.BLACK);
+
+        // Thêm MouseListener để xử lý nhấn chuột vào cột "Loại"
+        tableKhuyenMai.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = tableKhuyenMai.rowAtPoint(e.getPoint());
+                int col = tableKhuyenMai.columnAtPoint(e.getPoint());
+                if (row >= 0 && col == 5) { // Cột "Loại"
+                    int modelRow = tableKhuyenMai.convertRowIndexToModel(row);
+                    String value = tableModel.getValueAt(modelRow, 5).toString().trim(); // Loại bỏ khoảng trắng
+                    System.out.println("Clicked on Loai column, value: '" + value + "'");
+                    if ("Combo".equalsIgnoreCase(value)) { // Bỏ qua hoa thường
+                        String idKhuyenMai = tableModel.getValueAt(modelRow, 0).toString();
+                        System.out.println("Opening ComboDetailDialog for ID: " + idKhuyenMai);
+                        new ComboDetailDialog(PromotionPanel.this, idKhuyenMai).setVisible(true);
+                    }
+                }
+            }
+        });
+
+        // Thêm MouseMotionListener để đổi con trỏ chuột khi di chuột qua cột "Loại"
+        tableKhuyenMai.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int row = tableKhuyenMai.rowAtPoint(e.getPoint());
+                int col = tableKhuyenMai.columnAtPoint(e.getPoint());
+                if (row >= 0 && col == 5) { // Cột "Loại"
+                    int modelRow = tableKhuyenMai.convertRowIndexToModel(row);
+                    String value = tableModel.getValueAt(modelRow, 5).toString().trim();
+                    if ("Combo".equalsIgnoreCase(value)) {
+                        tableKhuyenMai.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    } else {
+                        tableKhuyenMai.setCursor(Cursor.getDefaultCursor());
+                    }
+                } else {
+                    tableKhuyenMai.setCursor(Cursor.getDefaultCursor());
+                }
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(tableKhuyenMai);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
@@ -253,20 +293,6 @@ public class PromotionPanel extends JPanel {
 
                 panel.add(textLabel, BorderLayout.CENTER);
                 panel.add(eyeLabel, BorderLayout.EAST);
-
-                // Đặt con trỏ tay cho toàn bộ panel
-                panel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-                // Thêm MouseListener cho toàn bộ panel
-                panel.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        int modelRow = table.convertRowIndexToModel(row);
-                        String idKhuyenMai = tableModel.getValueAt(modelRow, 0).toString();
-                        System.out.println("Opening ComboDetailDialog for ID: " + idKhuyenMai);
-                        new ComboDetailDialog(PromotionPanel.this, idKhuyenMai).setVisible(true);
-                    }
-                });
             } else {
                 panel.add(textLabel, BorderLayout.CENTER);
             }

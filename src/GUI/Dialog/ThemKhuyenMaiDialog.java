@@ -54,7 +54,6 @@ public class ThemKhuyenMaiDialog extends JDialog {
         btnCombo.setFont(new Font("Arial", Font.PLAIN, 12));
         
         typePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        
 
         if (isEditMode) {
             btnDonLe.setEnabled(false);
@@ -111,12 +110,6 @@ public class ThemKhuyenMaiDialog extends JDialog {
         JScrollPane scrollPane = new JScrollPane(productTable);
         productPanel.add(scrollPane, BorderLayout.CENTER);
 
-        if (isEditMode && "Combo".equals(loai)) {
-            for (ComboProduct p : selectedProducts) {
-                productTableModel.addRow(new Object[]{p.getIdSanPham(), p.getTenSanPham()});
-            }
-        }
-
         JButton btnChonSanPham = buttonFactory.createStyledButton("Chọn sản phẩm", null);
         btnChonSanPham.setPreferredSize(new Dimension(130, 30));
         btnChonSanPham.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -132,7 +125,7 @@ public class ThemKhuyenMaiDialog extends JDialog {
             btnChonSanPham.setVisible(false);
         }
         
-            btnChonSanPham.addActionListener(e -> {
+        btnChonSanPham.addActionListener(e -> {
             JDialog selectDialog = new JDialog(this, "Chọn sản phẩm", true);
             selectDialog.setSize(500, 500);
             selectDialog.setLayout(new BorderLayout());
@@ -176,9 +169,8 @@ public class ThemKhuyenMaiDialog extends JDialog {
             for (ComboProduct p : selectedProducts) {
                 productTableModel.addRow(new Object[]{p.getIdSanPham(), p.getTenSanPham()});
             }
-            contentPanel.add(productPanel, BorderLayout.CENTER); // <-- Thêm dòng này!
+            contentPanel.add(productPanel, BorderLayout.CENTER);
         }
-        
 
         // Nút Hoàn tất và Hủy
         JButton btnHoanTat = buttonFactory.createStyledButton("Hoàn tất", "./resources/icon/complete.png");
@@ -252,4 +244,3 @@ public class ThemKhuyenMaiDialog extends JDialog {
         contentPanel.repaint();
     }
 }
-    
