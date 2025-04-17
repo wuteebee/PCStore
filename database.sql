@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS KhuyenMaiCombo (
 
 -- Create NhanVien table
 CREATE TABLE IF NOT EXISTS NhanVien (
-    IDNhanVien VARCHAR(20) PRIMARY KEY,
+    idNhanVien VARCHAR(20) PRIMARY KEY,
     TenNhanVien VARCHAR(50) NOT NULL,
     SDT VARCHAR(20),
     Mail VARCHAR(255),
