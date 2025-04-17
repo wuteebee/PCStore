@@ -6,13 +6,8 @@ import GUI.ActionListener.ProductActionListener;
 import GUI.ActionListener.ProductDetailActionListener;
 import GUI.ActionListener.PromotionActionListener;
 import GUI.Main;
-import GUI.Panel.CustomerPanel;
-import GUI.Panel.EmployeePanel;
-import GUI.Panel.PhieuNhapPanel;
-import GUI.Panel.ProductDetailPanel;
-import GUI.Panel.ProductPanel;
-import GUI.Panel.PromotionPanel;
-import GUI.Panel.SupplierPanel;
+import GUI.Panel.*;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -173,6 +168,13 @@ public class MenuChucNang {
             btnExport.addActionListener(actionListener);
             btnDS.addActionListener(actionListener);
 
+            actionPanel.add(btnAdd);
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnDelete);
+            actionPanel.add(btnDS);
+        }
+        else if (panel instanceof SaleInvoicePanel)
+        {
             actionPanel.add(btnAdd);
             actionPanel.add(btnEdit);
             actionPanel.add(btnDelete);

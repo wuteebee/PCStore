@@ -1,8 +1,5 @@
 package GUI.Components;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +9,7 @@ import javax.swing.*;
 
 // import GUI.BanHang;
 import GUI.Main;
+import GUI.Panel.SaleInvoicePanel;
 import GUI.Panel.CustomerPanel;
 import GUI.Panel.EmployeePanel;
 import GUI.Panel.PhieuNhapPanel;
@@ -19,7 +17,6 @@ import GUI.Panel.ProductPanel;
 import GUI.Panel.PromotionPanel;
 import GUI.Panel.SupplierPanel;
 import GUI.Panel.Trangchu;
-import GUI.Components.MenuChucNang;
 import net.miginfocom.swing.MigLayout;
 
 public class MenuLeft extends JPanel {
@@ -108,7 +105,7 @@ public class MenuLeft extends JPanel {
                 mainFrame.setMainPanel(new ProductPanel(mainFrame));
                 break;
             case "Phiếu xuất":
-                // mainFrame.setMainPanel(new BanHang());
+                mainFrame.setMainPanel(new SaleInvoicePanel(mainFrame));
                 break;
             case "Phiếu nhập":
             System.out.println("Phiếu nhập nè");

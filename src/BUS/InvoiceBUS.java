@@ -13,6 +13,16 @@ public class InvoiceBUS {
     public InvoiceBUS(InvoiceDAO invoiceDAO) {
         this.invoiceDAO = invoiceDAO;
     }
+    public InvoiceBUS()
+    {
+        invoiceDAO = new InvoiceDAO();
+    }
+
+    public List<SalesInvoice> fetchSalesInvoice()
+    {
+        System.out.println("Fetch data invoice");
+        return invoiceDAO.getAllSalesInvoice();
+    }
 
     public boolean addSalesInvoice(SalesInvoice salesInvoice) {
         System.out.println("Thêm hóa đơn xuất vào hệ thống");
