@@ -137,9 +137,9 @@ public class MenuLeft extends JPanel {
                 // case "Thống kê":
                 //     mainFrame.setMainPanel(new StatisticsPanel());
                 //     break;
-            case "Khuyến mãi và ưu đãi":
-                mainFrame.setMainPanel(new PromotionPanel());
-                break;
+                case "Khuyến mãi và ưu đãi":
+                    mainFrame.setMainPanel(new PromotionPanel(mainFrame));
+                    break;
             case "Đăng xuất":
                 JOptionPane.showMessageDialog(mainFrame, "Đăng xuất thành công!");
                 System.exit(0);
