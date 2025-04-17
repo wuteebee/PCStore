@@ -10,6 +10,7 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -73,8 +74,9 @@ public class ThemKhuyenMaiDialog extends JDialog {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
-        txtMaKM = new JTextField(isEditMode ? promotion.getIdKhuyenMai() : promotionBUS.generateUniqueId());
-        txtMaKM.setEditable(!isEditMode);
+        // Sinh mã KM tự động hoặc lấy mã cũ (khi chỉnh sửa)
+        txtMaKM = new JTextField(isEditMode ? promotion.getIdKhuyenMai() : generatePromotionId(loai));
+        txtMaKM.setEditable(false); // Không cho chỉnh sửa mã KM trong mọi trường hợp
         txtTenKM = new JTextField(isEditMode ? promotion.getTenKhuyenMai() : "");
         txtPhanTramKM = new JTextField(isEditMode ? String.valueOf(promotion.getGiaTri()) : "");
         dateChooserNgayBD = new JDateChooser();
@@ -180,7 +182,7 @@ public class ThemKhuyenMaiDialog extends JDialog {
         buttonPanel.add(btnHuy);
 
         btnHoanTat.addActionListener(e -> {
-            String maKM = txtMaKM.getText();
+            String maKMToSave = txtMaKM.getText(); // Lấy mã KM từ txtMaKM
             String tenKM = txtTenKM.getText();
             String phanTramKM = txtPhanTramKM.getText();
             String ngayBD = dateChooserNgayBD.getDate() != null ?
@@ -188,11 +190,13 @@ public class ThemKhuyenMaiDialog extends JDialog {
             String ngayKT = dateChooserNgayKT.getDate() != null ?
                     new SimpleDateFormat("yyyy-MM-dd").format(dateChooserNgayKT.getDate()) : "";
 
-            if (maKM.isEmpty() || tenKM.isEmpty() || phanTramKM.isEmpty()) {
+            // Kiểm tra thông tin bắt buộc
+            if (maKMToSave.isEmpty() || tenKM.isEmpty() || phanTramKM.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
                 return;
             }
 
+            // Kiểm tra ngày
             if (!ngayBD.isEmpty() && !ngayKT.isEmpty()) {
                 LocalDate bd = LocalDate.parse(ngayBD);
                 LocalDate kt = LocalDate.parse(ngayKT);
@@ -202,13 +206,24 @@ public class ThemKhuyenMaiDialog extends JDialog {
                 }
             }
 
+            // Kiểm tra sản phẩm combo
             List<ComboProduct> productsToSave = selectedProducts;
             if ("Combo".equals(loai) && productsToSave.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn ít nhất một sản phẩm cho combo!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            if (promotionBUS.savePromotion(maKM, tenKM, phanTramKM, ngayBD, ngayKT, loai, isEditMode, productsToSave)) {
+            // Kiểm tra mã KM có đúng định dạng theo loại không
+            if ("Combo".equals(loai) && !maKMToSave.startsWith("KMCombo")) {
+                JOptionPane.showMessageDialog(this, "Mã KM cho Combo phải bắt đầu bằng 'KMCombo'!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if ("Đơn lẻ".equals(loai) && !maKMToSave.startsWith("KM")) {
+                JOptionPane.showMessageDialog(this, "Mã KM cho Đơn lẻ phải bắt đầu bằng 'KM'!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Lưu khuyến mãi
+            if (promotionBUS.savePromotion(maKMToSave, tenKM, phanTramKM, ngayBD, ngayKT, loai, isEditMode, productsToSave)) {
                 JOptionPane.showMessageDialog(this, (isEditMode ? "Sửa" : "Thêm") + " khuyến mãi thành công!");
                 parentPanel.loadData();
                 dispose();
@@ -224,12 +239,61 @@ public class ThemKhuyenMaiDialog extends JDialog {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    private String generatePromotionId(String loai) {
+        List<Promotion> promotions = promotionBUS.getAllPromotions();
+        // Sắp xếp danh sách theo IdKhuyenMai để đảm bảo lấy mã cuối cùng
+        promotions.sort(Comparator.comparing(Promotion::getIdKhuyenMai));
+
+        String lastDonLeId = null;
+        String lastComboId = null;
+
+        // Duyệt danh sách từ cuối để tìm mã cuối cùng
+        for (int i = promotions.size() - 1; i >= 0; i--) {
+            String id = promotions.get(i).getIdKhuyenMai();
+            if (lastDonLeId == null && id.startsWith("KM") && !id.startsWith("KMCombo")) {
+                lastDonLeId = id;
+            }
+            if (lastComboId == null && id.startsWith("KMCombo")) {
+                lastComboId = id;
+            }
+            if (lastDonLeId != null && lastComboId != null) {
+                break; // Đã tìm thấy cả hai, thoát vòng lặp
+            }
+        }
+
+        // Tạo mã mới dựa trên loại
+        if ("Combo".equals(loai)) {
+            if (lastComboId == null) {
+                return "KMCombo001"; // Nếu chưa có mã combo, bắt đầu từ 001
+            }
+            try {
+                int number = Integer.parseInt(lastComboId.replace("KMCombo", ""));
+                return String.format("KMCombo%03d", number + 1);
+            } catch (NumberFormatException e) {
+                return "KMCombo001"; // Nếu không parse được, mặc định là 001
+            }
+        } else {
+            if (lastDonLeId == null) {
+                return "KM001"; // Nếu chưa có mã đơn lẻ, bắt đầu từ 001
+            }
+            try {
+                int number = Integer.parseInt(lastDonLeId.replace("KM", ""));
+                return String.format("KM%03d", number + 1);
+            } catch (NumberFormatException e) {
+                return "KM001"; // Nếu không parse được, mặc định là 001
+            }
+        }
+    }
+
     private void switchType(String newLoai) {
         if (isEditMode) return;
     
         loai = newLoai;
         btnDonLe.setBackground("Đơn lẻ".equals(loai) ? Color.LIGHT_GRAY : Color.WHITE);
         btnCombo.setBackground("Combo".equals(loai) ? Color.LIGHT_GRAY : Color.WHITE);
+    
+        // Cập nhật mã KM khi chuyển loại
+        txtMaKM.setText(generatePromotionId(loai));
     
         if ("Combo".equals(loai)) {
             contentPanel.add(productPanel, BorderLayout.CENTER);
@@ -242,3 +306,5 @@ public class ThemKhuyenMaiDialog extends JDialog {
         // Cập nhật lại layout
         contentPanel.revalidate();
         contentPanel.repaint();
+    }
+}
