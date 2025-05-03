@@ -47,7 +47,7 @@ public class ProductDetailPanel extends JPanel {
     public JPanel createCustomToolbar() {
         JPanel toolbar = new JPanel(new GridLayout(1, 2, 10, 10));
         toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        toolbar.setPreferredSize(new Dimension(950, 110));
+        toolbar.setPreferredSize(new Dimension(960, 90));
         toolbar.setBackground(Color.WHITE);
 
         MenuChucNang menu = new MenuChucNang();
@@ -131,21 +131,6 @@ public class ProductDetailPanel extends JPanel {
             variantTabsPanel.add(btn);
         }
 
-        JButton newButton=new JButton("Thêm cấu hình mới");
-        JButton tmp=new JButton("Xem danh sách sản phẩm có cấu hình này");
-        newButton.setPreferredSize(new Dimension(150, 30));
-        tmp.setPreferredSize(new Dimension(250, 30));
-        newButton.addActionListener(e -> {
-            System.out.println("Thêm cấu hình mới cho sản phẩm: " + product.getTenSp());
-            // mainFrame.showAddProductPanel();
-        });
-        tmp.addActionListener(e -> {
-            System.out.println("Xem danh sách sản phẩm có cấu hình này: " + product.getTenSp()+" - " + product.getDanhSachPhienBan().get(phienban-1).getPhienBan());
-            // mainFrame.showProductListPanel(product.getDanhSachPhienBan().get(phienban-1).getIdCauHinh());
-        }); 
-
-        variantTabsPanel.add(newButton);
-        variantTabsPanel.add(tmp);
 
         panelConfigWrapper.add(variantTabsPanel, BorderLayout.NORTH);
 

@@ -28,7 +28,7 @@ public class ProductBUS {
         Product product = new Product();
         ProductDAO productDAO = new ProductDAO();
         product = productDAO.getProductByIdFull(id);
-       
+        
 
         if (product.getDanhMuc().getMaDanhMuc().equals("DM002")) {
             

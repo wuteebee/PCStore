@@ -11,7 +11,7 @@ import java.util.Map;
 import DTO.Brand;
 import DTO.Catalog;
 import DTO.ThongSoKyThuat;
-import config.DatabaseConnection;
+
 
 public class AtributeDAO {
     private Connection conn;

@@ -2,7 +2,7 @@ package DTO;
 
 public class ProductDetail {
     private String serialNumber;
-    private String idPhanLoai;
+    private int idPhanLoai;
     private String maPhieuNhap;
     private String maPhieuXuat;
     private double giaNhap;
@@ -11,14 +11,14 @@ public class ProductDetail {
     public ProductDetail() {
     }
 
-    public ProductDetail(String serialNumber, String idPhanLoai, double giaNhap, boolean trangThai) {
+    public ProductDetail(String serialNumber, int idPhanLoai, double giaNhap, boolean trangThai) {
         this.serialNumber = serialNumber;
         this.idPhanLoai = idPhanLoai;
         this.giaNhap = giaNhap;
         this.trangThai = trangThai;
     }
     
-    public ProductDetail(String serialNumber, String idPhanLoai, double giaNhap, boolean trangThai,String maPhieuNhap, String maPhieuXuat) {
+    public ProductDetail(String serialNumber, int idPhanLoai, double giaNhap, boolean trangThai,String maPhieuNhap, String maPhieuXuat) {
         this.maPhieuNhap = maPhieuNhap;
         this.serialNumber = serialNumber;
         this.idPhanLoai = idPhanLoai;
@@ -37,11 +37,11 @@ public class ProductDetail {
         this.serialNumber = serialNumber;
     }
 
-    public String getIdPhanLoai() {
+    public int getIdPhanLoai() {
         return idPhanLoai;
     }
 
-    public void setIdPhanLoai(String idPhanLoai) {
+    public void setIdPhanLoai(int idPhanLoai) {
         this.idPhanLoai = idPhanLoai;
     }
 

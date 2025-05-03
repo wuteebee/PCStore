@@ -57,7 +57,7 @@ public class EmployeeActionListener implements ActionListener {
             }
             
                 break;
-            case "Tìm":
+            case "Tìm kiếm":
                 System.out.println("Tìm");
                 break;
             case "Xuất Excel":

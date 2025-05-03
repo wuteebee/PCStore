@@ -252,10 +252,10 @@ public class ProductDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String serialNumber = rs.getString("SerialNumber");
-                    String idSP = rs.getString("idPhanLoai");
+                    int idSP = rs.getInt("idPhanLoai");
                     double giaNhap = rs.getDouble("giaNhap");
                     boolean trangThai = rs.getBoolean("trangThai");
-    
+                    
                     ProductDetail tmp = new ProductDetail(serialNumber, idSP, giaNhap, trangThai);
                     productDetails.add(tmp);
                 }
@@ -264,14 +264,22 @@ public class ProductDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
 
-        Map<String, ProductDetail> productMap = new HashMap<>();
-        for (ProductDetail p : productDetails) {
-             productMap.put(p.getSerialNumber(), p);
+        if(id==null){
+            return productDetails;
         }
 
+        List<ProductDetail> danhsach= new ArrayList<>();
+   
+        for (ProductDetail p : productDetails) {
+             if(p.getIdPhanLoai()==id){
+                danhsach.add(p);
+             }
+        }
+
+        return danhsach;
         
-        return productDetails;
     }
     
 }

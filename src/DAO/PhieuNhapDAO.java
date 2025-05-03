@@ -1,5 +1,6 @@
 package DAO;
 
+import DTO.ChiTietDonNhap;
 import DTO.HoaDonNhap;
 import config.DatabaseConnection;
 
@@ -85,5 +86,31 @@ public class PhieuNhapDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    
+    public List<ChiTietDonNhap> getAll_CTDonNhap(){
+        List<ChiTietDonNhap> danhsach=new ArrayList<>();
+        String sql="SELECT * FROM chitietdonnhap";
+       try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)){
+            while (rs.next()) {
+                String idDonHang=rs.getString("idDonHang");
+                String SN=rs.getString("SN");
+                double donGia=rs.getDouble("donGia");
+
+                ChiTietDonNhap tmp=new ChiTietDonNhap(idDonHang, SN, donGia);
+
+                danhsach.add(tmp);
+                
+            }
+        
+       } catch (Exception e) {
+        // TODO: handle exception
+       }
+
+
+        return danhsach;
     }
 }

@@ -1,6 +1,7 @@
 package BUS;
 
 import DAO.PhieuNhapDAO;
+import DTO.ChiTietDonNhap;
 import DTO.HoaDonNhap;
 
 import java.util.List;
@@ -30,5 +31,9 @@ public class PhieuNhapBUS {
     // Lấy theo ID
     public HoaDonNhap getPhieuNhapById(String id) {
         return dao.getById(id);
+    }
+
+    public List<ChiTietDonNhap> getAll_ChiTietDonNhap(){
+        return dao.getAll_CTDonNhap();
     }
 }

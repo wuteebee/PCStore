@@ -4,6 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+
+import com.formdev.flatlaf.FlatLightLaf;
 
 import GUI.Main;
 import GUI.Panel.ProductDetailPanel;
@@ -14,7 +17,7 @@ public class ProductActionListener implements ActionListener{
     private Main MainFrame;
 
     public ProductActionListener(ProductPanel panel,Main MainFrame){
-        System.out.println("h");
+
         this.panel=panel;
         this.MainFrame=MainFrame;
     }
@@ -22,8 +25,13 @@ public class ProductActionListener implements ActionListener{
     public void actionPerformed(ActionEvent e) {
                 switch (e.getActionCommand()) {
             case "Thêm":
-                System.out.println("Thêm khách hàng nè");
-                // panel.openAddCustomerDialog();
+            try {
+                        UIManager.setLookAndFeel(new FlatLightLaf());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                panel.openAddNewProductDialog();
                 break;
             case "Sửa":
             // String id = panel.getSelectedCustomerId();
@@ -31,7 +39,7 @@ public class ProductActionListener implements ActionListener{
             //     System.out.println(id);
             //     panel.openEditCustomerDialog(id);
 
-                System.out.println("Sửa khách hàng nè");
+                System.out.println("Sửa khách hàng nèww");
             // } else {
             //     // System.out.println("Vui lòng chọn khách hàng cần chỉnh sửa!");
             // JOptionPane.showMessageDialog(panel, "Vui lòng chọn nhân viên cần chỉnh sửa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
@@ -39,7 +47,7 @@ public class ProductActionListener implements ActionListener{
             // }
                 break;
             case "Xóa":
-            System.out.println("Xoá nè");
+            System.out.println("Xoá nèee");
             //  id = panel.getSelectedCustomerId();
             // if(id != "-1") {
             //     int result = JOptionPane.showConfirmDialog(
@@ -61,9 +69,16 @@ public class ProductActionListener implements ActionListener{
 
             // }
                 break;
-            case "Tìm":
-                System.out.println("Tìm khách hàng nè");
+            case "search":
                 
+                System.out.println(panel.getTextField().getText().trim());
+                // panel.printTableData();
+                break;
+            case "Làm mới":
+                System.out.println("Làm mới nè");
+                // panel.getTextField().setText("");
+                // panel.getTable().setRowCount(0);
+                // panel.loadDataToTable();
                 break;
             case "Chi tiết":
                 System.out.println("Chi tiết nè");

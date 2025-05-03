@@ -67,11 +67,11 @@ CREATE TABLE IF NOT EXISTS ThongTinKyThuat (
     idDanhMuc VARCHAR(20) NOT NULL,
     idThongTin VARCHAR(20) PRIMARY KEY,
     tenThongTin VARCHAR(50) NOT NULL,
-    FOREIGN KEY (idDanhMuc) REFERENCES DanhMuc(idDanhMuc)
+    idDanhMucLinhKien VARCHAR(20),
+    FOREIGN KEY (idDanhMuc) REFERENCES DanhMuc(idDanhMuc),
+    FOREIGN KEY (idDanhMucLinhKien) REFERENCES DanhMuc(idDanhMuc)
 );
 
--- Create CauHinhLaptop table
--- Create CauHinhLaptop table
 CREATE TABLE IF NOT EXISTS CauHinhLaptop (
     idSanPham VARCHAR(20),
     idThongTin VARCHAR(20),
@@ -289,6 +289,20 @@ INSERT INTO ThongTinKyThuat (idDanhMuc, idThongTin, tenThongTin) VALUES
 ('Laptop', 'WiFi', 'Chuẩn WiFi'),
 ('Laptop', 'Bluetooth', 'Phiên bản Bluetooth'),
 ('Laptop', 'HeDieuHanh', 'Hệ điều hành');
+
+
+
+-- Chèn thông số kỹ thuật cho từng linh kiện, dựa vào bảng DanhMuc
+INSERT INTO ThongTinKyThuat (idDanhMuc, idThongTin, tenThongTin, idDanhMucLinhKien) VALUES
+('DM002', 'TS001', 'CPU', 'DM004'),  -- CPU
+('DM002', 'TS002', 'Mainboard', 'DM011'),  -- Mainboard
+('DM002', 'TS003', 'RAM', 'DM006'),  -- RAM
+('DM002', 'TS004', 'Ổ cứng', 'DM007'),  
+('DM002', 'TS006', 'Card đồ họa (GPU)', 'DM005'),  -- GPU
+('DM002', 'TS007', 'Nguồn (PSU)', 'DM010'),  -- PSU
+('DM002', 'TS008', 'Vỏ Case', 'DM009'),  -- Case
+('DM002', 'TS009', 'Tản nhiệt CPU', 'DM012'),  -- Tản nhiệt
+
 
 -- Sản phẩm cho Laptop
 INSERT INTO SanPham (idSanPham, idDanhMuc, tenSanPham, idThuongHieu, Gia, moTaSanPham)
