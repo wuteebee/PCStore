@@ -1,12 +1,9 @@
 package GUI;
 
+import GUI.Components.MenuLeft;
+import GUI.Panel.Trangchu;
 import java.awt.*;
 import javax.swing.*;
-
-import GUI.Components.MenuLeft;
-import GUI.Panel.EmployeePanel;
-
-import GUI.Panel.Trangchu;
 
 public class Main extends JFrame {
 
@@ -30,13 +27,8 @@ public class Main extends JFrame {
     
         // Truyền `this` vào `MenuLeft`
         menuTaskbar = new MenuLeft(this);
-
-        JScrollPane scrollPane = new JScrollPane(menuTaskbar);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new Dimension(250, 800));
-    
-        this.add(scrollPane, BorderLayout.WEST);
+        menuTaskbar.setPreferredSize(new Dimension(250, 800));
+        this.add(menuTaskbar, BorderLayout.WEST);
     
         MainContent = new JPanel(new BorderLayout());
         MainContent.setBackground(MainColor);
