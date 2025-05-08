@@ -34,8 +34,7 @@ public class ProductPanel extends JPanel {
     }
 
     public void updateTable(Product sp){
-        Object[] newRow = {sp.getTenSp(), sp.getGiasp(), sp.getDanhMuc().getTenDanhMuc(), sp.getThuongHieu().getTenThuongHieu()};
-        System.out.println("Thêm hàng nè"+sp.getTenSp());
+        Object[] newRow = {sp.getMaSp(),sp.getTenSp(), sp.getDanhMuc().getTenDanhMuc(), sp.getThuongHieu().getTenThuongHieu(),sp.getMoTaSanPham()};
         tableModel.addRow(newRow);
     }
     public JPanel createCustomToolbar() {

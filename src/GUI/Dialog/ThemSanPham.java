@@ -218,8 +218,7 @@ catalogMap = new HashMap<>();
                     if (errorMsg == null) {
                         panel.updateTable(sp);
                         JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công!");
-                        SwingUtilities.getWindowAncestor(submit).dispose(); // đóng cửa sổ cha của nút "submit"
-                       ;
+                        SwingUtilities.getWindowAncestor(submit).dispose(); 
  
                     } else {
                         JOptionPane.showMessageDialog(null, errorMsg, "Lỗi", JOptionPane.WARNING_MESSAGE);

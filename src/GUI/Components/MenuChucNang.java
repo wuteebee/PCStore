@@ -206,7 +206,7 @@ public class MenuChucNang {
         searchField.setBorder(BorderFactory.createLineBorder(new Color(80, 149, 237), 1)); 
       
         Button buttonFactory = new Button();
-         btnSearch = buttonFactory.createStyledButton("Tìm", "./resources/icon/find.svg");
+         btnSearch = buttonFactory.createStyledButton("Tìm kiếm", "./resources/icon/find.svg");
         btnReset = buttonFactory.createStyledButton("Làm mới", null);
         btnSearch.setPreferredSize(new Dimension(90, 35));
         btnReset.setPreferredSize(new Dimension(90, 35));
