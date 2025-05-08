@@ -39,7 +39,7 @@ public class MenuLeft extends JPanel {
     private final String[][] menuItems = {
             {"Trang chủ", "home.svg"},
             {"Sản phẩm", "book.svg", "Laptop", "PC", "Linh kiện máy tính"},
-            {"Thuộc tính", "settings2.svg", "Màu sắc", "Thương hiệu", "Xuất xứ"},
+            {"Thuộc tính", "khu_vuc.svg", "Màu sắc", "Thương hiệu", "Xuất xứ"},
             {"Phiếu nhập", "import.svg"},
             {"Phiếu xuất", "export.svg"},
             {"Khách hàng", "customer.svg"},
@@ -63,7 +63,7 @@ public class MenuLeft extends JPanel {
         pnlTop.setBackground(DefaultColor);
         pnlTop.setLayout(new BorderLayout(0, 0));
         add(pnlTop, BorderLayout.NORTH);
-
+        
         bar1 = new JPanel();
         bar1.setBackground(new Color(204, 214, 219));
         bar1.setPreferredSize(new Dimension(1, 0));
