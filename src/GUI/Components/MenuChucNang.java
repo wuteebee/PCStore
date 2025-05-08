@@ -22,18 +22,20 @@ import javax.swing.border.TitledBorder;
 
 public class MenuChucNang {
     private static Color color = Color.WHITE;
-
+    private static JTextField searchField;
+    private static JButton btnSearch = new Button().createStyledButton("Tìm", null);
+    private static JButton btnReset=new Button().createStyledButton("Làm mới", null);
     // Tạo ActionPanel cho các chức năng
     public JPanel createActionPanel(JPanel panel, Main MainFrame) {
-        JPanel actionPanel = new JPanel(new GridLayout(1, 4, 10, 10)); 
-        actionPanel.setPreferredSize(new Dimension(475, 100));  
+        JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,2,2)); 
+        actionPanel.setPreferredSize(new Dimension(640,75));  
         actionPanel.setBackground(Color.WHITE);  
         Button buttonFactory = new Button();  
         JButton btnAdd = buttonFactory.createStyledButton("Thêm", "./resources/icon/add.png");
         JButton btnEdit = buttonFactory.createStyledButton("Sửa", "./resources/icon/edit.png");
         JButton btnDelete = buttonFactory.createStyledButton("Xóa", "./resources/icon/delete.png");
         JButton btnExport = buttonFactory.createStyledButton("Xuất Excel", "./resources/icon/export.svg");
-        JButton btnDetail = new JButton("Chi tiết");
+        JButton btnDetail = buttonFactory.createStyledButton("Chi tiết",null);
         JButton btnDS = buttonFactory.createStyledButton("Xem DS", null);
 
         // Nếu panel là EmployeePanel, gán sự kiện cho các nút
@@ -192,32 +194,27 @@ public class MenuChucNang {
 
     // Tạo panel tìm kiếm
     public static JPanel createSearchPanel() {
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10)); 
-        searchPanel.setPreferredSize(new Dimension(475, 100));  
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5)); 
+        searchPanel.setPreferredSize(new Dimension(435, 75));  
         searchPanel.setBackground(Color.WHITE); 
 
-        JButton btnReset = new JButton("Làm mới");
-        btnReset.setPreferredSize(new Dimension(90, 30));
-        btnReset.setFont(new Font("Arial", Font.BOLD, 12));
 
-        JTextField searchField = new JTextField(20); 
+
+    searchField = new JTextField(); 
         searchField.setFont(new Font("Arial", Font.PLAIN, 16)); 
-        searchField.setPreferredSize(new Dimension(250, 40)); 
-        searchField.setBorder(BorderFactory.createLineBorder(new Color(100, 149, 237), 1)); 
-
+        searchField.setPreferredSize(new Dimension(230, 30)); 
+        searchField.setBorder(BorderFactory.createLineBorder(new Color(80, 149, 237), 1)); 
+      
         Button buttonFactory = new Button();
-        JButton btnSearch = buttonFactory.createStyledButton("Tìm kiếm", "./resources/icon/find.svg");
-
-        btnSearch.setHorizontalTextPosition(SwingConstants.RIGHT); 
-        btnSearch.setVerticalTextPosition(SwingConstants.CENTER);
-        btnSearch.setPreferredSize(new Dimension(100, 40)); 
-        btnSearch.setFont(new Font("Arial", Font.BOLD, 12)); 
-
+         btnSearch = buttonFactory.createStyledButton("Tìm kiếm", "./resources/icon/find.svg");
+        btnReset = buttonFactory.createStyledButton("Làm mới", null);
+        btnSearch.setPreferredSize(new Dimension(90, 35));
+        btnReset.setPreferredSize(new Dimension(90, 35));
         searchPanel.add(btnReset);
         searchPanel.add(searchField);
         searchPanel.add(btnSearch);
         searchPanel.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(100, 149, 237), 1),
+            BorderFactory.createLineBorder(new Color(80, 149, 237), 1),
             "Tìm kiếm", 
             TitledBorder.LEFT, TitledBorder.TOP, 
             new Font("Arial", Font.BOLD, 12), 
@@ -225,5 +222,8 @@ public class MenuChucNang {
         ));
 
         return searchPanel;
+    }
+    public JTextField getTextField() {
+        return searchField;
     }
 }

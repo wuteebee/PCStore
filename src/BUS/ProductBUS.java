@@ -3,6 +3,8 @@ package BUS;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import DAO.ProductDAO;
 import DTO.CauHinhLaptop;
 import DTO.CauHinhPC;
@@ -31,7 +33,6 @@ public class ProductBUS {
         
 
         if (product.getDanhMuc().getMaDanhMuc().equals("DM002")) {
-            
             product.getDanhSachPhienBan().forEach(item -> {
                 if(item.getPhienBan().equals(version)){
                     item.getChitiet().forEach(item1->{
@@ -82,6 +83,32 @@ return danhsach;
         return productDetails;
     }
 
+   
 
+    public String insertSP(Product sp) {
+        if (sp.getTenSp() == null || sp.getTenSp().trim().isEmpty()) {
+            return "Vui lòng nhập tên sản phẩm!";
+        }
+        if (sp.getGiasp() <= 0) {
+            return "Giá sản phẩm phải lớn hơn 0!";
+        }
+        if (sp.getDanhMuc() == null) {
+            return "Chưa chọn danh mục!";
+        }
+        if (sp.getThuongHieu() == null) {
+            return "Chưa chọn thương hiệu!";
+        }
+        if (sp.getAnhSanPham() == null) {
+            return "Chưa chọn ảnh sản phẩm!";
+        }
+        if (sp.getMoTaSanPham() == null || sp.getMoTaSanPham().trim().isEmpty()) {
+            return "Vui lòng nhập mô tả sản phẩm!";
+        }
+
+       ProductDAO productDAO = new ProductDAO();
+        boolean success = productDAO.insertSP(sp);
+        return success ? null : "Lỗi khi thêm sản phẩm vào CSDL!";
+    }
+    
 
 }

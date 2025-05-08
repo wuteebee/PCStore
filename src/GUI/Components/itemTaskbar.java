@@ -80,7 +80,7 @@ public class itemTaskbar extends JPanel {
         lblIcon.setBorder(new EmptyBorder(0, 20, 0, 0));
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         try {
-            lblIcon.setIcon(new FlatSVGIcon("./icon/" + linkIcon));
+lblIcon.setIcon(new FlatSVGIcon("./icon/" + linkIcon));
         } catch (Exception e) {
             // Không hiển thị gì nếu icon không load được
         }

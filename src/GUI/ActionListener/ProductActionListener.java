@@ -2,13 +2,15 @@ package GUI.ActionListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import DTO.Product;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
+import DTO.Product;
 import GUI.Main;
+import GUI.Dialog.ThemSanPham;
 import GUI.Panel.ProductDetailPanel;
 import GUI.Panel.ProductPanel;
 
@@ -26,12 +28,15 @@ public class ProductActionListener implements ActionListener{
                 switch (e.getActionCommand()) {
             case "Thêm":
             try {
-                        UIManager.setLookAndFeel(new FlatLightLaf());
+                      
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
+                Product sp=new Product();
+                ThemSanPham tsp=new ThemSanPham(panel);
+                tsp.formThemSanPham(sp);
 
-                panel.openAddNewProductDialog();
+                
                 break;
             case "Sửa":
             // String id = panel.getSelectedCustomerId();
