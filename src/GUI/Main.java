@@ -4,6 +4,8 @@ import GUI.Components.MenuLeft;
 import GUI.Panel.Trangchu;
 import java.awt.*;
 import javax.swing.*;
+import com.formdev.flatlaf.FlatLightLaf;
+
 
 public class Main extends JFrame {
 
@@ -47,6 +49,12 @@ public class Main extends JFrame {
     }
 
     public static void main(String[] args) {
+        try {
+            // Kích hoạt FlatLaf
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize FlatLaf");
+        }
         new Main();
     }
 }

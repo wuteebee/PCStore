@@ -150,8 +150,10 @@ CREATE TABLE IF NOT EXISTS TaiKhoan (
     idNhanVien VARCHAR(20) NOT NULL,
     anhDaiDien BLOB,
     idNhomQuyen VARCHAR(20) NOT NULL,
+    tenDangNhap varchar(255) Not null,
     matKhau VARCHAR(50) NOT NULL,
     trangThai INT DEFAULT 1,
+    maOTP varchar(50) ,
     FOREIGN KEY (idNhomQuyen) REFERENCES NhomQuyen(idNhomQuyen),
     FOREIGN KEY (idNhanVien) REFERENCES NhanVien(idNhanVien)
 );
