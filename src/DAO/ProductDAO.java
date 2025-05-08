@@ -374,7 +374,7 @@ public class ProductDAO {
     public boolean insertSP(Product sp) {
         String idsp = RandomIdSP(getDanhMucCha(sp.getDanhMuc().getMaDanhMuc()));
         String sql = "INSERT INTO SanPham (idSanPham, tenSanPham, idDanhMuc, idThuongHieu, moTaSanPham, anhSanPham, Gia, trangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    
+        String sql2="INSERT INTO phanloaisp (idSanPham,STTPL,Gia,soLuongTonKho)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
@@ -388,6 +388,10 @@ public class ProductDAO {
             stmt.setBoolean(8, sp.isTrangThai());
     
             int rowsInserted = stmt.executeUpdate();
+            if(rowsInserted>0){
+                System.out.println("intert nè");
+                insertplsp(idsp, 0, sp.getGiasp(), 0);
+            }
             return rowsInserted > 0;
     
         } catch (SQLException e) {
@@ -396,5 +400,23 @@ public class ProductDAO {
         }
     }
     
+    public boolean insertplsp(String idsp, int STTPL, double gia, int soLuongTonKho) {
+        String sql = "INSERT INTO phanloaisp (idSanPham, STTPL, Gia, soLuongTonKho) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            stmt.setString(1, idsp);
+            stmt.setInt(2, STTPL);
+            stmt.setDouble(3, gia);
+            stmt.setInt(4, soLuongTonKho);
+    
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     
 }

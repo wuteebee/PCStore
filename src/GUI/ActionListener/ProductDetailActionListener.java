@@ -42,6 +42,7 @@ public class ProductDetailActionListener implements ActionListener{
             //         panel.openRemoveEmployeeDialog(id);
                       
             //     }
+            break;
 
         case "Xem DS":
             System.out.println("Xem danh sách cấu hình nè");

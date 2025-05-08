@@ -33,7 +33,6 @@ public class ProductBUS {
         
 
         if (product.getDanhMuc().getMaDanhMuc().equals("DM002")) {
-            
             product.getDanhSachPhienBan().forEach(item -> {
                 if(item.getPhienBan().equals(version)){
                     item.getChitiet().forEach(item1->{

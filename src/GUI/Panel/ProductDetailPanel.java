@@ -134,7 +134,6 @@ public class ProductDetailPanel extends JPanel {
 
         panelConfigWrapper.add(variantTabsPanel, BorderLayout.NORTH);
 
-        // Tạo panel chứa cấu hình, và thêm cấu hình ban đầu
         cauhinhPanel = new JPanel(new BorderLayout());
         cauhinhPanel.add(CauhinhPanel(phienban), BorderLayout.CENTER);
         panelConfigWrapper.add(cauhinhPanel, BorderLayout.CENTER);
@@ -187,10 +186,11 @@ public class ProductDetailPanel extends JPanel {
         for (ThongSoKyThuat tskt : thongSoList) {
             ChiTietCauHinh chitiet = mapCauHinh.get(tskt.getIdThongSo());
             String labelText = tskt.getTenThongSo() + ": ";
-
+            System.out.println("hi vào thông số kỹ thuật");
             if (chitiet instanceof CauHinhLaptop laptop) {
                 labelText += laptop.getThongTin();
             } else if (chitiet instanceof CauHinhPC pc) {
+                System.out.println("Vào chi tiết cấu hình của pc nè");
                 labelText += (pc.getLinhKien() != null) ? pc.getLinhKien().getTenSp() : "Không có linh kiện";
             } else {
                 labelText += "(Chưa có)";

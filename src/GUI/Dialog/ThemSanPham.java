@@ -22,6 +22,7 @@ import DTO.Brand;
 import DTO.Catalog;
 import DTO.Product;
 import GUI.Components.Button;
+import GUI.Panel.ProductPanel;
 public class ThemSanPham extends JDialog {
     private JTextField txtTen, gia;
     private JComboBox<String> loaisanpham, danhmuc, storage, thuonghieu;
@@ -34,14 +35,20 @@ public class ThemSanPham extends JDialog {
     private ProductBUS productBUS=new ProductBUS();
     private List <Catalog> catalogs;
     private List<Brand> brands;
+    private ProductPanel panel;
     Map<String, Catalog> catalogMap ;
     Map<String, Brand> BrandMap;
+    private      boolean isSave=false;
+    public ThemSanPham(){
 
-    public void formThemSanPham() {
+    }
+    public ThemSanPham(ProductPanel panel){
+        this.panel=panel;
+    } 
+    public void formThemSanPham(Product sp) {
         AttributeBUS attributeBUS = new AttributeBUS();
         catalogs = attributeBUS.getAllCatalogs();
-       
-        
+  
 
         setTitle("Thêm sản phẩm mới");
         setSize(550, 700);
@@ -198,14 +205,22 @@ catalogMap = new HashMap<>();
                     String dm = (String) danhmuc.getSelectedItem();
                     String th = (String) thuonghieu.getSelectedItem();
                     String moTa = mota.getText().trim();
-        
-                    Product sp = new Product(tenSanPham, catalogMap.get(dm), BrandMap.get(th), moTa, imageBase64, giaValue, true);
-        
+               
+                    sp.setTenSp(tenSanPham);
+                    sp.setDanhMuc(catalogMap.get(dm));
+                    sp.setThuongHieu(BrandMap.get(th));
+                    sp.setMoTaSanPham(moTa);
+                    sp.setAnhSanPham(imageBase64);
+                    sp.setGiasp(giaValue);
+                    sp.setTrangThai(true);
+
                     String errorMsg = productBUS.insertSP(sp);
                     if (errorMsg == null) {
+                        panel.updateTable(sp);
                         JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công!");
                         SwingUtilities.getWindowAncestor(submit).dispose(); // đóng cửa sổ cha của nút "submit"
-
+                       ;
+ 
                     } else {
                         JOptionPane.showMessageDialog(null, errorMsg, "Lỗi", JOptionPane.WARNING_MESSAGE);
                     }
@@ -232,7 +247,9 @@ catalogMap = new HashMap<>();
     }
 
 
-    
+    public boolean getIsSave(){
+        return isSave;
+    }
     private String getImageFormat(String fileName) {
         if (fileName.toLowerCase().endsWith(".png")) return "png";
         if (fileName.toLowerCase().endsWith(".jpg") || fileName.toLowerCase().endsWith(".jpeg")) return "jpeg";

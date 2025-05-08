@@ -33,6 +33,11 @@ public class ProductPanel extends JPanel {
         add(createTablePanel(), BorderLayout.CENTER);
     }
 
+    public void updateTable(Product sp){
+        Object[] newRow = {sp.getTenSp(), sp.getGiasp(), sp.getDanhMuc().getTenDanhMuc(), sp.getThuongHieu().getTenThuongHieu()};
+        System.out.println("Thêm hàng nè"+sp.getTenSp());
+        tableModel.addRow(newRow);
+    }
     public JPanel createCustomToolbar() {
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -145,10 +150,10 @@ public class ProductPanel extends JPanel {
     //     }
     // }
     
-    public void openAddNewProductDialog() {
-        ThemSanPham sanpham=new ThemSanPham();
-        sanpham.formThemSanPham();
-    }
+    // public void openAddNewProductDialog(Product sp) {
+    //     ThemSanPham sanpham=new ThemSanPham();
+    //     sanpham.formThemSanPham(sp);
+    // }
 
 
 }
