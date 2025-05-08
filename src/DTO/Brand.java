@@ -3,21 +3,21 @@ package DTO;
 public class Brand {
     private String maThuongHieu;
     private String tenThuongHieu;
-    private Catalog danhMuc;
+    private String maDanhMuc;
     private boolean trangThai;
+    public Brand(){}
 
 
-
-    public Brand(String tenThuongHieu, Catalog danhMuc, boolean trangThai) {
+    public Brand(String tenThuongHieu, String maDanhMuc, boolean trangThai) {
         this.tenThuongHieu = tenThuongHieu;
-        this.danhMuc = danhMuc;
+        this.maDanhMuc = maDanhMuc;
         this.trangThai = trangThai;
     }
 
-    public Brand(String maThuongHieu, String tenThuongHieu, Catalog danhMuc, boolean trangThai) {
+    public Brand(String maThuongHieu, String tenThuongHieu, String maDanhMuc, boolean trangThai) {
         this.maThuongHieu = maThuongHieu;
         this.tenThuongHieu = tenThuongHieu;
-        this.danhMuc = danhMuc;
+        this.maDanhMuc = maDanhMuc;
         this.trangThai = trangThai;
     }
 
@@ -37,12 +37,12 @@ public class Brand {
         return tenThuongHieu;
     }
 
-    public void setDanhMuc(Catalog danhMuc) {
-        this.danhMuc = danhMuc;
+    public void setDanhMuc( String maDanhMuc) {
+        this.maDanhMuc = maDanhMuc;
     }
 
-    public Catalog getDanhMuc() {
-        return danhMuc;
+    public String getmaDanhMuc() {
+        return maDanhMuc;
     }
 
     public void setTrangThai(boolean trangThai) {

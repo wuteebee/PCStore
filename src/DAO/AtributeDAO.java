@@ -74,7 +74,8 @@ public class AtributeDAO {
                 if (idDanhMuc != null) {
                     tmp = catalogmap.get(idDanhMuc);
                 }
-                Brand brand = new Brand(id, name, tmp, trangThai);
+                // Brand brand = new Brand(id, name, tmp, trangThai);
+                Brand brand=new Brand(id, name, idDanhMuc, trangThai);
                 brands.add(brand);
 
             }

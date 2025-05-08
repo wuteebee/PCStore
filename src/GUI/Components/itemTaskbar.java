@@ -21,13 +21,13 @@ public class itemTaskbar extends JPanel {
 
     public itemTaskbar(String linkIcon, String content) {
         setLayout(new FlowLayout(FlowLayout.LEFT, 10, 7));
-        setPreferredSize(new Dimension(230, 45));
+        setPreferredSize(new Dimension(100, 30));
         setBackground(DefaultColor);
         putClientProperty(FlatClientProperties.STYLE, "arc: 15");
 
         lblIcon = new JLabel();
-        lblIcon.setBorder(new EmptyBorder(0, 10, 0, 0));
-        lblIcon.setPreferredSize(new Dimension(40, 40));
+        lblIcon.setBorder(new EmptyBorder(0, 1, 0, 0));
+        lblIcon.setPreferredSize(new Dimension(15, 15));
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         if (!linkIcon.isEmpty()) {
             try {

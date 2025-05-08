@@ -9,6 +9,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale.Category;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,25 +18,29 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import BUS.AttributeBUS;
 import BUS.ProductBUS;
 import DAO.ProductDAO;
+import DTO.Brand;
 import DTO.Catalog;
-
+import DTO.Product;
+import GUI.Components.Button;
 public class ThemSanPham extends JDialog {
     private JTextField txtTen, gia;
     private JComboBox<String> loaisanpham, danhmuc, storage, thuonghieu;
     private JTextArea mota;
     private JLabel imageLabel;
     private String imageBase64;
-
+    private JButton submit= new Button().createStyledButton("Tạo", null);
     private String[] labels = {"Tên sản phẩm", "Giá", "Loại sản phẩm", "Danh mục", "Thương hiệu", "Mô tả"};
     private ProductDAO productDAO;
-    private ProductBUS productBUS;
+    private ProductBUS productBUS=new ProductBUS();
     private List <Catalog> catalogs;
+    private List<Brand> brands;
+    Map<String, Catalog> catalogMap ;
+    Map<String, Brand> BrandMap;
 
     public void formThemSanPham() {
         AttributeBUS attributeBUS = new AttributeBUS();
         catalogs = attributeBUS.getAllCatalogs();
-        
-
+       
         
 
         setTitle("Thêm sản phẩm mới");
@@ -72,7 +77,20 @@ public class ThemSanPham extends JDialog {
         mota.setWrapStyleWord(true);
         JScrollPane motaScroll = new JScrollPane(mota);
 
-        Map<String, Catalog> catalogMap = new HashMap<>();
+        brands=attributeBUS.getAllBrand(); 
+        for(Brand tmp:brands){
+          System.out.println(tmp.getMaThuongHieu()+tmp.getTenThuongHieu()+tmp.getmaDanhMuc());
+        }
+        BrandMap = new HashMap<>();
+      for (Brand th : brands) {
+          if(th.getmaDanhMuc() == null) {
+              thuonghieu.addItem(th.getTenThuongHieu());
+           
+          }
+          BrandMap.put(th.getTenThuongHieu(), th);
+      }
+
+catalogMap = new HashMap<>();
         for (Catalog catalog : catalogs) {
             if(catalog.getDanhMucCha() == null) {
                 loaisanpham.addItem(catalog.getTenDanhMuc());
@@ -94,6 +112,7 @@ public class ThemSanPham extends JDialog {
         gbc.gridy = 4; add(thuonghieu, gbc);
         gbc.gridy = 5; add(motaScroll, gbc);
 
+  
         // ===== Ảnh
         gbc.gridx = 0;
         gbc.gridy = 6;
@@ -111,7 +130,17 @@ public class ThemSanPham extends JDialog {
         imageLabel.setPreferredSize(new Dimension(200, 200));
         imageLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         add(imageLabel, gbc);
+        
 
+
+        // Nút lưu nè
+        gbc.gridx = 0;
+        gbc.gridy = 8;             
+        gbc.gridwidth = 2;        
+        gbc.anchor = GridBagConstraints.CENTER;  
+        gbc.fill = GridBagConstraints.NONE;      // không co giãn theo chiều ngang
+        add(submit, gbc);
+        
         // ===== Chọn ảnh
         btnChonAnh.addActionListener(new ActionListener() {
             @Override
@@ -156,7 +185,49 @@ public class ThemSanPham extends JDialog {
         });
         
 
+        submit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String tenSanPham = txtTen.getText().trim();
+                String giaStr = gia.getText().trim();
+        
+                try {
+                    double giaValue = Double.parseDouble(giaStr);
+        
+                    String loai = (String) loaisanpham.getSelectedItem();
+                    String dm = (String) danhmuc.getSelectedItem();
+                    String th = (String) thuonghieu.getSelectedItem();
+                    String moTa = mota.getText().trim();
+        
+                    Product sp = new Product(tenSanPham, catalogMap.get(dm), BrandMap.get(th), moTa, imageBase64, giaValue, true);
+        
+                    String errorMsg = productBUS.insertSP(sp);
+                    if (errorMsg == null) {
+                        JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công!");
+                        SwingUtilities.getWindowAncestor(submit).dispose(); // đóng cửa sổ cha của nút "submit"
 
+                    } else {
+                        JOptionPane.showMessageDialog(null, errorMsg, "Lỗi", JOptionPane.WARNING_MESSAGE);
+                    }
+        
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Giá sản phẩm không hợp lệ. Vui lòng nhập số!", "Lỗi nhập liệu", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+        
+        
+
+        danhmuc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedDM = (String) danhmuc.getSelectedItem();
+                if (selectedDM != null) {
+                    updateTHTheoDM(selectedDM, brands, catalogMap);
+                }
+            }
+        });
+        
         setVisible(true);
     }
 
@@ -179,6 +250,7 @@ public class ThemSanPham extends JDialog {
         }
     }
     
+    // Lay them thuong hieu theo idDanhMuc
 
     // loaisanpham.addActionListener(new ActionListener() {
     //     @Override
@@ -195,7 +267,19 @@ public class ThemSanPham extends JDialog {
     //         }
     //     }
     // });
-    
+    private void updateTHTheoDM(String tenDanhMuc, List<Brand> brands, Map<String, Catalog> cataMap) {
+        thuonghieu.removeAllItems();
+        String maDanhMuc = cataMap.get(tenDanhMuc).getMaDanhMuc();
+        for (Brand th : brands) {
+            if (th.getmaDanhMuc() != null && th.getmaDanhMuc().equals(maDanhMuc)) {
+                thuonghieu.addItem(th.getTenThuongHieu());
+            }
+            else if(th.getmaDanhMuc()==null){
+                thuonghieu.addItem(th.getTenThuongHieu());
+            }
+        }
+    }
+
     
 
 }
