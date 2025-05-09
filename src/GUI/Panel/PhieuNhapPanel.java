@@ -1,6 +1,7 @@
 package GUI.Panel;
 
 import java.awt.*;
+import java.util.Comparator;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -36,7 +37,7 @@ public class PhieuNhapPanel extends JPanel {
     private JPanel createCustomToolbar() {
         JPanel toolbar = new JPanel(new GridLayout(1, 2, 10, 10));
         toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        toolbar.setPreferredSize(new Dimension(950, 110));
+        toolbar.setPreferredSize(new Dimension(980, 90));
 
         MenuChucNang menu = new MenuChucNang();
         toolbar.add(menu.createActionPanel(this, mainFrame));
@@ -53,6 +54,7 @@ public class PhieuNhapPanel extends JPanel {
         tableModel = new DefaultTableModel(columnNames, 0);
 
         List<HoaDonNhap> danhSach = bus.getAllPhieuNhap();
+        danhSach.sort(Comparator.comparing(HoaDonNhap::getIdHoaDonNhap));
         for (HoaDonNhap p : danhSach) {
             Object[] row = {
                 p.getIdHoaDonNhap(),
@@ -98,6 +100,7 @@ public class PhieuNhapPanel extends JPanel {
     public void refreshTable() {
         tableModel.setRowCount(0);
         List<HoaDonNhap> danhSach = bus.getAllPhieuNhap();
+        danhSach.sort(Comparator.comparing(HoaDonNhap::getIdHoaDonNhap));
         for (HoaDonNhap p : danhSach) {
             Object[] row = {
                 p.getIdHoaDonNhap(),

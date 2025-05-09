@@ -11,22 +11,36 @@ public class Product {
     private String moTaSanPham;
     private String anhSanPham;
     private boolean trangThai;
+    private double giasp;
     private List<Variant> danhSachPhienBan;
 
     public Product() {
         this.danhSachPhienBan = new ArrayList<>();
     }
 
-    public Product(String maSp, String tenSp, Catalog danhMuc, Brand thuongHieu, String moTaSanPham, String anhSanPham, boolean trangThai) {
+    public Product(String maSp, String tenSp, Catalog danhMuc, Brand thuongHieu, String moTaSanPham, String anhSanPham,double giasp, boolean trangThai) {
         this.maSp = maSp;
         this.tenSp = tenSp;
         this.danhMuc = danhMuc;
         this.thuongHieu = thuongHieu;
         this.moTaSanPham = moTaSanPham;
         this.anhSanPham = anhSanPham;
+        this.giasp=giasp;
         this.trangThai = trangThai;
         this.danhSachPhienBan = new ArrayList<>();
     }
+    public Product(String tenSp, Catalog danhMuc, Brand thuongHieu, String moTaSanPham, String anhSanPham,double giasp, boolean trangThai) {
+     
+        this.tenSp = tenSp;
+        this.danhMuc = danhMuc;
+        this.thuongHieu = thuongHieu;
+        this.moTaSanPham = moTaSanPham;
+        this.anhSanPham = anhSanPham;
+        this.giasp=giasp;
+        this.trangThai = trangThai;
+        this.danhSachPhienBan = new ArrayList<>();
+    }
+    
     
 
     public void setAnhSanPham(String anhSanPham) {
@@ -91,5 +105,11 @@ public class Product {
 
     public boolean isTrangThai() {
         return trangThai;
+    }
+    public void setGiasp(double giasp) {
+        this.giasp = giasp;
+    }
+    public double getGiasp() {
+        return giasp;
     }
 }

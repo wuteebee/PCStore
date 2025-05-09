@@ -18,14 +18,14 @@ public class Button extends JButton {
 
     public JButton createStyledButton(String text, String iconPath) {
         JButton button = new JButton(text);
-        button.setPreferredSize(new Dimension(110, 40));
+        button.setPreferredSize(new Dimension(90, 45));
         // Kiểm tra iconPath không phải null và không rỗng
         if (iconPath != null && !iconPath.isEmpty()) {
 
             // Kiểm tra nếu icon là .svg
             if (iconPath.endsWith(".svg")) {
                 // Xử lý SVG
-                FlatSVGIcon icon = new FlatSVGIcon(iconPath, 32, 32);
+                FlatSVGIcon icon = new FlatSVGIcon(iconPath, 20, 20);
                 button.setIcon(icon);
     
 
@@ -33,7 +33,7 @@ public class Button extends JButton {
                 java.net.URL imageURL = getClass().getResource(iconPath.startsWith("/") ? iconPath : "/" + iconPath);
                 if (imageURL != null) {
                     ImageIcon icon = new ImageIcon(imageURL);
-                    Image img = icon.getImage().getScaledInstance(42, 42, Image.SCALE_SMOOTH);
+                    Image img = icon.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
                     button.setIcon(new ImageIcon(img));
               
                 } else {
@@ -51,10 +51,10 @@ public class Button extends JButton {
  // Vị trí icon và text
         button.setVerticalTextPosition(SwingConstants.CENTER);
         button.setHorizontalTextPosition(SwingConstants.RIGHT);
-        button.setIconTextGap(3); // khoảng cách giữa icon và text
+        button.setIconTextGap(2); // khoảng cách giữa icon và text
 
 
-        button.setMargin(new Insets(2, 3, 2, 3));
+        button.setMargin(new Insets(2, 1, 2, 1));
 
         button.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         button.setFocusable(false);

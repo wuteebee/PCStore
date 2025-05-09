@@ -3,6 +3,7 @@ package DAO;
 import config.DatabaseConnection;
 import DTO.*;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
 
@@ -40,8 +41,9 @@ public class ProductDAO {
                     boolean trangThai = rs.getBoolean("trangThai");
                     String idDM = rs.getString("idDanhMuc");
                     String idTH = rs.getString("idThuongHieu");
+                    double gia = rs.getDouble("Gia");
 
-                    product = new Product(idSP, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh, trangThai);
+                    product = new Product(idSP, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh,gia, trangThai);
                     product.setDanhSachPhienBan(new ArrayList<>());
                     productMap.put(idSP, product);
                 }
@@ -93,8 +95,9 @@ public class ProductDAO {
                 boolean trangThai = rs.getBoolean("trangThai");
                 String idDM = rs.getString("idDanhMuc");
                 String idTH = rs.getString("idThuongHieu");
+                double gia = rs.getDouble("Gia");
 
-                product = new Product(id, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh, trangThai);
+                product = new Product(id, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh,gia, trangThai);
 
                 List<Variant> variants = new ArrayList<>();
                 String sqlVariants = "SELECT * FROM phanloaisp WHERE idSanPham = ?";
@@ -104,7 +107,7 @@ public class ProductDAO {
                     while (rsVar.next()) {
                         String idPL = rsVar.getString("idPhanLoai");
                         String phienBan = rsVar.getString("STTPL");
-                        double gia = rsVar.getDouble("Gia");
+                         gia = rsVar.getDouble("Gia");
                         int soLuong = rsVar.getInt("soLuongTonKho");
 
                         Variant variant = new Variant(idPL, phienBan, gia, soLuong);
@@ -123,7 +126,7 @@ public class ProductDAO {
         return product;
     }
 
-    
+     
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
 
@@ -151,8 +154,10 @@ public class ProductDAO {
                 boolean trangThai = rs.getBoolean("trangThai");
                 String idDM = rs.getString("idDanhMuc");
                 String idTH = rs.getString("idThuongHieu");
+                double giasp = rs.getDouble("Gia");
 
-                Product product = new Product(id, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh, trangThai);
+                Product product = new Product(id, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh,giasp, trangThai);
+
                 products.add(product);
             }
         } catch (SQLException e) {
@@ -217,8 +222,9 @@ public class ProductDAO {
                 String mota = rs.getString("moTaSanPham");
                 String anh = rs.getString("anhSanPham");
                 boolean trangThai = rs.getBoolean("trangThai");
+                double gia = rs.getDouble("Gia");
 
-                product = new Product(id, name, null, null, mota, anh, trangThai);
+                product = new Product(id, name, null, null, mota, anh, gia,trangThai);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -281,5 +287,114 @@ public class ProductDAO {
         return danhsach;
         
     }
+    
+    public boolean isProductExist(String idSanPham) {
+        boolean exists = false;
+        String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idSanPham);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                exists = rs.getInt(1) > 0; // Nếu đếm được > 0, tức là mã sản phẩm đã tồn tại
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Xử lý lỗi nếu có
+        }
+
+        return exists;
+    }
+    // Hàm lấy danh mục cha
+    public String getDanhMucCha(String idDanhMuc) {
+        String sql = "SELECT idDanhMucCha, tenDanhMuc FROM DanhMuc WHERE idDanhMuc = ?";
+        String danhMucCha = null;
+    
+        try (Connection conn = DatabaseConnection.getConnection() ;
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, idDanhMuc); 
+            
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                String idDanhMucCha = rs.getString("idDanhMucCha");
+                
+                if (idDanhMucCha != null) {
+                    danhMucCha=idDanhMucCha;
+                } else {
+                    danhMucCha = idDanhMuc;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return danhMucCha;
+    }
+    public boolean checkMaSPDaTonTai(String idsp) {
+        String sql = "SELECT idSanPham FROM SanPham WHERE idSanPham = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, idsp);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // true nếu tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public String RandomIdSP(String id) {
+        String prefix;
+    
+        if ("Laptop".equals(id)) {
+            prefix = "Laptop";
+        } else if ("DM002".equals(id)) {
+            prefix = "PC";
+        } else {
+            prefix = "SP";
+        }
+    
+        String idsp;
+        Random rand = new Random();
+        int attempt = 0;
+        do {
+            int randomNum = 100 + rand.nextInt(900); 
+            idsp = prefix + randomNum;
+            attempt++;
+        } while (checkMaSPDaTonTai(idsp) && attempt < 10); 
+    
+        return idsp;
+    }
+    
+    public boolean insertSP(Product sp) {
+        String idsp = RandomIdSP(getDanhMucCha(sp.getDanhMuc().getMaDanhMuc()));
+        String sql = "INSERT INTO SanPham (idSanPham, tenSanPham, idDanhMuc, idThuongHieu, moTaSanPham, anhSanPham, Gia, trangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            stmt.setString(1, idsp);
+            stmt.setString(2, sp.getTenSp());
+            stmt.setString(3, sp.getDanhMuc().getMaDanhMuc());
+            stmt.setString(4, sp.getThuongHieu().getMaThuongHieu());
+            stmt.setString(5, sp.getMoTaSanPham());
+            stmt.setString(6, sp.getAnhSanPham());
+            stmt.setDouble(7, sp.getGiasp());
+            stmt.setBoolean(8, sp.isTrangThai());
+    
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     
 }

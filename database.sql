@@ -111,13 +111,18 @@ CREATE TABLE IF NOT EXISTS ChiTietSP (
     FOREIGN KEY (idPhanLoai) REFERENCES PhanLoaiSP(idPhanLoai) -- Khóa ngoại
 );
 
--- Create KhuyenMai table
+-- Create KhuyenMai table (Cập nhật để đầy đủ các cột)
 CREATE TABLE IF NOT EXISTS KhuyenMai (
     idKhuyenMai VARCHAR(20) PRIMARY KEY,
-    giaTri DECIMAL(10,2) NOT NULL
+    tenKhuyenMai VARCHAR(255) NOT NULL,  -- Tên khuyến mãi
+    giaTri DECIMAL(10,2) NOT NULL,       -- Giá trị khuyến mãi (phần trăm giảm giá)
+    ngayBatDau DATE,                     -- Ngày bắt đầu
+    ngayKetThuc DATE,                    -- Ngày kết thúc
+    loai VARCHAR(20) NOT NULL,           -- Loại khuyến mãi: "Đơn lẻ" hoặc "Combo"
+    trangThai INT DEFAULT 1              -- Trạng thái: 1 là hoạt động, 0 là đã xóa
 );
 
--- Create KhuyenMaiCombo table
+-- Create KhuyenMaiCombo table (Giữ nguyên vì đã phù hợp)
 CREATE TABLE IF NOT EXISTS KhuyenMaiCombo (
     idKhuyenMai VARCHAR(20) NOT NULL,
     idSanPham VARCHAR(20) NOT NULL,
@@ -145,8 +150,10 @@ CREATE TABLE IF NOT EXISTS TaiKhoan (
     idNhanVien VARCHAR(20) NOT NULL,
     anhDaiDien BLOB,
     idNhomQuyen VARCHAR(20) NOT NULL,
+    tenDangNhap varchar(255) Not null,
     matKhau VARCHAR(50) NOT NULL,
     trangThai INT DEFAULT 1,
+    maOTP varchar(50) ,
     FOREIGN KEY (idNhomQuyen) REFERENCES NhomQuyen(idNhomQuyen),
     FOREIGN KEY (idNhanVien) REFERENCES NhanVien(idNhanVien)
 );
@@ -301,7 +308,7 @@ INSERT INTO ThongTinKyThuat (idDanhMuc, idThongTin, tenThongTin, idDanhMucLinhKi
 ('DM002', 'TS006', 'Card đồ họa (GPU)', 'DM005'),  -- GPU
 ('DM002', 'TS007', 'Nguồn (PSU)', 'DM010'),  -- PSU
 ('DM002', 'TS008', 'Vỏ Case', 'DM009'),  -- Case
-('DM002', 'TS009', 'Tản nhiệt CPU', 'DM012'),  -- Tản nhiệt
+('DM002', 'TS009', 'Tản nhiệt CPU', 'DM012');  -- Tản nhiệt
 
 
 -- Sản phẩm cho Laptop
@@ -481,6 +488,22 @@ INSERT INTO NhaCungCap (idNhaCungCap, tenNhaCungCap, diaChi, soDienThoai, email,
 ('NCC003', 'Phát Triển Công Nghệ Việt', '789 Trường Chinh, Hà Nội', '0988777666', 'info@viettech.vn', 1),
 ('NCC004', 'Vinatech Solutions', '45 Lạc Long Quân, Đà Nẵng', '0933555777', 'sales@vinatech.vn', 1),
 ('NCC005', 'Linh Kiện Sài Gòn', '101 Cách Mạng Tháng Tám, Q.3, TP.HCM', '0909888777', 'contact@lksaigon.vn', 1);
+
+
+-- Chèn dữ liệu mẫu cho bảng KhuyenMai
+INSERT INTO KhuyenMai (idKhuyenMai, tenKhuyenMai, giaTri, ngayBatDau, ngayKetThuc, loai, trangThai) VALUES
+('KM001', 'Giảm giá laptop mùa hè', 10.00, '2025-05-01', '2025-05-31', 'Đơn lẻ', 1),
+('KM002', 'Khuyến mãi tản nhiệt', 15.00, '2025-05-01', '2025-05-15', 'Đơn lẻ', 1),
+('KMCombo001', 'Combo CPU + RAM', 20.00, '2025-05-01', '2025-05-20', 'Combo', 1),
+('KMCombo002', 'Combo GPU + Tản nhiệt', 25.00, '2025-05-01', '2025-05-25', 'Combo', 1),
+('KM003', 'Giảm giá SSD', 10.00, '2025-05-01', '2025-05-31', 'Đơn lẻ', 1);
+
+-- Chèn dữ liệu mẫu cho bảng KhuyenMaiCombo
+INSERT INTO KhuyenMaiCombo (idKhuyenMai, idSanPham) VALUES
+('KMCombo001', 'SP001'), -- Intel Core i9-13900K
+('KMCombo001', 'SP011'), -- Corsair Vengeance LPX 16GB
+('KMCombo002', 'SP006'), -- NVIDIA GeForce RTX 3080
+('KMCombo002', 'SP031'); -- Noctua NH-D15
 
 
 

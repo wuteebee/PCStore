@@ -26,12 +26,13 @@ public class ProductActionListener implements ActionListener{
                 switch (e.getActionCommand()) {
             case "Thêm":
             try {
-                        UIManager.setLookAndFeel(new FlatLightLaf());
+                      
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
 
                 panel.openAddNewProductDialog();
+                
                 break;
             case "Sửa":
             // String id = panel.getSelectedCustomerId();
