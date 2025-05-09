@@ -1,10 +1,13 @@
 package GUI.Components;
 
+import GUI.ActionListener.BrandActionListener;
 import GUI.ActionListener.CustomerActionListener;
 import GUI.ActionListener.EmployeeActionListener;
+import GUI.ActionListener.PhieuNhapActionListener;
 import GUI.ActionListener.ProductActionListener;
 import GUI.ActionListener.ProductDetailActionListener;
 import GUI.ActionListener.PromotionActionListener;
+import GUI.ActionListener.SupplierActionListener;
 import GUI.Main;
 import GUI.Panel.*;
 import java.awt.Color;
@@ -80,17 +83,26 @@ public class MenuChucNang {
             actionPanel.add(btnExport);
             actionPanel.add(btnDetail);
         }
-        else if (panel instanceof SupplierPanel) {
+        if (panel instanceof SupplierPanel) {
             SupplierPanel supplierPanel = (SupplierPanel) panel;
-            btnAdd.addActionListener(e -> supplierPanel.openAddSupplierDialog());
-            btnEdit.addActionListener(e -> {
-                String id = supplierPanel.getSelectedSupplierId();
-                if (!id.equals("-1")) supplierPanel.openEditSupplierDialog(id);
-            });
-            btnDelete.addActionListener(e -> {
-                String id = supplierPanel.getSelectedSupplierId();
-                if (!id.equals("-1")) supplierPanel.openRemoveSupplierDialog(id);
-            });
+            SupplierActionListener actionListener = new SupplierActionListener(supplierPanel);
+
+            btnAdd.addActionListener(actionListener);
+            btnEdit.addActionListener(actionListener);
+            btnDelete.addActionListener(actionListener);
+
+            actionPanel.add(btnAdd);
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnDelete);
+            actionPanel.add(btnExport);
+        }
+        else if (panel instanceof BrandPanel) {
+            BrandPanel brandPanel = (BrandPanel) panel;
+            BrandActionListener actionListener = new BrandActionListener(brandPanel, MainFrame);
+
+            btnAdd.addActionListener(actionListener);
+            btnEdit.addActionListener(actionListener);
+            btnDelete.addActionListener(actionListener);
 
             actionPanel.add(btnAdd);
             actionPanel.add(btnEdit);
@@ -99,46 +111,13 @@ public class MenuChucNang {
         }
         else if (panel instanceof PhieuNhapPanel) {
             PhieuNhapPanel phieuNhapPanel = (PhieuNhapPanel) panel;
+            PhieuNhapActionListener actionListener = new PhieuNhapActionListener(phieuNhapPanel, MainFrame);
 
-            btnAdd.addActionListener(e -> {
-                new GUI.Dialog.ThemPhieuNhap(MainFrame, phieuNhapPanel, false, null).setVisible(true);
-            });
-
-            btnEdit.addActionListener(e -> {
-                String id = phieuNhapPanel.getSelectedPhieuId();
-                if (!id.equals("-1")) {
-                    DTO.HoaDonNhap hdn = new BUS.PhieuNhapBUS().getPhieuNhapById(id);
-                    new GUI.Dialog.ThemPhieuNhap(MainFrame, phieuNhapPanel, true, hdn).setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một phiếu nhập để sửa.");
-                }
-            });
-
-            btnDelete.addActionListener(e -> {
-                String id = phieuNhapPanel.getSelectedPhieuId();
-                if (!id.equals("-1")) {
-                    int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa phiếu này không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        new BUS.PhieuNhapBUS().xoaPhieuNhap(id);
-                        phieuNhapPanel.refreshTable();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một phiếu nhập để xóa.");
-                }
-            });
-
-            btnExport.addActionListener(e -> {
-                JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel đang được phát triển.");
-            });
-
-            btnDetail.addActionListener(e -> {
-                String id = phieuNhapPanel.getSelectedPhieuId();
-                if (!id.equals("-1")) {
-                    JOptionPane.showMessageDialog(null, "Chi tiết phiếu nhập: " + id + "\n(Tạm thời chỉ hiển thị đơn giản)");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một phiếu để xem chi tiết.");
-                }
-            });
+            btnAdd.addActionListener(actionListener);
+            btnEdit.addActionListener(actionListener);
+            btnDelete.addActionListener(actionListener);
+            btnExport.addActionListener(actionListener);  // Nếu bạn có chức năng Xuất Excel
+            btnDetail.addActionListener(actionListener);
 
             actionPanel.add(btnAdd);
             actionPanel.add(btnEdit);

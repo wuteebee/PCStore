@@ -188,6 +188,7 @@ public class MenuLeft extends JPanel {
             case "Sản phẩm" -> mainFrame.setMainPanel(new ProductPanel(mainFrame));
             case "Phiếu xuất" -> mainFrame.setMainPanel(new SaleInvoicePanel(mainFrame));
             case "Phiếu nhập" -> mainFrame.setMainPanel(new PhieuNhapPanel(mainFrame));
+            case "  └ Thương hiệu" -> mainFrame.setMainPanel(new GUI.Panel.BrandPanel(mainFrame));
             case "Nhân viên" -> mainFrame.setMainPanel(new EmployeePanel(mainFrame));
             case "Khách hàng" -> mainFrame.setMainPanel(new CustomerPanel(mainFrame));
             case "Nhà cung cấp" -> mainFrame.setMainPanel(new SupplierPanel(mainFrame));

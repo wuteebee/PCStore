@@ -1,6 +1,7 @@
 package GUI.Panel;
 
 import java.awt.*;
+import java.util.Comparator;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -53,6 +54,7 @@ public class PhieuNhapPanel extends JPanel {
         tableModel = new DefaultTableModel(columnNames, 0);
 
         List<HoaDonNhap> danhSach = bus.getAllPhieuNhap();
+        danhSach.sort(Comparator.comparing(HoaDonNhap::getIdHoaDonNhap));
         for (HoaDonNhap p : danhSach) {
             Object[] row = {
                 p.getIdHoaDonNhap(),
@@ -98,6 +100,7 @@ public class PhieuNhapPanel extends JPanel {
     public void refreshTable() {
         tableModel.setRowCount(0);
         List<HoaDonNhap> danhSach = bus.getAllPhieuNhap();
+        danhSach.sort(Comparator.comparing(HoaDonNhap::getIdHoaDonNhap));
         for (HoaDonNhap p : danhSach) {
             Object[] row = {
                 p.getIdHoaDonNhap(),
