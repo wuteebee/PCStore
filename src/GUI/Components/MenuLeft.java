@@ -1,6 +1,7 @@
 package GUI.Components;
 
 import GUI.Main;
+import GUI.Panel.AccountPanel;
 import GUI.Panel.CustomerPanel;
 import GUI.Panel.EmployeePanel;
 import GUI.Panel.PhieuNhapPanel;
@@ -191,6 +192,7 @@ public class MenuLeft extends JPanel {
             case "Nhân viên" -> mainFrame.setMainPanel(new EmployeePanel(mainFrame));
             case "Khách hàng" -> mainFrame.setMainPanel(new CustomerPanel(mainFrame));
             case "Nhà cung cấp" -> mainFrame.setMainPanel(new SupplierPanel(mainFrame));
+            case "Tài khoản" -> mainFrame.setMainPanel(new AccountPanel(mainFrame));
             case "Khuyến mãi và ưu đãi" -> mainFrame.setMainPanel(new PromotionPanel(mainFrame));
             case "Đăng xuất" -> {
                 JOptionPane.showMessageDialog(mainFrame, "Đăng xuất thành công!");
