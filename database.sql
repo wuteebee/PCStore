@@ -96,11 +96,12 @@ CREATE TABLE IF NOT EXISTS CauHinhPC (
 
 -- Create PhanLoaiSP table (chỉnh sửa)
 CREATE TABLE IF NOT EXISTS PhanLoaiSP (
-    idPhanLoai INT PRIMARY KEY,  -- idPhanLoai là khóa chính
+    idPhanLoai INT PRIMARY KEY AUTO_INCREMENT,  -- idPhanLoai là khóa chính
     idSanPham VARCHAR(20),
     STTPL INT DEFAULT 0,         -- Trạng thái phân loại sản phẩm
     Gia DECIMAL(12,2),           -- Giá sản phẩm
     soLuongTonKho INT DEFAULT 0, -- Số lượng tồn kho
+     trangThai INT DEFAULT 1   ,  
     FOREIGN KEY (idSanPham) REFERENCES SanPham(idSanPham)
 );
 
@@ -141,8 +142,8 @@ CREATE TABLE IF NOT EXISTS NhanVien (
     ViTri VARCHAR(50),
     Luong DECIMAL(10,2),
     trangThai INT DEFAULT 1
-
 );
+
 
 -- Create TaiKhoan table
 CREATE TABLE IF NOT EXISTS TaiKhoan (
@@ -363,6 +364,19 @@ VALUES
 ('SP003', 'DM004', 'Intel Core i7-12700K', 'TH015', 4990000, 'Bộ vi xử lý Intel Core i7-12700K, 12 lõi, 20 luồng, xung nhịp tối đa 5.0GHz'),
 ('SP004', 'DM004', 'AMD Ryzen 7 5800X', 'TH016', 3990000, 'Bộ vi xử lý AMD Ryzen 7 5800X, 8 lõi, 16 luồng, xung nhịp tối đa 4.7GHz'),
 ('SP005', 'DM004', 'Intel Core i5-12600K', 'TH015', 3290000, 'Bộ vi xử lý Intel Core i5-12600K, 6 lõi, 12 luồng, xung nhịp tối đa 4.9GHz');
+INSERT INTO SanPham (idSanPham, idDanhMuc, tenSanPham, idThuongHieu, Gia, moTaSanPham)
+VALUES
+  ('SP106', 'DM004', 'Intel Core i9-14900K',   'TH015', 8500000, 'Bộ vi xử lý Intel Core i9-14900K, 10 lõi Performance + 6 lõi Efficient, 20 luồng, turbo lên đến 6.0 GHz'),
+  ('SP107', 'DM004', 'AMD Ryzen 9 7950X',       'TH016',   7690000, 'Bộ vi xử lý AMD Ryzen 9 7950X, 16 lõi, 32 luồng, xung nhịp tối đa 5.7 GHz'),
+  ('SP108', 'DM004', 'Intel Core i7-13700K',   'TH015', 5590000, 'Bộ vi xử lý Intel Core i7-13700K, 8 lõi Performance + 8 lõi Efficient, 24 luồng, turbo 5.4 GHz'),
+  ('SP109', 'DM004', 'AMD Ryzen 7 7700X',       'TH016',   4690000, 'Bộ vi xử lý AMD Ryzen 7 7700X, 8 lõi, 16 luồng, xung nhịp tối đa 5.4 GHz'),
+  ('SP110', 'DM004', 'Intel Core i5-13600K',   'TH015', 3890000, 'Bộ vi xử lý Intel Core i5-13600K, 6 lõi Performance + 8 lõi Efficient, 20 luồng, turbo 5.1 GHz'),
+  ('SP111', 'DM004', 'AMD Ryzen 5 7600',        'TH016',   3290000, 'Bộ vi xử lý AMD Ryzen 5 7600, 6 lõi, 12 luồng, xung nhịp tối đa 5.1 GHz'),
+  ('SP112', 'DM004', 'Intel Core i3-13100',    'TH015', 2190000, 'Bộ vi xử lý Intel Core i3-13100, 4 lõi Performance, 8 luồng, turbo 4.5 GHz'),
+  ('SP113', 'DM004', 'AMD Ryzen 5 5600X',       'TH016',   2890000, 'Bộ vi xử lý AMD Ryzen 5 5600X, 6 lõi, 12 luồng, xung nhịp tối đa 4.6 GHz'),
+  ('SP114', 'DM004', 'Intel Pentium Gold G6400','TH015', 1190000, 'Bộ vi xử lý Intel Pentium Gold G6400, 2 lõi, 4 luồng, xung nhịp 4.0 GHz'),
+  ('SP115', 'DM004', 'AMD Ryzen 3 4100',        'TH016',   1490000, 'Bộ vi xử lý AMD Ryzen 3 4100, 4 lõi, 8 luồng, xung nhịp tối đa 4.0 GHz');
+
 
 
 -- Sản phẩm cho GPU
@@ -465,21 +479,21 @@ VALUES
 -- Chèn cấu hình cho các sản phẩm PC với idLinhKien trực tiếp
 INSERT INTO CauHinhPC (idSanPham, idThongTin, idLinhKien, STTPL)
 VALUES
-    ('PC001', 'CPU', 'SP001', 0),  -- Intel Core i9-11900K
-    ('PC001', 'RAM', 'SP011', 0),  -- Corsair Vengeance 32GB
-    ('PC001', 'GPU', 'SP006', 0),  -- NVIDIA GeForce RTX 3080
-    ('PC002', 'CPU', 'SP003', 1),  -- Intel Xeon E5-1650 v4
-    ('PC002', 'RAM', 'SP012', 1),  -- Samsung 64GB DDR4
-    ('PC002', 'GPU', 'SP007', 1),  -- NVIDIA Quadro RTX 4000
-    ('PC003', 'CPU', 'SP005', 0),  -- Intel Core i5-11400
-    ('PC003', 'RAM', 'SP013', 0),  -- Kingston HyperX Fury 16GB
-    ('PC003', 'GPU', 'SP008', 0),  -- Integrated Intel UHD
-    ('PC004', 'CPU', 'SP004', 0),  -- AMD Ryzen 7 5800X
-    ('PC004', 'RAM', 'SP011', 0),  -- Corsair Vengeance 16GB
-    ('PC004', 'GPU', 'SP009', 0),  -- NVIDIA GeForce RTX 3070
-    ('PC005', 'CPU', 'SP005', 0),  -- AMD Ryzen 9 5950X
-    ('PC005', 'RAM', 'SP014', 0),  -- G.Skill Ripjaws 64GB
-    ('PC005', 'GPU', 'SP010', 0);  -- NVIDIA GeForce RTX 3090
+    ('PC001', 'TS001', 'SP001', 0),  -- Intel Core i9-11900K
+    ('PC001', 'TS003', 'SP011', 0),  -- Corsair Vengeance 32GB
+    ('PC001', 'TS006', 'SP006', 0),  -- NVIDIA GeForce RTX 3080
+    ('PC002', 'TS001', 'SP003', 1),  -- Intel Xeon E5-1650 v4
+    ('PC002', 'TS003', 'SP012', 1),  -- Samsung 64GB DDR4
+    ('PC002', 'TS006', 'SP007', 1),  -- NVIDIA Quadro RTX 4000
+    ('PC003', 'TS001', 'SP005', 0),  -- Intel Core i5-11400
+    ('PC003', 'TS003', 'SP013', 0),  -- Kingston HyperX Fury 16GB
+    ('PC003', 'TS006', 'SP008', 0),  -- Integrated Intel UHD
+    ('PC004', 'TS001', 'SP004', 0),  -- AMD Ryzen 7 5800X
+    ('PC004', 'TS003', 'SP011', 0),  -- Corsair Vengeance 16GB
+    ('PC004', 'TS006', 'SP009', 0),  -- NVIDIA GeForce RTX 3070
+    ('PC005', 'TS001', 'SP005', 0),  -- AMD Ryzen 9 5950X
+    ('PC005', 'TS003', 'SP014', 0),  -- G.Skill Ripjaws 64GB
+    ('PC005', 'TS006', 'SP010', 0);  -- NVIDIA GeForce RTX 3090
 
 -- Chèn dữ liệu nhà cung cấp 
 INSERT INTO NhaCungCap (idNhaCungCap, tenNhaCungCap, diaChi, soDienThoai, email, trangThai) VALUES
@@ -507,3 +521,118 @@ INSERT INTO KhuyenMaiCombo (idKhuyenMai, idSanPham) VALUES
 
 
 
+INSERT INTO phanloaisp (idSanPham, STTPL, Gia, SoLuongTonKho)
+VALUES 
+('LAP001', 0, 56799000, 0),
+('LAP002', 0, 35199000, 0),
+('LAP003', 0, 37199000, 0),
+('LAP004', 0, 42599000, 0),
+('LAP005', 0, 25199000, 0),
+('PC001', 0, 25000000, 0),
+('PC002', 0, 20000000, 0),
+('PC003', 0, 12000000, 0),
+('PC004', 0, 18000000, 0),
+('PC005', 0, 30000000, 0),
+('SP001', 0, 7490000, 0),
+('SP002', 0, 5890000, 0),
+('SP003', 0, 4990000, 0),
+('SP004', 0, 3990000, 0),
+('SP005', 0, 3290000, 0),
+('SP006', 0, 6990000, 0),
+('SP007', 0, 7990000, 0),
+('SP008', 0, 4990000, 0),
+('SP009', 0, 5990000, 0),
+('SP010', 0, 3990000, 0),
+('SP011', 0, 799000, 0),
+('SP012', 0, 1499000, 0),
+('SP013', 0, 699000, 0),
+('SP014', 0, 1999000, 0),
+('SP015', 0, 899000, 0),
+('SP016', 0, 3490000, 0),
+('SP017', 0, 2490000, 0),
+('SP018', 0, 2990000, 0),
+('SP019', 0, 1990000, 0),
+('SP020', 0, 3490000, 0),
+('SP021', 0, 7990000, 0),
+('SP022', 0, 5490000, 0),
+('SP023', 0, 6990000, 0),
+('SP024', 0, 5990000, 0),
+('SP025', 0, 9990000, 0),
+('SP026', 0, 1800000, 0),
+('SP027', 0, 2300000, 0),
+('SP028', 0, 2500000, 0),
+('SP029', 0, 1200000, 0),
+('SP030', 0, 2000000, 0),
+('SP031', 0, 2590000, 0),
+('SP032', 0, 3990000, 0),
+('SP033', 0, 3490000, 0),
+('SP034', 0, 1290000, 0),
+('SP035', 0, 890000, 0),
+('SP036', 0, 4790000, 0),
+('SP037', 0, 2190000, 0),
+('SP038', 0, 2990000, 0),
+('SP039', 0, 5490000, 0),
+('SP040', 0, 1890000, 0);
+
+
+
+INSERT INTO phanloaisp (idSanPham, STTPL, Gia, SoLuongTonKho)
+VALUES
+  ('SP106', 0, 8500000, 0),
+  ('SP007', 0, 7690000, 0),
+  ('SP108', 0, 5590000, 0),
+  ('SP109', 0, 4690000, 0),
+  ('SP110', 0, 3890000, 0),
+  ('SP111', 0, 3290000, 0),
+  ('SP112', 0, 2190000, 0),
+  ('SP013', 0, 2890000, 0),
+  ('SP114', 0, 1190000, 0),
+  ('SP115', 0, 1490000, 0);
+
+INSERT INTO NhanVien (idNhanVien, TenNhanVien, SDT, Mail, NgayVaoLam, ViTri, Luong, trangThai)
+VALUES
+('NV001', 'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', '2020-05-01', 'Quản lý', 10000.00, 1),
+('NV002', 'Trần Thị B', '0123456790', 'tranthib@example.com', '2019-03-15', 'Nhân viên bán hàng', 7500.00, 1),
+('NV003', 'Lê Minh C', '0123456791', 'leminhc@example.com', '2021-06-20', 'Tư vấn', 8000.00, 1),
+('NV004', 'Phạm Quang D', '0123456792', 'phamquangd@example.com', '2018-02-10', 'Kế toán', 8500.00, 1),
+('NV005', 'Hoàng Lan E', '0123456793', 'hoanglane@example.com', '2020-11-05', 'Lễ tân', 6000.00, 1),
+('NV006', 'Vũ Hoàng F', '0123456794', 'vuhoangf@example.com', '2022-08-18', 'Nhân viên kho', 7000.00, 1),
+('NV007', 'Nguyễn Thi G', '0123456795', 'nguyenthig@example.com', '2021-01-12', 'Nhân viên bán hàng', 7500.00, 1),
+('NV008', 'Trần Minh H', '0123456796', 'tranminhh@example.com', '2021-07-21', 'Tư vấn', 8000.00, 1),
+('NV009', 'Lê Minh I', '0123456797', 'leminhi@example.com', '2022-05-23', 'Nhân viên kho', 7000.00, 1),
+('NV010', 'Phạm Lan J', '0123456798', 'phamlanj@example.com', '2019-09-13', 'Quản lý', 10000.00, 1),
+('NV011', 'Hoàng Quang K', '0123456799', 'hoangquangk@example.com', '2020-04-03', 'Kế toán', 8500.00, 1),
+('NV012', 'Vũ Lan L', '0123456800', 'vulanl@example.com', '2021-02-25', 'Lễ tân', 6000.00, 1),
+('NV013', 'Nguyễn Thi M', '0123456801', 'nguyenthim@example.com', '2022-06-15', 'Nhân viên bán hàng', 7500.00, 1),
+('NV014', 'Trần Hoàng N', '0123456802', 'tranhoangn@example.com', '2021-03-11', 'Nhân viên kho', 7000.00, 1),
+('NV015', 'Lê Minh O', '0123456803', 'leminho@example.com', '2020-07-19', 'Tư vấn', 8000.00, 1),
+('NV016', 'Phạm Quang P', '0123456804', 'phamquangp@example.com', '2019-04-09', 'Quản lý', 10000.00, 1),
+('NV017', 'Hoàng Lan Q', '0123456805', 'hoanglanq@example.com', '2021-09-22', 'Kế toán', 8500.00, 1),
+('NV018', 'Vũ Hoàng R', '0123456806', 'vuhoangr@example.com', '2022-10-17', 'Lễ tân', 6000.00, 1),
+('NV019', 'Nguyễn Thi S', '0123456807', 'nguyenthis@example.com', '2020-11-03', 'Nhân viên bán hàng', 7500.00, 1),
+('NV020', 'Trần Minh T', '0123456808', 'tranminht@example.com', '2021-08-30', 'Tư vấn', 8000.00, 1);
+
+
+
+INSERT INTO KhachHang (tenKhachHang, soDienThoai, Mail, NgayThamGia, trangThai)
+VALUES
+  ('Nguyễn Văn An',   '0912345678', 'nguyenvanan@example.com',   '2023-01-15', 1),
+  ('Trần Thị Bích',   '0987654321', 'tranthibich@example.com',   '2023-02-20', 1),
+  ('Lê Văn Bình',     '0901234567', 'levanbinh@example.com',     '2023-03-05', 1),
+  ('Phạm Thị Dung',   '0918765432', 'phamthidung@example.com',   '2023-04-10', 1),
+  ('Hoàng Anh Em',    '0923456789', 'hoanganhem@example.com',    '2023-05-01', 1),
+  ('Đỗ Minh Phúc',    '0934567890', 'dominphuc@example.com',     '2023-06-18', 1),
+  ('Vũ Thị Giang',    '0945678901', 'vuthigiang@example.com',    '2023-07-22', 1),
+  ('Phan Văn Hoàng',  '0956789012', 'phanvanhoang@example.com',  '2023-08-30', 1),
+  ('Bùi Thị Hồng',    '0967890123', 'buithihong@example.com',    '2023-09-15', 1),
+  ('Đặng Văn Hưng',   '0978901234', 'dangvanhung@example.com',   '2023-10-05', 1),
+  ('Trịnh Thị Kim',   '0989012345', 'trinhthikim@example.com',   '2023-11-11', 1),
+  ('Nguyễn Thị Lan',  '0902345678', 'nguyenthilan@example.com',   '2023-12-20', 1),
+  ('Lê Thị Mai',      '0913456789', 'lethimai@example.com',       '2024-01-10', 1),
+  ('Phạm Văn Nam',    '0924567890', 'phamvannam@example.com',     '2024-02-05', 1),
+  ('Hoàng Thị Oanh',  '0935678901', 'hoangthioanh@example.com',   '2024-03-18', 1),
+  ('Đỗ Văn Phong',    '0946789012', 'dovanphong@example.com',     '2024-04-25', 1),
+  ('Vũ Văn Quân',     '0957890123', 'vuvanquan@example.com',      '2024-05-30', 1),
+  ('Phan Thị Rạng',   '0968901234', 'phanthirang@example.com',    '2024-06-12', 1),
+  ('Bùi Văn Sơn',     '0979012345', 'buivanson@example.com',      '2024-07-07', 1),
+  ('Đặng Thị Thanh',  '0980123456', 'dangthithanh@example.com',   '2024-08-19', 1);

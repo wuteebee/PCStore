@@ -15,7 +15,7 @@ import GUI.Dialog.ThemSanPham;
 public class ProductPanel extends JPanel {
     private DefaultTableModel tableModel;
     private JTable productTable;
-    private String selectedCustomerId = "-1";
+    private String selectedProductId = "-1";
     private Main mainFrame;
 
     public ProductPanel(Main mainFrame) {
@@ -60,6 +60,9 @@ public class ProductPanel extends JPanel {
     tableModel = new DefaultTableModel(columnNames, 0);
 
     for (Product product : products) {
+        if(product.isTrangThai()== false){
+            continue;
+        }
         String maSP = product.getMaSp();
         String tenSP = product.getTenSp();
         String tenLoai = product.getDanhMuc() != null ? product.getDanhMuc().getTenDanhMuc() : "N/A";
@@ -112,8 +115,8 @@ public class ProductPanel extends JPanel {
     return panel;
 }
 
-    public String getSelectedCustomerId() {
-        return selectedCustomerId;
+    public String getSelectedProductId() {
+        return selectedProductId;
     }
 
     public void addTableSelectionListener() {
@@ -121,7 +124,7 @@ public class ProductPanel extends JPanel {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = productTable.getSelectedRow();
                 if (selectedRow != -1) {
-                    selectedCustomerId = (String) tableModel.getValueAt(selectedRow, 0);
+                    selectedProductId = (String) tableModel.getValueAt(selectedRow, 0);
                 }
             }
         });
@@ -131,6 +134,9 @@ public class ProductPanel extends JPanel {
         MenuChucNang menu = new MenuChucNang();
         return menu.getTextField();
     }
+        public void reloadPanel() {
+    mainFrame.setMainPanel(new ProductPanel(mainFrame));
+}
 
     // public void printTableData(String name) {
     //     int rowCount = tableModel.getRowCount();

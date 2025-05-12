@@ -28,10 +28,10 @@ public class PhieuNhapBUS {
         return dao.delete(id);
     }
 
-    // Lấy theo ID
-    public HoaDonNhap getPhieuNhapById(String id) {
-        return dao.getById(id);
-    }
+    // // Lấy theo ID
+    // public HoaDonNhap getPhieuNhapById(String id) {
+    //     return dao.getById(id);
+    // }
 
     public List<ChiTietDonNhap> getAll_ChiTietDonNhap(){
         return dao.getAll_CTDonNhap();

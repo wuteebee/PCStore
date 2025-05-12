@@ -95,19 +95,20 @@ public class AtributeDAO {
     
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, id); // Gán giá trị id vào dấu hỏi chấm
+            stmt.setString(1, id); 
             ResultSet rs = stmt.executeQuery();
     
             while (rs.next()) {
                 String idThongSo = rs.getString("idThongtin");
                 String idDanhMuc = rs.getString("idDanhMuc");
                 String tenThongTin = rs.getString("tenThongTin");
+                String idDMLinhKien=rs.getString("idDanhMucLinhKien");
     
-                ThongSoKyThuat tmp = new ThongSoKyThuat(idThongSo, idDanhMuc, tenThongTin);
+                ThongSoKyThuat tmp = new ThongSoKyThuat(idThongSo, idDanhMuc, tenThongTin,idDMLinhKien);
                 danhsach.add(tmp);
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Debug lỗi nếu có
+            e.printStackTrace(); 
         }
     
         return danhsach;

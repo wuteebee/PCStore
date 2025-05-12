@@ -25,277 +25,255 @@ import GUI.Components.Button;
 import GUI.Panel.ProductPanel;
 public class ThemSanPham extends JDialog {
     private JTextField txtTen, gia;
-    private JComboBox<String> loaisanpham, danhmuc, storage, thuonghieu;
+    private JComboBox<String> loaisanpham, danhmuc, thuonghieu;
     private JTextArea mota;
     private JLabel imageLabel;
     private String imageBase64;
-    private JButton submit= new Button().createStyledButton("Tạo", null);
-    private String[] labels = {"Tên sản phẩm", "Giá", "Loại sản phẩm", "Danh mục", "Thương hiệu", "Mô tả"};
-    private ProductDAO productDAO;
-    private ProductBUS productBUS=new ProductBUS();
-    private List <Catalog> catalogs;
-    private List<Brand> brands;
+    private JButton submit = new Button().createStyledButton("Tạo", null);
+
+    private Product editingProduct; // null nếu thêm mới
     private ProductPanel panel;
-    Map<String, Catalog> catalogMap ;
-    Map<String, Brand> BrandMap;
-    private      boolean isSave=false;
-    public ThemSanPham(){
+    private Map<String, Catalog> catalogMap = new HashMap<>();
+    private Map<String, Brand> brandMap = new HashMap<>();
+    private List<Catalog> catalogs;
+    private List<Brand> brands;
 
+    public ThemSanPham(ProductPanel panel, Product productToEdit) {
+        this.panel = panel;
+        this.editingProduct = productToEdit;
+        initializeForm();
+        setVisible(true);
     }
-    public ThemSanPham(ProductPanel panel){
-        this.panel=panel;
-    } 
-    public void formThemSanPham(Product sp) {
-        AttributeBUS attributeBUS = new AttributeBUS();
-        catalogs = attributeBUS.getAllCatalogs();
-  
 
-        setTitle("Thêm sản phẩm mới");
+    private void initializeForm() {
+        setTitle(editingProduct == null ? "Thêm sản phẩm mới" : "Sửa sản phẩm");
         setSize(550, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
- 
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(8, 10, 8, 10);
-        gbc.weightx = 1;
-        gbc.gridx = 0;
+        AttributeBUS attributeBUS = new AttributeBUS();
+        catalogs = attributeBUS.getAllCatalogs();
+        brands = attributeBUS.getAllBrand();
 
+        createFields();
+        buildLayout();
+        bindEvents();
 
-        gbc.anchor = GridBagConstraints.EAST;
-        for (int i = 0; i < labels.length; i++) {
-            gbc.gridy = i;
-            JLabel label = new JLabel(labels[i] + ": ");
-            label.setFont(new Font("Arial", Font.BOLD, 13));
-            add(label, gbc);
+        if (editingProduct != null) {
+            populateData(editingProduct);
         }
+    }
 
-       
+    private void createFields() {
         txtTen = new JTextField(18);
         gia = new JTextField(18);
         loaisanpham = new JComboBox<>();
         danhmuc = new JComboBox<>();
         thuonghieu = new JComboBox<>();
-        storage = new JComboBox<>();
         mota = new JTextArea(5, 20);
         mota.setLineWrap(true);
         mota.setWrapStyleWord(true);
-        JScrollPane motaScroll = new JScrollPane(mota);
+        imageLabel = new JLabel("Chưa có ảnh", SwingConstants.CENTER);
+        imageLabel.setPreferredSize(new Dimension(200, 200));
+        imageLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
-        brands=attributeBUS.getAllBrand(); 
-        for(Brand tmp:brands){
-          System.out.println(tmp.getMaThuongHieu()+tmp.getTenThuongHieu()+tmp.getmaDanhMuc());
+        for (Catalog c : catalogs) {
+            if (c.getDanhMucCha() == null)
+                loaisanpham.addItem(c.getTenDanhMuc());
+            catalogMap.put(c.getTenDanhMuc(), c);
         }
-        BrandMap = new HashMap<>();
-      for (Brand th : brands) {
-          if(th.getmaDanhMuc() == null) {
-              thuonghieu.addItem(th.getTenThuongHieu());
-           
-          }
-          BrandMap.put(th.getTenThuongHieu(), th);
-      }
 
-catalogMap = new HashMap<>();
-        for (Catalog catalog : catalogs) {
-            if(catalog.getDanhMucCha() == null) {
-                loaisanpham.addItem(catalog.getTenDanhMuc());
-            }
-            catalogMap.put(catalog.getTenDanhMuc(), catalog);
+        for (Brand b : brands) {
+            if (b.getmaDanhMuc() == null)
+                thuonghieu.addItem(b.getTenThuongHieu());
+            brandMap.put(b.getTenThuongHieu(), b);
         }
-        if (loaisanpham.getItemCount() > 0) {
-            loaisanpham.setSelectedIndex(0);
-            updateDanhMucTheoLoai((String) loaisanpham.getSelectedItem(), catalogs);
+    }
+
+    private void buildLayout() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 10, 8, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        String[] labels = {"Tên sản phẩm", "Giá", "Loại sản phẩm", "Danh mục", "Thương hiệu", "Mô tả"};
+
+        for (int i = 0; i < labels.length; i++) {
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            add(new JLabel(labels[i] + ":"), gbc);
         }
-      
-     
+
         gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
         gbc.gridy = 0; add(txtTen, gbc);
         gbc.gridy = 1; add(gia, gbc);
         gbc.gridy = 2; add(loaisanpham, gbc);
         gbc.gridy = 3; add(danhmuc, gbc);
         gbc.gridy = 4; add(thuonghieu, gbc);
-        gbc.gridy = 5; add(motaScroll, gbc);
+        gbc.gridy = 5; add(new JScrollPane(mota), gbc);
 
-  
-        // ===== Ảnh
         gbc.gridx = 0;
         gbc.gridy = 6;
-        JLabel lblAnh = new JLabel("Ảnh sản phẩm:");
-        lblAnh.setFont(new Font("Arial", Font.BOLD, 13));
-        add(lblAnh, gbc);
+        add(new JLabel("Ảnh sản phẩm:"), gbc);
 
         gbc.gridx = 1;
         JButton btnChonAnh = new JButton("Chọn ảnh");
         add(btnChonAnh, gbc);
 
-        // ===== Hiển thị ảnh
         gbc.gridy = 7;
-        imageLabel = new JLabel("Chưa có ảnh", SwingConstants.CENTER);
-        imageLabel.setPreferredSize(new Dimension(200, 200));
-        imageLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         add(imageLabel, gbc);
-        
 
-
-        // Nút lưu nè
+        gbc.gridy = 8;
         gbc.gridx = 0;
-        gbc.gridy = 8;             
-        gbc.gridwidth = 2;        
-        gbc.anchor = GridBagConstraints.CENTER;  
-        gbc.fill = GridBagConstraints.NONE;      // không co giãn theo chiều ngang
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         add(submit, gbc);
-        
-        // ===== Chọn ảnh
-        btnChonAnh.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif", "bmp");
-                fileChooser.setFileFilter(filter);
 
-                int result = fileChooser.showOpenDialog(ThemSanPham.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    try {
-                        BufferedImage img = ImageIO.read(selectedFile);
-                        Image scaledImg = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-                        imageLabel.setIcon(new ImageIcon(scaledImg));
-                        imageLabel.setText("");
-
-                        
-                        byte[] imageBytes =Files.readAllBytes(selectedFile.toPath());
-                        String format = getImageFormat(selectedFile.getName());
-                        String base64 = Base64.getEncoder().encodeToString(imageBytes);
-                        imageBase64 = "data:image/" + format + ";base64," + base64;
-
-                        System.out.println("Base64 ảnh đã chọn: " + imageBase64.substring(0, 50) + "...");
-
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(ThemSanPham.this, "Không thể đọc ảnh", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        });
-
-        loaisanpham.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedLoai = (String) loaisanpham.getSelectedItem();
-                if (selectedLoai != null) {
-                    updateDanhMucTheoLoai(selectedLoai, catalogs);
-                }
-            }
-        });
-        
-
-        submit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String tenSanPham = txtTen.getText().trim();
-                String giaStr = gia.getText().trim();
-        
-                try {
-                    double giaValue = Double.parseDouble(giaStr);
-        
-                    String loai = (String) loaisanpham.getSelectedItem();
-                    String dm = (String) danhmuc.getSelectedItem();
-                    String th = (String) thuonghieu.getSelectedItem();
-                    String moTa = mota.getText().trim();
-               
-                    sp.setTenSp(tenSanPham);
-                    sp.setDanhMuc(catalogMap.get(dm));
-                    sp.setThuongHieu(BrandMap.get(th));
-                    sp.setMoTaSanPham(moTa);
-                    sp.setAnhSanPham(imageBase64);
-                    sp.setGiasp(giaValue);
-                    sp.setTrangThai(true);
-
-                    String errorMsg = productBUS.insertSP(sp);
-                    if (errorMsg == null) {
-                        panel.updateTable(sp);
-                        JOptionPane.showMessageDialog(null, "Thêm sản phẩm thành công!");
-                        SwingUtilities.getWindowAncestor(submit).dispose(); 
- 
-                    } else {
-                        JOptionPane.showMessageDialog(null, errorMsg, "Lỗi", JOptionPane.WARNING_MESSAGE);
-                    }
-        
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Giá sản phẩm không hợp lệ. Vui lòng nhập số!", "Lỗi nhập liệu", JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        });
-        
-        
-
-        danhmuc.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedDM = (String) danhmuc.getSelectedItem();
-                if (selectedDM != null) {
-                    updateTHTheoDM(selectedDM, brands, catalogMap);
-                }
-            }
-        });
-        
-        setVisible(true);
+        btnChonAnh.addActionListener(e -> chooseImage());
     }
 
+    private void bindEvents() {
+        loaisanpham.addActionListener(e -> {
+            String selected = (String) loaisanpham.getSelectedItem();
+            updateDanhMucTheoLoai(selected);
+        });
 
-    public boolean getIsSave(){
-        return isSave;
-    }
-    private String getImageFormat(String fileName) {
-        if (fileName.toLowerCase().endsWith(".png")) return "png";
-        if (fileName.toLowerCase().endsWith(".jpg") || fileName.toLowerCase().endsWith(".jpeg")) return "jpeg";
-        if (fileName.toLowerCase().endsWith(".gif")) return "gif";
-        if (fileName.toLowerCase().endsWith(".bmp")) return "bmp";
-        return "png"; // mặc định
+        danhmuc.addActionListener(e -> {
+            String selectedDM = (String) danhmuc.getSelectedItem();
+            updateThuongHieuTheoDanhMuc(selectedDM);
+        });
+
+        submit.addActionListener(e -> {
+            String ten = txtTen.getText().trim();
+            String giaStr = gia.getText().trim();
+
+            try {
+                double giaValue = Double.parseDouble(giaStr);
+                String dm = (String) danhmuc.getSelectedItem();
+                String th = (String) thuonghieu.getSelectedItem();
+
+                Product sp = (editingProduct != null) ? editingProduct : new Product();
+                sp.setTenSp(ten);
+                sp.setGiasp(giaValue);
+                sp.setMoTaSanPham(mota.getText().trim());
+                sp.setAnhSanPham(imageBase64);
+                sp.setDanhMuc(catalogMap.get(dm));
+                sp.setThuongHieu(brandMap.get(th));
+                sp.setTrangThai(true);
+                if(sp.getDanhMuc()==null){
+                    sp.setDanhMuc(catalogMap.get(loaisanpham.getSelectedItem()));
+                }
+                ProductBUS productBUS = new ProductBUS();
+                String error = (editingProduct == null) ? productBUS.saveProduct(sp) : productBUS.saveProduct(sp);
+
+                if (error == null) {
+                    panel.updateTable(sp);
+                    JOptionPane.showMessageDialog(this, (editingProduct == null ? "Thêm" : "Cập nhật") + " sản phẩm thành công!");
+                    panel.reloadPanel();
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, error, "Lỗi", JOptionPane.WARNING_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Giá sản phẩm không hợp lệ.", "Lỗi", JOptionPane.WARNING_MESSAGE);
+            }
+        });
     }
 
-    private void updateDanhMucTheoLoai(String tenLoai, List<Catalog> catalogs) {
+    private void chooseImage() {
+        JFileChooser fc = new JFileChooser();
+        fc.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png"));
+        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            try {
+                BufferedImage img = ImageIO.read(file);
+                imageLabel.setIcon(new ImageIcon(img.getScaledInstance(200, 200, Image.SCALE_SMOOTH)));
+                imageLabel.setText("");
+                byte[] imgBytes = Files.readAllBytes(file.toPath());
+                imageBase64 = "data:image/" + getImageFormat(file.getName()) + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Không thể đọc ảnh", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+   private void populateData(Product sp) {
+    txtTen.setText(sp.getTenSp());
+    gia.setText(String.valueOf(sp.getGiasp()));
+    mota.setText(sp.getMoTaSanPham());
+
+    try {
+        String base64String = sp.getAnhSanPham();
+
+        if (base64String != null && !base64String.isEmpty()) {
+            // If the Base64 string contains data:image/png;base64,..., split it out
+            if (base64String.contains(",")) {
+                base64String = base64String.split(",")[1];
+            }
+
+            byte[] imageData = Base64.getDecoder().decode(base64String);
+            BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageData));
+
+            if (img != null) {
+                int imgWidth = img.getWidth();
+                int imgHeight = img.getHeight();
+
+                int targetWidth = 200;
+                int targetHeight = 200;
+
+                float widthRatio = (float) targetWidth / imgWidth;
+                float heightRatio = (float) targetHeight / imgHeight;
+                float scale = Math.min(widthRatio, heightRatio);
+
+                int scaledWidth = Math.max(1, Math.round(imgWidth * scale));
+                int scaledHeight = Math.max(1, Math.round(imgHeight * scale));
+
+                Image scaledImage = img.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+                imageLabel.setIcon(new ImageIcon(scaledImage));
+                imageLabel.setText(""); // Clear "Chưa có ảnh" text
+            } else {
+                imageLabel.setText("Ảnh không hợp lệ");
+            }
+        } else {
+            imageLabel.setText("Không có ảnh");
+        }
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        imageLabel.setText("Không thể hiển thị ảnh");
+    }
+
+    String loai = sp.getDanhMuc().getDanhMucCha() != null ? sp.getDanhMuc().getDanhMucCha().getTenDanhMuc() : sp.getDanhMuc().getTenDanhMuc();
+    loaisanpham.setSelectedItem(loai);
+    updateDanhMucTheoLoai(loai);
+    danhmuc.setSelectedItem(sp.getDanhMuc().getTenDanhMuc());
+    thuonghieu.setSelectedItem(sp.getThuongHieu().getTenThuongHieu());
+
+    submit.setText("Lưu");
+}
+
+    private void updateDanhMucTheoLoai(String loai) {
         danhmuc.removeAllItems();
-        for (Catalog cat : catalogs) {
-            if (cat.getDanhMucCha() != null && cat.getDanhMucCha().getTenDanhMuc().equals(tenLoai)) {
-                danhmuc.addItem(cat.getTenDanhMuc());
+        for (Catalog c : catalogs) {
+            if (c.getDanhMucCha() != null && c.getDanhMucCha().getTenDanhMuc().equals(loai)) {
+                danhmuc.addItem(c.getTenDanhMuc());
             }
         }
     }
-    
-    // Lay them thuong hieu theo idDanhMuc
 
-    // loaisanpham.addActionListener(new ActionListener() {
-    //     @Override
-    //     public void actionPerformed(ActionEvent e) {
-    //         String selectedLoai = (String) loaisanpham.getSelectedItem();
-            
-    //         // Xóa hết danh mục cũ
-    //         danhmuc.removeAllItems();
-    
-    //         for (Catalog cat : catalogs) {
-    //             if (cat.getDanhMucCha() != null && cat.getDanhMucCha().getTenDanhMuc().equals(selectedLoai)) {
-    //                 danhmuc.addItem(cat.getTenDanhMuc());
-    //             }
-    //         }
-    //     }
-    // });
-    private void updateTHTheoDM(String tenDanhMuc, List<Brand> brands, Map<String, Catalog> cataMap) {
+    private void updateThuongHieuTheoDanhMuc(String danhMuc) {
         thuonghieu.removeAllItems();
-        String maDanhMuc = cataMap.get(tenDanhMuc).getMaDanhMuc();
-        for (Brand th : brands) {
-            if (th.getmaDanhMuc() != null && th.getmaDanhMuc().equals(maDanhMuc)) {
-                thuonghieu.addItem(th.getTenThuongHieu());
-            }
-            else if(th.getmaDanhMuc()==null){
-                thuonghieu.addItem(th.getTenThuongHieu());
+        for (Brand b : brands) {
+            if (b.getmaDanhMuc() != null && catalogMap.containsKey(danhMuc)
+                && b.getmaDanhMuc().equals(catalogMap.get(danhMuc).getMaDanhMuc())) {
+                thuonghieu.addItem(b.getTenThuongHieu());
             }
         }
     }
 
-    
-
+    private String getImageFormat(String name) {
+        name = name.toLowerCase();
+        if (name.endsWith(".png")) return "png";
+        if (name.endsWith(".jpg") || name.endsWith(".jpeg")) return "jpeg";
+        return "png";
+    }
 }
