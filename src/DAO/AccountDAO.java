@@ -2,7 +2,6 @@ package DAO;
 
 import DTO.Account;
 import config.DatabaseConnection;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +11,30 @@ public class AccountDAO {
 
     public AccountDAO() {
         conn = DatabaseConnection.getConnection();
+    }
+
+    public Account getAccountByUsername(String username) {
+        String sql = "SELECT * FROM TaiKhoan WHERE tenDangNhap = ? AND trangThai = 1";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Account(
+                        rs.getString("idTaiKhoan"),
+                        rs.getString("idNhanVien"),
+                        rs.getBytes("anhDaiDien"),
+                        rs.getString("idNhomQuyen"),
+                        rs.getString("tenDangNhap"),
+                        rs.getString("matKhau"),
+                        rs.getInt("trangThai"),
+                        rs.getString("maOTP")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<Account> getAllAccounts() {
@@ -68,6 +91,30 @@ public class AccountDAO {
             ps.setString(5, account.getMatKhau());
             ps.setString(6, account.getMaOTP());
             ps.setString(7, account.getIdTaiKhoan());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updatePassword(String idTaiKhoan, String newPassword) {
+        String sql = "UPDATE TaiKhoan SET matKhau = ? WHERE idTaiKhoan = ? AND trangThai = 1";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newPassword);
+            ps.setString(2, idTaiKhoan);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateOTP(String idTaiKhoan, String otp) {
+        String sql = "UPDATE TaiKhoan SET maOTP = ? WHERE idTaiKhoan = ? AND trangThai = 1";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, otp);
+            ps.setString(2, idTaiKhoan);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

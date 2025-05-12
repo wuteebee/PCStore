@@ -1,26 +1,20 @@
 package GUI;
 
+import DTO.Account;
 import GUI.Components.MenuLeft;
 import GUI.Panel.Trangchu;
 import java.awt.*;
 import javax.swing.*;
-import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 
 public class Main extends JFrame {
-
-    public static boolean isLoggedIn = false; // Biến trạng thái đăng nhập
+    private final Account user;
     public JPanel MainContent;
     Color MainColor = new Color(250, 250, 250);
-
     private MenuLeft menuTaskbar;
 
-    public Main() {
-        if (!isLoggedIn) { // Kiểm tra trạng thái đăng nhập
-            JOptionPane.showMessageDialog(null, "Bạn cần đăng nhập trước!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-            new Login(); // Chuyển sang form Login
-            this.dispose(); // Đóng Main nếu chưa đăng nhập
-            return;
-        }
+    public Main(Account user) {
+        this.user = user;
         initComponents();
     }
 
@@ -31,8 +25,7 @@ public class Main extends JFrame {
         this.setTitle("Hệ thống quản lý cửa hàng máy tính");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Truyền `this` vào `MenuLeft`
-        menuTaskbar = new MenuLeft(this);
+        menuTaskbar = new MenuLeft(this, user);
         menuTaskbar.setPreferredSize(new Dimension(250, 800));
         this.add(menuTaskbar, BorderLayout.WEST);
 
@@ -40,7 +33,7 @@ public class Main extends JFrame {
         MainContent.setBackground(MainColor);
         this.add(MainContent, BorderLayout.CENTER);
 
-        setMainPanel(new Trangchu()); // Mặc định mở Trang chủ
+        setMainPanel(new Trangchu());
 
         this.setVisible(true);
     }
@@ -54,17 +47,11 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         try {
-            // Kích hoạt FlatLaf
-            UIManager.setLookAndFeel(new FlatLightLaf());
+            UIManager.setLookAndFeel(new FlatIntelliJLaf());
         } catch (Exception ex) {
             System.err.println("Failed to initialize FlatLaf");
         }
 
-        // Kiểm tra trạng thái đăng nhập
-        if (!isLoggedIn) {
-            new Login(); // Hiển thị form Login
-        } else {
-            new Main(); // Hiển thị form Main nếu đã đăng nhập
-        }
+        new Login();
     }
 }

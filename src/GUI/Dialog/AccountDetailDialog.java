@@ -82,19 +82,10 @@ public class AccountDetailDialog extends JDialog {
         txtTenDangNhap.setPreferredSize(new Dimension(200, 30)); // Giữ chiều rộng 200
         rightPanel.add(txtTenDangNhap, gbc);
 
-        // Mật khẩu
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        rightPanel.add(new JLabel("Mật khẩu:"), gbc);
-        gbc.gridx = 1;
-        JTextField txtMatKhau = new JTextField(account.getMatKhau());
-        txtMatKhau.setEditable(false);
-        txtMatKhau.setPreferredSize(new Dimension(200, 30)); // Giữ chiều rộng 200
-        rightPanel.add(txtMatKhau, gbc);
 
         // Nhân viên
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         rightPanel.add(new JLabel("Nhân viên:"), gbc);
         gbc.gridx = 1;
         JTextField txtNhanVien = new JTextField(accountBUS.getEmployeeName(account.getIdNhanVien()));
@@ -104,7 +95,7 @@ public class AccountDetailDialog extends JDialog {
 
         // Nhóm quyền
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 3;
         rightPanel.add(new JLabel("Nhóm quyền:"), gbc);
         gbc.gridx = 1;
         JTextField txtNhomQuyen = new JTextField(accountBUS.getPermissionGroupName(account.getIdNhomQuyen()));
@@ -112,15 +103,7 @@ public class AccountDetailDialog extends JDialog {
         txtNhomQuyen.setPreferredSize(new Dimension(200, 30)); // Giữ chiều rộng 200
         rightPanel.add(txtNhomQuyen, gbc);
 
-        // Mã OTP
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        rightPanel.add(new JLabel("Mã OTP:"), gbc);
-        gbc.gridx = 1;
-        JTextField txtMaOTP = new JTextField(account.getMaOTP());
-        txtMaOTP.setEditable(false);
-        txtMaOTP.setPreferredSize(new Dimension(200, 30)); // Giữ chiều rộng 200
-        rightPanel.add(txtMaOTP, gbc);
+      
 
         mainPanel.add(rightPanel, BorderLayout.CENTER);
 

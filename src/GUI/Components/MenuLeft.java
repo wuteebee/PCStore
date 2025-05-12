@@ -1,5 +1,10 @@
 package GUI.Components;
 
+import DAO.AccountDAO;
+import DAO.EmployeeDAO;
+import DTO.Account;
+import DTO.Employee;
+import GUI.Login;
 import GUI.Main;
 import GUI.Panel.AccountPanel;
 import GUI.Panel.CustomerPanel;
@@ -10,6 +15,7 @@ import GUI.Panel.PromotionPanel;
 import GUI.Panel.SaleInvoicePanel;
 import GUI.Panel.SupplierPanel;
 import GUI.Panel.Trangchu;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -23,6 +29,9 @@ import javax.swing.border.EmptyBorder;
 public class MenuLeft extends JPanel {
     private final Map<Integer, List<JComponent>> menuSubmenus = new HashMap<>();
     private final Main mainFrame;
+    private final Account user;
+    private final AccountDAO accountDAO;
+    private final EmployeeDAO employeeDAO;
     private final ArrayList<itemTaskbar> listItems = new ArrayList<>();
     private final JPanel pnlTop;
     private final JPanel pnlCenter;
@@ -53,8 +62,11 @@ public class MenuLeft extends JPanel {
             {"Đăng xuất", "log_out.svg"},
     };
 
-    public MenuLeft(Main main) {
+    public MenuLeft(Main main, Account user) {
         this.mainFrame = main;
+        this.user = user;
+        this.accountDAO = new AccountDAO();
+        this.employeeDAO = new EmployeeDAO();
         setOpaque(true);
         setBackground(DefaultColor);
         setLayout(new BorderLayout(0, 0));
@@ -64,7 +76,10 @@ public class MenuLeft extends JPanel {
         pnlTop.setBackground(DefaultColor);
         pnlTop.setLayout(new BorderLayout(0, 0));
         add(pnlTop, BorderLayout.NORTH);
-        
+
+        // Add user information to top panel
+        addUserInfo(pnlTop);
+
         bar1 = new JPanel();
         bar1.setBackground(new Color(204, 214, 219));
         bar1.setPreferredSize(new Dimension(1, 0));
@@ -110,6 +125,43 @@ public class MenuLeft extends JPanel {
         }
     }
 
+    private void addUserInfo(JPanel info) {
+        JPanel pnlInfo = new JPanel();
+        pnlInfo.setOpaque(false);
+        pnlInfo.setLayout(new BoxLayout(pnlInfo, BoxLayout.Y_AXIS));
+        pnlInfo.setBorder(new EmptyBorder(15, 10, 0, 10));
+        info.add(pnlInfo, BorderLayout.CENTER);
+
+        // Add icon and username in a horizontal panel
+        JPanel userPanel = new JPanel();
+        userPanel.setOpaque(false);
+        userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.X_AXIS));
+        userPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Add user icon
+        FlatSVGIcon userIcon = new FlatSVGIcon("./icon/account1.svg");
+        JLabel lblIcon = new JLabel(userIcon);
+        lblIcon.setBorder(new EmptyBorder(0, 0, 0, 10)); // Add spacing between icon and text
+        userPanel.add(lblIcon);
+
+        // Add username
+        Employee employee = employeeDAO.getEmployeeById(user.getIdNhanVien());
+        String employeeName = employee != null ? employee.getName() : user.getTenDangNhap();
+        JLabel lblUsername = new JLabel(employeeName);
+        lblUsername.putClientProperty("FlatLaf.style", "font: 150% $semibold.font");
+        userPanel.add(lblUsername);
+
+        pnlInfo.add(userPanel);
+
+        // Add position
+        String position = employee != null ? employee.getPosition() : "Không xác định";
+        JLabel lblPosition = new JLabel(position);
+        lblPosition.putClientProperty("FlatLaf.style", "font: 120% $light.font");
+        lblPosition.setForeground(Color.GRAY);
+        lblPosition.setAlignmentX(Component.LEFT_ALIGNMENT);
+        pnlInfo.add(lblPosition);
+    }
+
     private void addMenu(String[] menuData, int index) {
         int length = menuData.length;
         String menuName = menuData[0];
@@ -133,7 +185,7 @@ public class MenuLeft extends JPanel {
         item.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println("Menu clicked: " + menuName); // Thêm log
+                System.out.println("Menu clicked: " + menuName);
                 handleMenuClick(menuName);
                 updateSelection(item);
             }
@@ -158,7 +210,7 @@ public class MenuLeft extends JPanel {
                 subItem.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
-                        System.out.println("Submenu clicked: " + subMenuText); // Thêm log
+                        System.out.println("Submenu clicked: " + subMenuText);
                         handleMenuClick(subMenuText);
                         updateSelection(subItem);
                     }
@@ -195,8 +247,13 @@ public class MenuLeft extends JPanel {
             case "Tài khoản" -> mainFrame.setMainPanel(new AccountPanel(mainFrame));
             case "Khuyến mãi và ưu đãi" -> mainFrame.setMainPanel(new PromotionPanel(mainFrame));
             case "Đăng xuất" -> {
-                JOptionPane.showMessageDialog(mainFrame, "Đăng xuất thành công!");
-                System.exit(0);
+                int input = JOptionPane.showConfirmDialog(null,
+                        "Bạn có chắc chắn muốn đăng xuất?", "Đăng xuất",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                if (input == 0) {
+                    mainFrame.dispose();
+                    new Login();
+                }
             }
             default -> JOptionPane.showMessageDialog(mainFrame, "Chức năng đang phát triển!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
         }
