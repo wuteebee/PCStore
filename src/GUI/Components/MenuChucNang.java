@@ -2,11 +2,13 @@ package GUI.Components;
 
 import GUI.ActionListener.AccountActionListener;
 import GUI.ActionListener.CustomerActionListener;
+import GUI.ActionListener.DashboardActionListener;
 import GUI.ActionListener.EmployeeActionListener;
+import GUI.ActionListener.PhieuNhapActionListener;
 import GUI.ActionListener.ProductActionListener;
 import GUI.ActionListener.ProductDetailActionListener;
 import GUI.ActionListener.PromotionActionListener;
-import GUI.ActionListener.SupplierActionListener;
+
 import GUI.Main;
 import GUI.Panel.*;
 
@@ -90,7 +92,7 @@ public class MenuChucNang {
         
         else if (panel instanceof PhieuNhapPanel) {
             PhieuNhapPanel phieuNhapPanel = (PhieuNhapPanel) panel;
-            SupplierActionListener actionListener = new SupplierActionListener(phieuNhapPanel,MainFrame);
+            PhieuNhapActionListener actionListener = new PhieuNhapActionListener(phieuNhapPanel,MainFrame);
             btnAdd.addActionListener(actionListener);
             btnEdit.addActionListener(actionListener);
             btnDelete.addActionListener(actionListener);
