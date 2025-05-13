@@ -14,7 +14,7 @@ import javax.swing.border.EmptyBorder;
 
 public class Login extends JFrame implements KeyListener {
     private JPanel loginPanel;
-    private JLabel lbTitle, lbForgotPassword, lbRegister, lbImage;
+    private JLabel lbTitle, lbForgotPassword, lbImage;
     private InputForm txtUsername, txtPassword;
     private JButton btnLogin;
     private AccountDAO accountDAO;
@@ -162,7 +162,7 @@ public class Login extends JFrame implements KeyListener {
         imagePanel.setBackground(Color.WHITE);
         imagePanel.setLayout(new BorderLayout());
 
-        ImageIcon originalIcon = new ImageIcon("./src/img/login.png");
+        ImageIcon originalIcon = new ImageIcon("./src/img/login1.png");
         Image scaledImage = originalIcon.getImage().getScaledInstance(350, 350, Image.SCALE_SMOOTH);
         lbImage = new JLabel(new ImageIcon(scaledImage));
         lbImage.setHorizontalAlignment(JLabel.CENTER);

@@ -195,7 +195,7 @@ public class QuenMatKhau extends JDialog {
         imagePanel.setBackground(Color.WHITE);
         imagePanel.setLayout(new BorderLayout());
 
-        ImageIcon originalIcon = new ImageIcon("./src/img/reset.png");
+        ImageIcon originalIcon = new ImageIcon("./src/img/reset1.png");
         Image scaledImage = originalIcon.getImage().getScaledInstance(350, 350, Image.SCALE_SMOOTH);
         lbImage = new JLabel(new ImageIcon(scaledImage));
         lbImage.setHorizontalAlignment(JLabel.CENTER);
