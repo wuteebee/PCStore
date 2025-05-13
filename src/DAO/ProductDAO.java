@@ -1,6 +1,7 @@
 package DAO;
 
 import config.DatabaseConnection;
+import config.H2DatabaseConnection;
 import DTO.*;
 
 import java.math.BigDecimal;
@@ -294,7 +295,7 @@ public class ProductDAO {
         boolean exists = false;
         String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection(); 
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, idSanPham);

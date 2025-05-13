@@ -215,7 +215,6 @@ CREATE TABLE IF NOT EXISTS ChiTietDonNhap (
 
     PRIMARY KEY (idDonHang,SN),
     FOREIGN KEY (SN) REFERENCES ChiTietSP(SerialNumber)
-
 );
 
 

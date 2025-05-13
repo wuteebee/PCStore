@@ -32,7 +32,7 @@ public class ProductBUS {
         Product product = new Product();
         ProductDAO productDAO = new ProductDAO();
         product = productDAO.getProductByIdFull(id);
-        
+
 
         if (product.getDanhMuc().getMaDanhMuc().equals("DM002")) {
             product.getDanhSachPhienBan().forEach(item -> {
@@ -85,7 +85,7 @@ return danhsach;
         return productDetails;
     }
 
-   
+
 
     // public String insertSP(Product sp) {
     //     if (sp.getTenSp() == null || sp.getTenSp().trim().isEmpty()) {
@@ -111,7 +111,7 @@ return danhsach;
     //     boolean success = productDAO.insertSP(sp);
     //     return success ? null : "Lỗi khi thêm sản phẩm vào CSDL!";
     // }
-    
+
     public List<Product> getSPbyCatalog(String id){
         ProductDAO productDAO=new ProductDAO();
         return productDAO.getAllProductsbyCT(id);
@@ -124,11 +124,11 @@ return danhsach;
           Save= productDAO.insertCauHinhPC(idSP,idThongTin,idLinhKien,STTPL);
         }
         else{
-            Save= productDAO.insertCauHinh(idSP,idThongTin,idLinhKien,STTPL);  
+            Save= productDAO.insertCauHinh(idSP,idThongTin,idLinhKien,STTPL);
         }
 
 
-       
+
         return Save;
 
     }

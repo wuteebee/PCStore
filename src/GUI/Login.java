@@ -4,7 +4,6 @@ import DAO.AccountDAO;
 import DTO.Account;
 import GUI.Components.InputForm;
 import GUI.Dialog.QuenMatKhau;
-import GUI.Dialog.RegisterDialog;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
@@ -15,7 +14,7 @@ import javax.swing.border.EmptyBorder;
 
 public class Login extends JFrame implements KeyListener {
     private JPanel loginPanel;
-    private JLabel lbTitle, lbForgotPassword, lbRegister, lbImage;
+    private JLabel lbTitle, lbForgotPassword, lbImage;
     private InputForm txtUsername, txtPassword;
     private JButton btnLogin;
     private AccountDAO accountDAO;
@@ -40,8 +39,10 @@ public class Login extends JFrame implements KeyListener {
         Account account = accountDAO.getAccountByUsername(username);
         if (account == null) {
             JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            new Main(new Account());
         } else if (account.getTrangThai() == 0) {
             JOptionPane.showMessageDialog(this, "Tài khoản của bạn đang bị khóa", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            new Main(new Account());
         } else if (password.equals(account.getMatKhau())) {
             this.dispose();
             new Main(account);
@@ -161,7 +162,7 @@ public class Login extends JFrame implements KeyListener {
         imagePanel.setBackground(Color.WHITE);
         imagePanel.setLayout(new BorderLayout());
 
-        ImageIcon originalIcon = new ImageIcon("./src/img/login.png");
+        ImageIcon originalIcon = new ImageIcon("./src/img/login1.png");
         Image scaledImage = originalIcon.getImage().getScaledInstance(350, 350, Image.SCALE_SMOOTH);
         lbImage = new JLabel(new ImageIcon(scaledImage));
         lbImage.setHorizontalAlignment(JLabel.CENTER);
