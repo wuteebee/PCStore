@@ -7,6 +7,9 @@ import BUS.PromotionBUS;
 import DTO.HoaDonNhap;
 import DTO.Promotion;
 import DTO.SalesInvoice;
+import DAO.InvoiceDAO;
+import DAO.PromotionDAO;
+import DAO.PhieuNhapDAO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +28,7 @@ public class DashFinance extends JPanel {
     private List<Rectangle> salesRects = new ArrayList<>();
     private List<Rectangle> promoRects = new ArrayList<>();
     private List<Rectangle> comRects = new ArrayList<>();
+
     private ArrayList<BigDecimal> sales = new ArrayList<>();
     private ArrayList<BigDecimal> coms = new ArrayList<>();
     private ArrayList<BigDecimal> proms = new ArrayList<>();
@@ -34,6 +38,7 @@ public class DashFinance extends JPanel {
 
     private List<SalesInvoice> salesInvoices;
     private List<HoaDonNhap> comInvoices;
+    private List<Promotion> promos;
     private Map<String, Double> promotions;
 
     private int max;
@@ -41,7 +46,7 @@ public class DashFinance extends JPanel {
     public DashFinance(InvoiceBUS salesInvoiceBUS, PhieuNhapBUS comInvoiceBUS, PromotionBUS promotionBUS) {
         initializePanel();
         setupComponents();
-        generateSampleData();
+        generateSampleData(); // đổi thành getData() để lấy dữ liệu từ database
         generateBars();
         setupEventListeners();
     }
@@ -68,6 +73,28 @@ public class DashFinance extends JPanel {
                 hideTooltip();
             }
         });
+    }
+
+    private void getData() {
+        comInvoices = new PhieuNhapDAO().getAll();
+        promos = new PromotionDAO().getAllPromotions();
+        salesInvoices = new InvoiceDAO().getAllSalesInvoice();
+
+        for(Promotion promotion : promos) {
+            promotions.put(promotion.getIdKhuyenMai(), promotion.getGiaTri());
+        }
+
+        for(HoaDonNhap comInvoice : comInvoices) {
+            coms.add(bdCon(comInvoice.getTongTien()));
+        }
+
+        for(SalesInvoice salesInvoice : salesInvoices) {
+            sales.add(bdCon(salesInvoice.getTotalPayment()));
+            proms.add(bdCon(salesInvoice.getTotalPayment() * promotions.get(salesInvoice.getDid())));
+        }
+
+        max = Math.max(getMaxValue(proms), getMaxValue(coms));
+        max = Math.max(max, getMaxValue(sales));
     }
 
     private void generateSampleData() {
