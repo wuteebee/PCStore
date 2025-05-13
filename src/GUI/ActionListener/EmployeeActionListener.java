@@ -2,9 +2,12 @@ package GUI.ActionListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+import BUS.ExcelBUS;
+import GUI.Components.Excel;
 import GUI.Panel.EmployeePanel;
 
 public class EmployeeActionListener implements ActionListener {
@@ -57,11 +60,22 @@ public class EmployeeActionListener implements ActionListener {
             }
             
                 break;
-            case "Tìm":
+            case "Tìm kiếm":
                 System.out.println("Tìm");
                 break;
             case "Xuất Excel":
                 System.out.println("Excel");
+                Excel panelExcel = new Excel();
+                String filePath = panelExcel.ChooseFile();
+                if(filePath != null) {
+                    ExcelBUS excelBUS = new ExcelBUS();
+                    try {
+                        excelBUS.ExcelListEmployee(filePath);
+                    } catch (IOException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
                 break;
         }
     }

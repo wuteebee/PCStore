@@ -13,17 +13,24 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import BUS.PhieuNhapBUS;
 import BUS.ProductBUS;
+import DTO.ChiTietDonNhap;
+import DTO.Customer;
 import DTO.ProductDetail;
 import GUI.Panel.ProductDetailPanel;
 
 import java.awt.Font;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.Component;
 
 public class DanhSachChiTietSP extends JDialog {
     DefaultTableModel tableModel;
     ProductDetailPanel productDetailPanel;
+    PhieuNhapBUS bus=new PhieuNhapBUS();
+    List <ChiTietDonNhap> danhsach=new ArrayList<>();
 
     public DanhSachChiTietSP(ProductDetailPanel productDetailPanel) {
         this.productDetailPanel = productDetailPanel;
@@ -124,6 +131,7 @@ public class DanhSachChiTietSP extends JDialog {
         panel.setBackground(Color.decode("#FFFFFF"));
         ProductBUS productBUS = new ProductBUS();
         productBUS.getProductDetailList(productDetailPanel.getPhienban());
+        List<ChiTietDonNhap> danhsach=bus.getAll_ChiTietDonNhap();
         String[] columnNames = {"SerialNumber", "Giá Nhập", "Mã phiếu nhập", "Mã phiếu xuất", "Trạng thái"};
         Object[][] data = {
             {"SN001", 1000.0, "PN001", "PX001", true},
@@ -163,5 +171,22 @@ public class DanhSachChiTietSP extends JDialog {
         panel.add(scrollPane, gbc);
 
         return panel;
+    }
+
+
+        public void loadTable() {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+        danhsach = bus.getAll_ChiTietDonNhap();
+        // for (ChiTietDonNhaps : customers) {
+        //     System.out.println(customer.getName());
+        //     Object[] rowData = {
+        //         customer.getId(),
+        //         customer.getName(),
+        //         customer.getPhoneNumber(),
+        //         customer.getEmail(),
+        //         customer.getDateOfJoining()
+        //     };
+        //     tableModel.addRow(rowData);
+        // }
     }
 }

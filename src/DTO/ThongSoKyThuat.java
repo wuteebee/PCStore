@@ -4,6 +4,7 @@ public class ThongSoKyThuat {
     private String idThongSo;
     private String idDanhMuc;
     private String tenThongSo;
+    private String idDMLinhKien;
 
 
 
@@ -11,10 +12,11 @@ public class ThongSoKyThuat {
     public  ThongSoKyThuat(){
 
     }
-    public ThongSoKyThuat(String idThongSo,String idDanhMuc,String tenThongSo){
+    public ThongSoKyThuat(String idThongSo,String idDanhMuc,String tenThongSo,String idDMLinhKien){
         this.idDanhMuc=idDanhMuc;
         this.idThongSo=idThongSo;
         this.tenThongSo=tenThongSo;
+        this.idDMLinhKien=idDMLinhKien;
     }
     public void setIDDanhMuc(String iDDanhMuc) {
         idDanhMuc = iDDanhMuc;
@@ -38,5 +40,11 @@ public class ThongSoKyThuat {
 
     public String getTenThongSo() {
         return tenThongSo;
+    }
+    public void setIdDMLinhKien(String idDMLinhKien) {
+        this.idDMLinhKien = idDMLinhKien;
+    }
+    public String getIdDMLinhKien() {
+        return idDMLinhKien;
     }
 }

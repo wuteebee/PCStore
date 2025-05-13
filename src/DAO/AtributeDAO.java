@@ -12,7 +12,7 @@ import java.util.Map;
 import DTO.Brand;
 import DTO.Catalog;
 import DTO.ThongSoKyThuat;
-import config.DatabaseConnection;
+
 
 public class AtributeDAO {
     private Connection conn;
@@ -75,7 +75,8 @@ public class AtributeDAO {
                 if (idDanhMuc != null) {
                     tmp = catalogmap.get(idDanhMuc);
                 }
-                Brand brand = new Brand(id, name, tmp, trangThai);
+                // Brand brand = new Brand(id, name, tmp, trangThai);
+                Brand brand=new Brand(id, name, idDanhMuc, trangThai);
                 brands.add(brand);
 
             }
@@ -95,19 +96,20 @@ public class AtributeDAO {
     
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, id); // Gán giá trị id vào dấu hỏi chấm
+            stmt.setString(1, id); 
             ResultSet rs = stmt.executeQuery();
     
             while (rs.next()) {
                 String idThongSo = rs.getString("idThongtin");
                 String idDanhMuc = rs.getString("idDanhMuc");
                 String tenThongTin = rs.getString("tenThongTin");
+                String idDMLinhKien=rs.getString("idDanhMucLinhKien");
     
-                ThongSoKyThuat tmp = new ThongSoKyThuat(idThongSo, idDanhMuc, tenThongTin);
+                ThongSoKyThuat tmp = new ThongSoKyThuat(idThongSo, idDanhMuc, tenThongTin,idDMLinhKien);
                 danhsach.add(tmp);
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Debug lỗi nếu có
+            e.printStackTrace(); 
         }
     
         return danhsach;

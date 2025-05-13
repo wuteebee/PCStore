@@ -1,78 +1,225 @@
 package GUI.Components;
 
+import DAO.AccountDAO;
+import DAO.EmployeeDAO;
+import DTO.Account;
+import DTO.Employee;
+import GUI.Login;
+import GUI.Main;
+import GUI.Panel.AccountPanel;
+import GUI.Panel.CustomerPanel;
+import GUI.Panel.EmployeePanel;
+import GUI.Panel.PhieuNhapPanel;
+import GUI.Panel.ProductPanel;
+import GUI.Panel.PromotionPanel;
+import GUI.Panel.SaleInvoicePanel;
+import GUI.Panel.SupplierPanel;
+import GUI.Panel.Trangchu;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.*;
-
-// import GUI.BanHang;
-import GUI.Main;
-import GUI.Panel.*;
-import net.miginfocom.swing.MigLayout;
+import javax.swing.border.EmptyBorder;
 
 public class MenuLeft extends JPanel {
-    private MigLayout layout;
-    private Map<Integer, List<JComponent>> menuSubmenus = new HashMap<>();
-    private Main mainFrame; // Tham chiếu tới Main
+    private final Map<Integer, List<JComponent>> menuSubmenus = new HashMap<>();
+    private final Main mainFrame;
+    private final Account user;
+    private final AccountDAO accountDAO;
+    private final EmployeeDAO employeeDAO;
+    private final ArrayList<itemTaskbar> listItems = new ArrayList<>();
+    private final JPanel pnlTop;
+    private final JPanel pnlCenter;
+    private final JPanel pnlBottom;
+    private final JPanel bar1;
+    private final JPanel bar2;
+    private final JPanel bar3;
+    private final JPanel bar4;
+    private final JScrollPane scrollPane;
+    private final Color FontColor = new Color(96, 125, 139);
+    private final Color DefaultColor = new Color(255, 255, 255);
+    private final Color HowerBackgroundColor = new Color(193, 237, 220);
+    private final Color HowerFontColor = new Color(1, 87, 155);
 
-    String[][] menuItems = {
-            {"Trang chủ"},
-            {"Sản phẩm", "Laptop", "PC", "Linh kiện máy tính"},
-            {"Thuộc tính", "Màu sắc", "Thương hiệu", "Xuất xứ"},
-            {"Phiếu nhập"},
-            {"Phiếu xuất"},
-            {"Khách hàng"},
-            {"Nhà cung cấp"},
-            {"Nhân viên", "Quản lí", "Bán hàng"},
-            {"Tài khoản"},
-            {"Thống kê"},
-            {"Phân quyền"},
-            {"Khuyến mãi và ưu đãi"},
-            {"Đăng xuất"},
+    private final String[][] menuItems = {
+            {"Trang chủ", "home.svg"},
+            {"Sản phẩm", "book.svg", "Laptop", "PC", "Linh kiện máy tính"},
+            {"Thuộc tính", "khu_vuc.svg", "Màu sắc", "Thương hiệu", "Xuất xứ"},
+            {"Phiếu nhập", "import.svg"},
+            {"Phiếu xuất", "export.svg"},
+            {"Khách hàng", "customer.svg"},
+            {"Nhà cung cấp", "supplier.svg"},
+            {"Nhân viên", "staff_1.svg", "Quản lí", "Bán hàng"},
+            {"Tài khoản", "account.svg"},
+            {"Thống kê", "statistical_1.svg"},
+            {"Phân quyền", "protect.svg"},
+            {"Khuyến mãi và ưu đãi", "sale.svg"},
+            {"Đăng xuất", "log_out.svg"},
     };
 
-    public MenuLeft(Main main) {
-        this.mainFrame = main; // Lưu tham chiếu
-        initComponents();
-    }
+    public MenuLeft(Main main, Account user) {
+        this.mainFrame = main;
+        this.user = user;
+        this.accountDAO = new AccountDAO();
+        this.employeeDAO = new EmployeeDAO();
+        setOpaque(true);
+        setBackground(DefaultColor);
+        setLayout(new BorderLayout(0, 0));
 
-    private void initComponents() {
-        layout = new MigLayout("wrap 1, fillx, gapy 0px, inset 0px");
-        setLayout(layout);
+        pnlTop = new JPanel();
+        pnlTop.setPreferredSize(new Dimension(250, 80));
+        pnlTop.setBackground(DefaultColor);
+        pnlTop.setLayout(new BorderLayout(0, 0));
+        add(pnlTop, BorderLayout.NORTH);
+
+        // Add user information to top panel
+        addUserInfo(pnlTop);
+
+        bar1 = new JPanel();
+        bar1.setBackground(new Color(204, 214, 219));
+        bar1.setPreferredSize(new Dimension(1, 0));
+        pnlTop.add(bar1, BorderLayout.EAST);
+
+        bar2 = new JPanel();
+        bar2.setBackground(new Color(204, 214, 219));
+        bar2.setPreferredSize(new Dimension(0, 1));
+        pnlTop.add(bar2, BorderLayout.SOUTH);
+
+        pnlCenter = new JPanel();
+        pnlCenter.setBackground(DefaultColor);
+        pnlCenter.setLayout(new BoxLayout(pnlCenter, BoxLayout.Y_AXIS));
+
+        scrollPane = new JScrollPane(pnlCenter, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(new EmptyBorder(5, 10, 0, 10));
+        add(scrollPane, BorderLayout.CENTER);
+
+        bar3 = new JPanel();
+        bar3.setBackground(new Color(204, 214, 219));
+        bar3.setPreferredSize(new Dimension(1, 1));
+        add(bar3, BorderLayout.EAST);
+
+        pnlBottom = new JPanel();
+        pnlBottom.setPreferredSize(new Dimension(250, 60));
+        pnlBottom.setBackground(DefaultColor);
+        pnlBottom.setLayout(new BorderLayout(0, 0));
+        add(pnlBottom, BorderLayout.SOUTH);
+
+        bar4 = new JPanel();
+        bar4.setBackground(new Color(204, 214, 219));
+        bar4.setPreferredSize(new Dimension(1, 1));
+        pnlBottom.add(bar4, BorderLayout.EAST);
 
         for (int i = 0; i < menuItems.length; i++) {
-            addMenu(menuItems[i][0], i);
+            addMenu(menuItems[i], i);
+        }
+
+        if (!listItems.isEmpty()) {
+            listItems.get(0).isSelected = true;
+            listItems.get(0).setBackground(HowerBackgroundColor);
+            listItems.get(0).pnlContent.setForeground(HowerFontColor);
         }
     }
 
-    private void addMenu(String menuName, int index) {
-        int length = menuItems[index].length;
+    private void addUserInfo(JPanel info) {
+        JPanel pnlInfo = new JPanel();
+        pnlInfo.setOpaque(false);
+        pnlInfo.setLayout(new BoxLayout(pnlInfo, BoxLayout.Y_AXIS));
+        pnlInfo.setBorder(new EmptyBorder(15, 10, 0, 10));
+        info.add(pnlInfo, BorderLayout.CENTER);
 
-        Runnable toggleAction = () -> toggleSubMenu(index);
+        // Add icon and username in a horizontal panel
+        JPanel userPanel = new JPanel();
+        userPanel.setOpaque(false);
+        userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.X_AXIS));
+        userPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        MenuItem item = new MenuItem(menuName, index, length > 1, toggleAction);
-        item.addActionListener(e -> handleMenuClick(index, menuName)); // Gán sự kiện click
-        add(item, "growx");
+        // Add user icon
+        FlatSVGIcon userIcon = new FlatSVGIcon("./icon/account1.svg");
+        JLabel lblIcon = new JLabel(userIcon);
+        lblIcon.setBorder(new EmptyBorder(0, 0, 0, 10)); // Add spacing between icon and text
+        userPanel.add(lblIcon);
 
-        List<JComponent> subMenuList = new ArrayList<>();
+        // Add username
+        Employee employee = employeeDAO.getEmployeeById(user.getIdNhanVien());
+        String employeeName = employee != null ? employee.getName() : user.getTenDangNhap();
+        JLabel lblUsername = new JLabel(employeeName);
+        lblUsername.putClientProperty("FlatLaf.style", "font: 150% $semibold.font");
+        userPanel.add(lblUsername);
 
-        if (length > 1) {
-            for (int j = 1; j < length; j++) {
-                // Lưu giá trị j vào một biến final để sử dụng trong lambda
-                final String subMenuText = "  └ " + menuItems[index][j];
+        pnlInfo.add(userPanel);
 
-                MenuItem subItem = new MenuItem(subMenuText, index, false, null);
-                subItem.setVisible(false);
+        // Add position
+        String position = employee != null ? employee.getPosition() : "Không xác định";
+        JLabel lblPosition = new JLabel(position);
+        lblPosition.putClientProperty("FlatLaf.style", "font: 120% $light.font");
+        lblPosition.setForeground(Color.GRAY);
+        lblPosition.setAlignmentX(Component.LEFT_ALIGNMENT);
+        pnlInfo.add(lblPosition);
+    }
 
-                subItem.addActionListener(e -> handleMenuClick(index, subMenuText));
+    private void addMenu(String[] menuData, int index) {
+        int length = menuData.length;
+        String menuName = menuData[0];
+        String iconPath = menuData[1];
 
-                subMenuList.add(subItem);
-                add(subItem, "growx, hidemode 3");
-            }
+        itemTaskbar item = new itemTaskbar(iconPath, menuName);
+        item.setPreferredSize(new Dimension(230, 45));
+        item.setMaximumSize(new Dimension(230, 45));
+        listItems.add(item);
+
+        Runnable toggleAction = length > 2 ? () -> toggleSubMenu(index) : null;
+        if (toggleAction != null) {
+            item.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    toggleAction.run();
+                }
+            });
         }
 
+        item.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                System.out.println("Menu clicked: " + menuName);
+                handleMenuClick(menuName);
+                updateSelection(item);
+            }
+        });
+
+        if (index == menuItems.length - 1) {
+            pnlBottom.add(item, BorderLayout.CENTER);
+        } else {
+            pnlCenter.add(item);
+        }
+
+        List<JComponent> subMenuList = new ArrayList<>();
+        if (length > 2) {
+            for (int j = 2; j < length; j++) {
+                String subMenuText = "  └ " + menuData[j];
+                itemTaskbar subItem = new itemTaskbar("", subMenuText);
+                subItem.setPreferredSize(new Dimension(230, 45));
+                subItem.setMaximumSize(new Dimension(230, 45));
+                subItem.setVisible(false);
+                listItems.add(subItem);
+
+                subItem.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        System.out.println("Submenu clicked: " + subMenuText);
+                        handleMenuClick(subMenuText);
+                        updateSelection(subItem);
+                    }
+                });
+
+                subMenuList.add(subItem);
+                pnlCenter.add(subItem);
+            }
+        }
 
         menuSubmenus.put(index, subMenuList);
         revalidate();
@@ -88,59 +235,39 @@ public class MenuLeft extends JPanel {
         repaint();
     }
 
-    // Xử lý sự kiện khi click menu
-    private void handleMenuClick(int index, String menuName) {
+    private void handleMenuClick(String menuName) {
         switch (menuName) {
-            case "Trang chủ":
-                mainFrame.setMainPanel(new Trangchu());
-                break;
-                case "Sản phẩm":
-                mainFrame.setMainPanel(new ProductPanel(mainFrame));
-                break;
-            case "Phiếu xuất":
-                mainFrame.setMainPanel(new SaleInvoicePanel(mainFrame));
-                break;
-            case "Phiếu nhập":
-            System.out.println("Phiếu nhập nè");
-                mainFrame.setMainPanel(new PhieuNhapPanel(mainFrame));
-                break;
-            case "PC":
-                // case "Linh kiện máy tính":
-                //     mainFrame.setMainPanel(new ProductPanel()); // Tạo class ProductPanel để hiển thị danh sách sản phẩm
-                break;
-            case "Nhân viên":
-                mainFrame.setMainPanel(new EmployeePanel(mainFrame));
-                break;
-            case "Khách hàng":
-                mainFrame.setMainPanel(new CustomerPanel(mainFrame));
-                break;
-            case "Nhà cung cấp":
-                mainFrame.setMainPanel(new SupplierPanel(mainFrame));
-                break;
-            case "Quản lí":
-                // case "Bán hàng":
-                //     mainFrame.setMainPanel(new EmployeePanel());
-                //     break;
-                // case "Khách hàng":
-                //     mainFrame.setMainPanel(new CustomerPanel());
-                //     break;
-                // case "Thống kê":
-                //     mainFrame.setMainPanel(new StatisticsPanel());
-                //     break;
-                case "Khuyến mãi và ưu đãi":
-                    mainFrame.setMainPanel(new PromotionPanel(mainFrame));
-                    break;
-            case "Đăng xuất":
-                JOptionPane.showMessageDialog(mainFrame, "Đăng xuất thành công!");
-                System.exit(0);
-                break;
-            case "Thống kê":
-                mainFrame.setMainPanel(new DashboardPanel(mainFrame));
-                break;
-            default:
-                JOptionPane.showMessageDialog(mainFrame, "Chức năng đang phát triển!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                break;
+            case "Trang chủ" -> mainFrame.setMainPanel(new Trangchu());
+            case "Sản phẩm" -> mainFrame.setMainPanel(new ProductPanel(mainFrame));
+            case "Phiếu xuất" -> mainFrame.setMainPanel(new SaleInvoicePanel(mainFrame));
+            case "Phiếu nhập" -> mainFrame.setMainPanel(new PhieuNhapPanel(mainFrame));
+            case "Nhân viên" -> mainFrame.setMainPanel(new EmployeePanel(mainFrame));
+            case "Khách hàng" -> mainFrame.setMainPanel(new CustomerPanel(mainFrame));
+            case "Nhà cung cấp" -> mainFrame.setMainPanel(new SupplierPanel(mainFrame));
+            case "Tài khoản" -> mainFrame.setMainPanel(new AccountPanel(mainFrame));
+            case "Khuyến mãi và ưu đãi" -> mainFrame.setMainPanel(new PromotionPanel(mainFrame));
+            case "Đăng xuất" -> {
+                int input = JOptionPane.showConfirmDialog(null,
+                        "Bạn có chắc chắn muốn đăng xuất?", "Đăng xuất",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                if (input == 0) {
+                    mainFrame.dispose();
+                    new Login();
+                }
+            }
+            default -> JOptionPane.showMessageDialog(mainFrame, "Chức năng đang phát triển!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
         }
-        System.out.println(getSize() + "Menuleft");
+    }
+
+    private void updateSelection(itemTaskbar selectedItem) {
+        for (itemTaskbar item : listItems) {
+            if (item == selectedItem) {
+                item.setSelected(true);
+                item.pnlContent.setForeground(HowerFontColor);
+            } else {
+                item.setSelected(false);
+                item.pnlContent.setForeground(FontColor);
+            }
+        }
     }
 }

@@ -36,8 +36,6 @@ public class EmployeePanel extends JPanel {
 
         add(createEmployeeToolbar(), BorderLayout.NORTH);
         add(createTablePanel(), BorderLayout.CENTER);
-
-        // 🔹 Gọi hàm để lắng nghe sự kiện chọn dòng
         addTableSelectionListener();
     }
 
@@ -93,7 +91,7 @@ public class EmployeePanel extends JPanel {
     public JPanel createEmployeeToolbar() {
         JPanel toolbar = new JPanel(new GridLayout(1, 2, 10, 10));
         toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        toolbar.setPreferredSize(new Dimension(950, 110));
+        toolbar.setPreferredSize(new Dimension(980, 90));
         
         MenuChucNang menu = new MenuChucNang();
         toolbar.add(menu.createActionPanel(this, mainFrame));  

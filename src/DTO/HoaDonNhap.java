@@ -4,18 +4,18 @@ import java.sql.Date;
 
 public class HoaDonNhap {
     private String idHoaDonNhap;
-    private String idNhanVien;
-    private String idNhaCungCap;
+    private Employee NhanVien;
+    private Supplier NhaCungCap;
     private Date ngayTao;
     private double tongTien;
 
     public HoaDonNhap() {
     }
 
-    public HoaDonNhap(String idHoaDonNhap, String idNhanVien, String idNhaCungCap, Date ngayTao, double tongTien) {
+    public HoaDonNhap(String idHoaDonNhap, Employee idNhanVien, Supplier NhaCungCap, Date ngayTao, double tongTien) {
         this.idHoaDonNhap = idHoaDonNhap;
-        this.idNhanVien = idNhanVien;
-        this.idNhaCungCap = idNhaCungCap;
+        this.NhanVien = idNhanVien;
+        this.NhaCungCap = NhaCungCap;
         this.ngayTao = ngayTao;
         this.tongTien = tongTien;
     }
@@ -28,20 +28,20 @@ public class HoaDonNhap {
         this.idHoaDonNhap = idHoaDonNhap;
     }
 
-    public String getIdNhanVien() {
-        return idNhanVien;
+    public Employee getNhanVien() {
+        return NhanVien;
     }
 
-    public void setIdNhanVien(String idNhanVien) {
-        this.idNhanVien = idNhanVien;
+    public void setNhanVien(Employee NhanVien) {
+        this.NhanVien = NhanVien;
     }
 
-    public String getIdNhaCungCap() {
-        return idNhaCungCap;
+    public Supplier getNhaCungCap() {
+        return NhaCungCap;
     }
 
-    public void setIdNhaCungCap(String idNhaCungCap) {
-        this.idNhaCungCap = idNhaCungCap;
+    public void setNhaCungCap(Supplier NhaCungCap) {
+        this.NhaCungCap = NhaCungCap;
     }
 
     public Date getNgayTao() {

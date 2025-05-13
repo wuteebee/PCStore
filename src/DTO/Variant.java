@@ -8,16 +8,19 @@ public class Variant {
     private Double gia;
     private int soLuong;
     private List<ChiTietCauHinh> chitiet;
+    private boolean trangThai;
+
 
 
     public Variant() {
     }
 
-    public Variant(String idVariant, String PhienBan, Double gia, int soLuong) {
+    public Variant(String idVariant, String PhienBan, Double gia, int soLuong,boolean trangThai) {
         this.idVariant = idVariant;
         this.PhienBan = PhienBan;
         this.gia = gia;
         this.soLuong = soLuong;
+        this.trangThai=trangThai;
     }
 
     public void setChitiet(List<ChiTietCauHinh> chitiet) {
@@ -50,5 +53,14 @@ public class Variant {
 
     public int getSoLuong() {
         return soLuong;
+    }
+    public String getIdVariant() {
+        return idVariant;
+    }
+    public void setTrangThai(boolean trangThai) {
+        this.trangThai = trangThai;
+    }
+    public boolean isTrangThai() {
+        return trangThai;
     }
 }

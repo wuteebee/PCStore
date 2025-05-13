@@ -2,11 +2,22 @@ package GUI.Panel;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Date;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
+import com.toedter.calendar.JDateChooser;
+
+import BUS.EmployeeBUS;
 import BUS.PhieuNhapBUS;
+import BUS.SupplierBUS;
+import DAO.EmployeeDAO;
+import DAO.SupplierDAO;
+import DTO.Employee;
 import DTO.HoaDonNhap;
+import DTO.Supplier;
 import GUI.Main;
 import GUI.Components.MenuChucNang;
 
@@ -16,6 +27,10 @@ public class PhieuNhapPanel extends JPanel {
     private String selectedPhieuId = "-1";
     private Main mainFrame;
     private PhieuNhapBUS bus;
+    private JComboBox<String> supplierComboBox;
+    private JComboBox<String> employeeComboBox;
+    private JDateChooser fromDateChooser;
+    private JDateChooser toDateChooser;
 
     public PhieuNhapPanel(Main mainFrame) {
         this.mainFrame = mainFrame;
@@ -30,13 +45,107 @@ public class PhieuNhapPanel extends JPanel {
         this.setBackground(Color.WHITE);
 
         add(createCustomToolbar(), BorderLayout.NORTH);
-        add(createTablePanel(), BorderLayout.CENTER);
+        add(createMainContent(), BorderLayout.CENTER);
+    }
+
+    private JPanel createMainContent() {
+        JPanel mainContent = new JPanel(new BorderLayout(10, 0));
+        mainContent.setBackground(Color.WHITE);
+
+        JPanel leftPanel = createFill();
+        JPanel rightPanel = createTablePanel();
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
+        splitPane.setDividerLocation(300);
+        splitPane.setResizeWeight(0);
+
+        mainContent.add(splitPane, BorderLayout.CENTER);
+        return mainContent;
+    }
+
+    private JPanel createFill() {
+        JPanel fillPanel = new JPanel(new GridBagLayout());
+        fillPanel.setBackground(Color.WHITE);
+        fillPanel.setPreferredSize(new Dimension(300, 0));
+        fillPanel.setBorder(BorderFactory.createTitledBorder("Bộ lọc"));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        Font font = new Font("Segoe UI", Font.PLAIN, 13);
+        Dimension fieldSize = new Dimension(200, 28);
+
+        // Nhà cung cấp
+        fillPanel.add(new JLabel("Nhà cung cấp:"), gbc);
+        gbc.gridy++;
+        supplierComboBox = new JComboBox<>();
+        SupplierBUS ncc = new SupplierBUS();
+        List<Supplier> dsncc = ncc.getAllSuppliers();
+        supplierComboBox.addItem("Tất cả");
+        for (Supplier supplier : dsncc) {
+            supplierComboBox.addItem(supplier.getName());
+        }
+        supplierComboBox.setPreferredSize(fieldSize);
+        supplierComboBox.setFont(font);
+        fillPanel.add(supplierComboBox, gbc);
+
+        // Nhân viên
+        gbc.gridy++;
+        fillPanel.add(new JLabel("Nhân viên:"), gbc);
+        gbc.gridy++;
+        employeeComboBox = new JComboBox<>();
+        EmployeeDAO employeeDAO = new EmployeeDAO();
+        EmployeeBUS employeeBUS = new EmployeeBUS(employeeDAO);
+        List<Employee> dsnv = employeeBUS.getAllEmployees();
+        employeeComboBox.addItem("Tất cả");
+        for (Employee employee : dsnv) {
+            employeeComboBox.addItem(employee.getName());
+        }
+        employeeComboBox.setPreferredSize(fieldSize);
+        employeeComboBox.setFont(font);
+        fillPanel.add(employeeComboBox, gbc);
+
+        // Từ ngày
+        gbc.gridy++;
+        fillPanel.add(new JLabel("Từ ngày:"), gbc);
+        gbc.gridy++;
+        fromDateChooser = new JDateChooser();
+        fromDateChooser.setDateFormatString("dd/MM/yyyy");
+        fromDateChooser.setPreferredSize(fieldSize);
+        fromDateChooser.setFont(font);
+        fillPanel.add(fromDateChooser, gbc);
+
+        // Đến ngày
+        gbc.gridy++;
+        fillPanel.add(new JLabel("Đến ngày:"), gbc);
+        gbc.gridy++;
+        toDateChooser = new JDateChooser();
+        toDateChooser.setDateFormatString("dd/MM/yyyy");
+        toDateChooser.setPreferredSize(fieldSize);
+        toDateChooser.setFont(font);
+        fillPanel.add(toDateChooser, gbc);
+
+        // Sự kiện thay đổi
+        supplierComboBox.addActionListener(e -> refreshTable());
+        employeeComboBox.addActionListener(e -> refreshTable());
+        fromDateChooser.getDateEditor().addPropertyChangeListener(e -> {
+            if ("date".equals(e.getPropertyName())) refreshTable();
+        });
+        toDateChooser.getDateEditor().addPropertyChangeListener(e -> {
+            if ("date".equals(e.getPropertyName())) refreshTable();
+        });
+
+        return fillPanel;
     }
 
     private JPanel createCustomToolbar() {
         JPanel toolbar = new JPanel(new GridLayout(1, 2, 10, 10));
         toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        toolbar.setPreferredSize(new Dimension(950, 110));
+        toolbar.setPreferredSize(new Dimension(980, 90));
 
         MenuChucNang menu = new MenuChucNang();
         toolbar.add(menu.createActionPanel(this, mainFrame));
@@ -45,24 +154,13 @@ public class PhieuNhapPanel extends JPanel {
         return toolbar;
     }
 
+
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        String[] columnNames = { "Mã phiếu", "Nhân viên", "Nhà cung cấp", "Ngày tạo", "Tổng tiền" };
+        String[] columnNames = { "Mã phiếu nhập", "Nhân viên", "Nhà cung cấp", "Ngày tạo", "Tổng tiền" };
         tableModel = new DefaultTableModel(columnNames, 0);
-
-        List<HoaDonNhap> danhSach = bus.getAllPhieuNhap();
-        for (HoaDonNhap p : danhSach) {
-            Object[] row = {
-                p.getIdHoaDonNhap(),
-                p.getIdNhanVien(),
-                p.getIdNhaCungCap(),
-                p.getNgayTao(),
-                String.format("%,.0f VND", p.getTongTien())
-            };
-            tableModel.addRow(row);
-        }
 
         table = new JTable(tableModel) {
             @Override
@@ -71,12 +169,19 @@ public class PhieuNhapPanel extends JPanel {
             }
         };
 
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.setFillsViewportHeight(true);
-        table.setRowHeight(30);
-        table.getTableHeader().setReorderingAllowed(false);
+        table.setRowHeight(26);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        header.setPreferredSize(new Dimension(header.getWidth(), 28));
 
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
+
+        refreshTable();
+
         return panel;
     }
 
@@ -97,16 +202,40 @@ public class PhieuNhapPanel extends JPanel {
 
     public void refreshTable() {
         tableModel.setRowCount(0);
+
+        String selectedSupplier = (String) supplierComboBox.getSelectedItem();
+        String selectedEmployee = (String) employeeComboBox.getSelectedItem();
+        Date fromDate = fromDateChooser.getDate();
+        Date toDate = toDateChooser.getDate();
+
         List<HoaDonNhap> danhSach = bus.getAllPhieuNhap();
+
         for (HoaDonNhap p : danhSach) {
-            Object[] row = {
-                p.getIdHoaDonNhap(),
-                p.getIdNhanVien(),
-                p.getIdNhaCungCap(),
-                p.getNgayTao(),
-                String.format("%,.0f VND", p.getTongTien())
-            };
-            tableModel.addRow(row);
+            boolean matches = true;
+
+            if (!"Tất cả".equals(selectedSupplier) && !p.getNhaCungCap().getName().equals(selectedSupplier)) {
+                matches = false;
+            }
+            if (!"Tất cả".equals(selectedEmployee) && !p.getNhanVien().getName().equals(selectedEmployee)) {
+                matches = false;
+            }
+            if (fromDate != null && p.getNgayTao().before(fromDate)) {
+                matches = false;
+            }
+            if (toDate != null && p.getNgayTao().after(toDate)) {
+                matches = false;
+            }
+
+            if (matches) {
+                Object[] row = {
+                    p.getIdHoaDonNhap(),
+                    p.getNhanVien().getName(),
+                    p.getNhaCungCap().getName(),
+                    p.getNgayTao(),
+                    String.format("%,.0f VND", p.getTongTien())
+                };
+                tableModel.addRow(row);
+            }
         }
     }
 }

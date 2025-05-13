@@ -36,8 +36,6 @@ public class ProductDetailPanel extends JPanel {
     private JLabel giaLabel;
     private JLabel soLuongLabel;
 
-
-
     public ProductDetailPanel(Main mainFrame, String id) {
         this.mainFrame = mainFrame;
         this.id = id;
@@ -47,13 +45,12 @@ public class ProductDetailPanel extends JPanel {
     public JPanel createCustomToolbar() {
         JPanel toolbar = new JPanel(new GridLayout(1, 2, 10, 10));
         toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        toolbar.setPreferredSize(new Dimension(950, 110));
+        toolbar.setPreferredSize(new Dimension(960, 90));
         toolbar.setBackground(Color.WHITE);
 
         MenuChucNang menu = new MenuChucNang();
         toolbar.add(menu.createActionPanel(this, mainFrame));
         toolbar.add(MenuChucNang.createSearchPanel());
-        
 
         return toolbar;
     }
@@ -69,14 +66,14 @@ public class ProductDetailPanel extends JPanel {
     }
 
     private JPanel mainProduct() {
-        product = productDAO.getProductByIdFull(id);
+        ProductBUS productBUS = new ProductBUS();
+        product = productBUS.getProductByIdHthi(id);
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.BOTH;
 
-        // ===== Panel thông tin sản phẩm =====
         JPanel contentPanel = new JPanel(new GridLayout(6, 1, 5, 5));
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setBorder(BorderFactory.createTitledBorder("Thông tin sản phẩm"));
@@ -94,67 +91,21 @@ public class ProductDetailPanel extends JPanel {
         contentPanel.add(moTaArea);
 
         contentPanel.add(new JLabel("Trạng thái: " + (product.isTrangThai() ? "Đang bán" : "Ngừng bán")));
-        giaLabel=new JLabel();
-        soLuongLabel=new JLabel(); 
-        if(product.getDanhSachPhienBan().isEmpty()){
-            giaLabel.setText("Giá: " + formatCurrency(0) );
-            soLuongLabel.setText("Số lượng: " + 0 + " cái");
-       
-        }else{
 
-
-        giaLabel.setText("Giá: " + formatCurrency(product.getDanhSachPhienBan().get(phienban-1).getGia()) + " VNĐ");
-        soLuongLabel.setText("Số lượng: " + product.getDanhSachPhienBan().get(phienban-1).getSoLuong() + " cái");
-    }
+        giaLabel = new JLabel();
+        soLuongLabel = new JLabel();
+        if (product.getDanhSachPhienBan().isEmpty()) {
+            giaLabel.setText("Giá: " + formatCurrency(0));
+            soLuongLabel.setText("Số lượng: 0 cái");
+        } else {
+            giaLabel.setText("Giá: " + formatCurrency(product.getDanhSachPhienBan().get(phienban - 1).getGia()) + " VNĐ");
+            soLuongLabel.setText("Số lượng: " + product.getDanhSachPhienBan().get(phienban - 1).getSoLuong() + " cái");
+        }
         contentPanel.add(giaLabel);
         contentPanel.add(soLuongLabel);
+      
+       
 
-        // ===== Panel cấu hình (tab + chi tiết) =====
-        JPanel panelConfigWrapper = new JPanel(new BorderLayout(10, 10));
-        panelConfigWrapper.setBackground(Color.WHITE);
-
-        JPanel variantTabsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        variantTabsPanel.setBackground(Color.WHITE);
-        variantTabsPanel.setBorder(BorderFactory.createTitledBorder("Chọn cấu hình"));
-
-        for (int i = 1; i <= product.getDanhSachPhienBan().size(); i++) {
-            final int index = i;
-            JButton btn = new JButton("Cấu hình " + index);
-            btn.setPreferredSize(new Dimension(120, 30));
-            btn.addActionListener(e ->{
-                phienban = index;
-                updateCauhinh(index);
-                updateActivebutton();
-            }
-            );
-            configButtons.add(btn);
-            variantTabsPanel.add(btn);
-        }
-
-        JButton newButton=new JButton("Thêm cấu hình mới");
-        JButton tmp=new JButton("Xem danh sách sản phẩm có cấu hình này");
-        newButton.setPreferredSize(new Dimension(150, 30));
-        tmp.setPreferredSize(new Dimension(250, 30));
-        newButton.addActionListener(e -> {
-            System.out.println("Thêm cấu hình mới cho sản phẩm: " + product.getTenSp());
-            // mainFrame.showAddProductPanel();
-        });
-        tmp.addActionListener(e -> {
-            System.out.println("Xem danh sách sản phẩm có cấu hình này: " + product.getTenSp()+" - " + product.getDanhSachPhienBan().get(phienban-1).getPhienBan());
-            // mainFrame.showProductListPanel(product.getDanhSachPhienBan().get(phienban-1).getIdCauHinh());
-        }); 
-
-        variantTabsPanel.add(newButton);
-        variantTabsPanel.add(tmp);
-
-        panelConfigWrapper.add(variantTabsPanel, BorderLayout.NORTH);
-
-        // Tạo panel chứa cấu hình, và thêm cấu hình ban đầu
-        cauhinhPanel = new JPanel(new BorderLayout());
-        cauhinhPanel.add(CauhinhPanel(phienban), BorderLayout.CENTER);
-        panelConfigWrapper.add(cauhinhPanel, BorderLayout.CENTER);
-
-        // ==== Gán vào layout chính ====
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1;
@@ -171,9 +122,43 @@ public class ProductDetailPanel extends JPanel {
         gbc.gridwidth = 2;
         gbc.weightx = 1;
         gbc.weighty = 0.4;
-        panel.add(panelConfigWrapper, gbc);
+  if(!product.getDanhSachPhienBan().isEmpty()) {
+            JPanel panelConfigWrapper = createConfigButtons();
+            panel.add(panelConfigWrapper, gbc);
+        }
+        
+
         updateActivebutton();
         return panel;
+    }
+
+    public JPanel createConfigButtons() {
+        JPanel panelConfigWrapper = new JPanel(new BorderLayout(10, 10));
+        panelConfigWrapper.setBackground(Color.WHITE);
+
+        JPanel variantTabsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        variantTabsPanel.setBackground(Color.WHITE);
+        variantTabsPanel.setBorder(BorderFactory.createTitledBorder("Chọn cấu hình"));
+
+        for (int i = 1; i <= product.getDanhSachPhienBan().size(); i++) {
+            final int index = i;
+            JButton btn = new JButton("Cấu hình " + index);
+            btn.setPreferredSize(new Dimension(120, 30));
+            btn.addActionListener(e -> {
+                phienban = index;
+                updateCauhinh(index);
+                updateActivebutton();
+            });
+            configButtons.add(btn);
+            variantTabsPanel.add(btn);
+        }
+
+        panelConfigWrapper.add(variantTabsPanel, BorderLayout.NORTH);
+
+        cauhinhPanel = new JPanel(new BorderLayout());
+        cauhinhPanel.add(CauhinhPanel(phienban), BorderLayout.CENTER);
+        panelConfigWrapper.add(cauhinhPanel, BorderLayout.CENTER);
+        return panelConfigWrapper;
     }
 
     public JPanel CauhinhPanel(int phienban) {
@@ -202,7 +187,6 @@ public class ProductDetailPanel extends JPanel {
         for (ThongSoKyThuat tskt : thongSoList) {
             ChiTietCauHinh chitiet = mapCauHinh.get(tskt.getIdThongSo());
             String labelText = tskt.getTenThongSo() + ": ";
-
             if (chitiet instanceof CauHinhLaptop laptop) {
                 labelText += laptop.getThongTin();
             } else if (chitiet instanceof CauHinhPC pc) {
@@ -264,7 +248,6 @@ public class ProductDetailPanel extends JPanel {
     }
 
     public void updateCauhinh(int i) {
-
         phienban = i;
         cauhinhPanel.removeAll();
         cauhinhPanel.add(CauhinhPanel(i), BorderLayout.CENTER);
@@ -272,10 +255,9 @@ public class ProductDetailPanel extends JPanel {
         cauhinhPanel.repaint();
         giaLabel.setText("Giá: " + formatCurrency(product.getDanhSachPhienBan().get(i - 1).getGia()) + " VNĐ");
         soLuongLabel.setText("Số lượng: " + product.getDanhSachPhienBan().get(i - 1).getSoLuong() + " cái");
-
-    
     }
-    public void updateActivebutton(){
+
+    public void updateActivebutton() {
         for (int i = 0; i < configButtons.size(); i++) {
             if (i == phienban - 1) {
                 configButtons.get(i).setBackground(new Color(100, 149, 237));
@@ -285,18 +267,25 @@ public class ProductDetailPanel extends JPanel {
                 configButtons.get(i).setForeground(Color.BLACK);
             }
         }
-
-
     }
 
-    public static String formatCurrency(double amount) {
-    DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-    symbols.setGroupingSeparator('.');
-    DecimalFormat formatter = new DecimalFormat("#,###", symbols);
-    return formatter.format(amount) + " VNĐ";
-}
+    private String formatCurrency(double amount) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator('.');
+        DecimalFormat formatter = new DecimalFormat("#,###", symbols);
+        return formatter.format(amount);
+    }
 public int getPhienban() {
     return phienban;
 
-}}
+}
+public Product getProduct(){
+    return product;
+}
 
+    public void reloadPanel() {
+    mainFrame.setMainPanel(new ProductDetailPanel(mainFrame, this.id));
+}
+
+
+}

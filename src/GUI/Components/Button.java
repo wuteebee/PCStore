@@ -4,62 +4,58 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
-import java.io.File;
-
+import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
-
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 public class Button extends JButton {
 
     public JButton createStyledButton(String text, String iconPath) {
         JButton button = new JButton(text);
+        button.setPreferredSize(new Dimension(100, 50));
 
         // Kiểm tra iconPath không phải null và không rỗng
         if (iconPath != null && !iconPath.isEmpty()) {
-            System.out.println("Icon path: " + iconPath);
-
-            // Kiểm tra nếu icon là .svg
-            if (iconPath.endsWith(".svg")) {
-                // Xử lý SVG
-                FlatSVGIcon icon = new FlatSVGIcon(iconPath, 32, 32);
-                button.setIcon(icon);
-                System.out.println("Đã set icon SVG");
-
-            } else if (iconPath.endsWith(".png")) {
-                java.net.URL imageURL = getClass().getResource(iconPath.startsWith("/") ? iconPath : "/" + iconPath);
-                if (imageURL != null) {
-                    ImageIcon icon = new ImageIcon(imageURL);
-                    Image img = icon.getImage().getScaledInstance(55, 55, Image.SCALE_SMOOTH);
-                    button.setIcon(new ImageIcon(img));
-                    System.out.println("Load PNG thành công: " + imageURL);
+            try {
+                if (iconPath.endsWith(".svg")) {
+                    // Xử lý SVG
+                    FlatSVGIcon icon = new FlatSVGIcon(iconPath, 20, 20);
+                    button.setIcon(icon);
+                } else if (iconPath.endsWith(".png")) {
+                    java.net.URL imageURL = getClass().getResource(iconPath.startsWith("/") ? iconPath : "/" + iconPath);
+                    if (imageURL != null) {
+                        ImageIcon icon = new ImageIcon(imageURL);
+                        Image img = icon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH); // Đồng nhất kích thước icon
+                        button.setIcon(new ImageIcon(img));
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Không tìm thấy icon: " + iconPath, "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
-                    System.out.println("Không tìm thấy PNG icon tại: " + iconPath);
+                    JOptionPane.showMessageDialog(null, "Định dạng icon không được hỗ trợ: " + iconPath, "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
-            }
-             else {
-                System.out.println("Không hỗ trợ định dạng này");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Lỗi khi tải icon: " + iconPath, "Lỗi", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             }
         } else {
             // Nếu không có icon, set icon null
             button.setIcon(null);
-            System.out.println("Không có icon");
         }
 
-        // Thiết lập vị trí của text và icon
-        button.setVerticalTextPosition(SwingConstants.BOTTOM); 
-        button.setHorizontalTextPosition(SwingConstants.CENTER); 
+        // Vị trí icon và text
+        button.setVerticalTextPosition(SwingConstants.CENTER);
+        button.setHorizontalTextPosition(SwingConstants.RIGHT);
+        button.setIconTextGap(2); // khoảng cách giữa icon và text
 
-        // Thiết lập kích thước và các thuộc tính của button
-        button.setPreferredSize(new Dimension(100, 100)); 
-        button.setFont(new Font("Arial", Font.BOLD, 14)); 
-        button.setFocusable(false); 
-        button.setBackground(Color.WHITE); 
-        button.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-
+        button.setMargin(new Insets(2, 1, 2, 1));
+        button.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        button.setFocusable(false);
+        button.setBackground(Color.WHITE);
+        button.setOpaque(true);
         return button;
     }
 }
