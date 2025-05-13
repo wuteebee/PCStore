@@ -19,7 +19,6 @@ public class Main extends JFrame {
     }
 
     private void initComponents() {
-        // this.setSize(new Dimension(1400, 800));
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(0, 0));
@@ -33,9 +32,9 @@ public class Main extends JFrame {
         MainContent = new JPanel(new BorderLayout());
         MainContent.setBackground(MainColor);
         this.add(MainContent, BorderLayout.CENTER);
-    
-        setMainPanel(new Trangchu()); // Mặc định mở Trang chủ
-    
+
+        setMainPanel(new Trangchu());
+
         this.setVisible(true);
     }
 

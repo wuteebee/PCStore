@@ -13,7 +13,7 @@ public class PhieuNhapDAO {
     private Connection conn;
 
     public PhieuNhapDAO() {
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     // Thêm hóa đơn nhập mới

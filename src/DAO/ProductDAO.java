@@ -1,5 +1,6 @@
 package DAO;
 
+import config.DatabaseConnection;
 import config.H2DatabaseConnection;
 import DTO.*;
 
@@ -26,7 +27,7 @@ public class ProductDAO {
         String sql = "SELECT sp.*, pl.idPhanLoai, pl.STTPL, pl.Gia AS giaPhienBan, pl.soLuongTonKho " +
                      "FROM sanpham sp LEFT JOIN phanloaisp pl ON sp.idSanPham = pl.idSanPham";
 
-        try (Connection conn = H2DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -84,7 +85,7 @@ public class ProductDAO {
 
         String sql = "SELECT * FROM sanpham WHERE idSanPham = ?";
 
-        try (Connection conn = H2DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, id);
@@ -144,7 +145,7 @@ public class ProductDAO {
 
         String sql = "SELECT * FROM sanpham";
 
-        try (Connection conn = H2DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -173,7 +174,7 @@ public class ProductDAO {
         List<ChiTietCauHinh> ctch = new ArrayList<>();
 
         String sql;
-        try (Connection conn = H2DatabaseConnection.getConnection()) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
             if (maDanhMuc.equals("Laptop")) {
                 sql = "SELECT * FROM cauhinhlaptop WHERE idSanPham = ? AND STTPL = ?";
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -214,7 +215,7 @@ public class ProductDAO {
         Product product = null;
         String sql = "SELECT * FROM sanpham WHERE idSanPham = ?";
 
-        try (Connection conn = H2DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, id);
@@ -250,7 +251,7 @@ public class ProductDAO {
             ? "SELECT * FROM chitietsp"
             : "SELECT * FROM chitietsp WHERE idPhanLoai = ?";
     
-        try (Connection conn = H2DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
     
             if (id != null) {
@@ -294,7 +295,7 @@ public class ProductDAO {
         boolean exists = false;
         String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection(); 
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, idSanPham);

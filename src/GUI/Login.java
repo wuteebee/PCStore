@@ -4,7 +4,6 @@ import DAO.AccountDAO;
 import DTO.Account;
 import GUI.Components.InputForm;
 import GUI.Dialog.QuenMatKhau;
-import GUI.Dialog.RegisterDialog;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
@@ -40,8 +39,10 @@ public class Login extends JFrame implements KeyListener {
         Account account = accountDAO.getAccountByUsername(username);
         if (account == null) {
             JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            new Main(new Account());
         } else if (account.getTrangThai() == 0) {
             JOptionPane.showMessageDialog(this, "Tài khoản của bạn đang bị khóa", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            new Main(new Account());
         } else if (password.equals(account.getMatKhau())) {
             this.dispose();
             new Main(account);

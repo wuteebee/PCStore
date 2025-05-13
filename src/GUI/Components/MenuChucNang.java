@@ -50,9 +50,9 @@ public class MenuChucNang {
             btnProduct.addActionListener(actionListener);
             btnExport.addActionListener(actionListener);
             actionPanel.add(btnFinance);
-            actionPanel.add(btnEdit);
-            actionPanel.add(btnEmployee);
             actionPanel.add(btnProduct);
+            actionPanel.add(btnEmployee);
+            actionPanel.add(btnExport);
         }
         else if (panel instanceof CustomerPanel) {
             CustomerPanel customerPanel = (CustomerPanel) panel;

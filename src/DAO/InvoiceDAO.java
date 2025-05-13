@@ -18,7 +18,7 @@ public class InvoiceDAO {
 
 
     public InvoiceDAO() {
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     public List<SalesInvoice> getAllSalesInvoice() {

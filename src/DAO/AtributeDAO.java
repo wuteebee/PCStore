@@ -18,7 +18,7 @@ public class AtributeDAO {
     private Connection conn;
 
     public AtributeDAO() {
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     public List<Catalog> getAllCatalogs() {

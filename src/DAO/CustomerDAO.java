@@ -17,7 +17,7 @@ public class CustomerDAO {
     private Connection conn;
 
     public CustomerDAO() {
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     public List<Customer> getAllCustomers() {

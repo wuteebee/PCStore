@@ -82,4 +82,6 @@ public class PromotionBUS {
         } while (promotionDAO.getAllPromotions().stream().anyMatch(p -> p.getIdKhuyenMai().equals(id.toString())));
         return id.toString();
     }
+
+
 }

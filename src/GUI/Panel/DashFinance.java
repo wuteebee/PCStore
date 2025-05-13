@@ -101,14 +101,14 @@ public class DashFinance extends JPanel {
 
             int salesValue = sales.size() > i ? (int) ((sales.get(i).intValue() * height / max) * (1 - topGap)) : 0;
             int promoValue = proms.size() > i ? (int) ((proms.get(i).intValue() * height / max) * (1 - topGap)) : 0;
-            int comValue = coms.size() > i ? (int) ((coms.get(i).intValue() * height / max) * (1 - topGap))  : 0;
+            int comValue = coms.size() > i ? (int) ((coms.get(i).intValue() * height / max) * (1 - topGap)) : 0;
 
             int baseX = widthGap + 3 * i * barWidth;
             int salesX = baseX;
             int comX = baseX + barWidth;
 
             int salesY = height - heightGap;
-            int promoY = salesY - salesValue ;
+            int promoY = salesY - salesValue;
             int comY = height - heightGap;
 
             salesRects.add(new Rectangle(salesX, salesY - salesValue, barWidth, salesValue));
@@ -132,7 +132,7 @@ public class DashFinance extends JPanel {
     }
 
     private BigDecimal bdCon(double value) {
-        MathContext mc = new MathContext(4, RoundingMode.HALF_UP);
+        MathContext mc = new MathContext(4, RoundingMode.HALF_EVEN);
         return new BigDecimal(value, mc);
     }
 
@@ -156,7 +156,10 @@ public class DashFinance extends JPanel {
         int lineGap = (int) (height * (1 - topGap)) / 10;
         g2D.setColor(Color.RED);
         for (int i = 1; i <= 10; i++) {
-            g2D.drawLine(widthGap,height - heightGap - i * lineGap, width,height - heightGap - i * lineGap);
+            g2D.setColor(Color.RED);
+            g2D.drawLine(widthGap, height - 3 - heightGap - i * lineGap, width, height - 3 - heightGap - i * lineGap);
+            int figure = roundToNextHundred(max) / 10;
+            g2D.drawString(String.valueOf(figure * i), widthGap, height - 5 - heightGap - i * lineGap);
         }
     }
 
@@ -200,6 +203,14 @@ public class DashFinance extends JPanel {
         });
     }
 
+    public static int roundToNextHundred(int number) {
+        if (number % 100 == 0) {
+            return number; // Already a multiple of 100
+        } else {
+            return ((number / 100) + 1) * 100;
+        }
+    }
+
     private void updateTooltip(MouseEvent e) {
         Point mousePoint = e.getPoint();
         int promoIndex = getHoverIndex(promoRects, mousePoint);
@@ -228,7 +239,7 @@ public class DashFinance extends JPanel {
 
     private void showTooltip(BigDecimal value, Rectangle rect) {
         tooltipContent.removeAll();
-        tooltipContent.add(new JLabel(value.toString()), BorderLayout.CENTER);
+        tooltipContent.add(new JLabel(value.setScale(0, RoundingMode.HALF_UP).toPlainString()), BorderLayout.CENTER);
         tooltipContent.revalidate();
         tooltipContent.repaint();
 
