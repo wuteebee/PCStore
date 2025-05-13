@@ -17,11 +17,11 @@ import GUI.Panel.PhieuNhapPanel;
 import GUI.Panel.ProductDetailPanel;
 import GUI.Panel.Trangchu;
 
-public class SupplierActionListener implements ActionListener{
+public class PhieuNhapActionListener implements ActionListener{
     private PhieuNhapPanel panel;
     private Main MainFrame;
 
-    public SupplierActionListener(PhieuNhapPanel panel, Main MainFrame) {
+    public PhieuNhapActionListener(PhieuNhapPanel panel, Main MainFrame) {
         this.panel = panel;
         this.MainFrame = MainFrame;
     }
@@ -31,7 +31,7 @@ public class SupplierActionListener implements ActionListener{
               String id;
                 switch (e.getActionCommand()) {
             case "Thêm":
-              MainFrame.setMainPanel(new NhapHoaDonPanel());
+              MainFrame.setMainPanel(new NhapHoaDonPanel(MainFrame));
                 
                 break;
             case "Sửa":

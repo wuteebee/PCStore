@@ -18,6 +18,9 @@ public class Main extends JFrame {
         initComponents();
     }
 
+    public Account getUser() {
+        return user;
+    }
     private void initComponents() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setLocationRelativeTo(null);
@@ -43,6 +46,7 @@ public class Main extends JFrame {
         MainContent.add(panel, BorderLayout.CENTER);
         MainContent.revalidate();
         MainContent.repaint();
+
     }
 
     public static void main(String[] args) {
@@ -51,6 +55,8 @@ public class Main extends JFrame {
         } catch (Exception ex) {
             System.err.println("Failed to initialize FlatLaf");
         }
+
+        UIManager.put("Component.opaque", true);
 
         new Login();
     }

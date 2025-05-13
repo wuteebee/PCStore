@@ -36,7 +36,7 @@ public class ProductBUS {
 
         if (product.getDanhMuc().getMaDanhMuc().equals("DM002")) {
             product.getDanhSachPhienBan().forEach(item -> {
-                if(item.getPhienBan().equals(version)){
+                if(item.getPhienBan()==Integer.parseInt(version)){
                     item.getChitiet().forEach(item1->{
                          danhsach.add(item1);
                     });
@@ -49,7 +49,7 @@ public class ProductBUS {
         else{
             product.getDanhSachPhienBan().forEach(item->{
 
-                if(item.getPhienBan().equals(version+"")){
+                if(item.getPhienBan()==Integer.parseInt(version)){
                     item.getChitiet().forEach(item1->{
                             // if(item1 instanceof CauHinhLaptop){
                             //     CauHinhLaptop item2 = (CauHinhLaptop) item1;

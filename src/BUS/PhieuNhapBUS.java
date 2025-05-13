@@ -3,6 +3,7 @@ package BUS;
 import DAO.PhieuNhapDAO;
 import DTO.ChiTietDonNhap;
 import DTO.HoaDonNhap;
+import DTO.ProductDetail;
 
 import java.util.List;
 
@@ -36,4 +37,16 @@ public class PhieuNhapBUS {
     public List<ChiTietDonNhap> getAll_ChiTietDonNhap(){
         return dao.getAll_CTDonNhap();
     }
+
+    public String insertHoaDonNhap(HoaDonNhap hdn) {
+        return dao.insertHoaDonNhap(hdn);
+    }
+
+    public boolean insertChitietSP(ProductDetail productDetail){
+        PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
+        return phieuNhapDAO.insertChitietSP(productDetail);
+    }
+    public boolean insertChitietPhieuNhap(ProductDetail productDetail){
+        PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
+        return phieuNhapDAO.insertChitietPhieuNhap(productDetail);    }
 }

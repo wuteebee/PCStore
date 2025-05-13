@@ -67,7 +67,7 @@ public class MenuLeft extends JPanel {
         this.user = user;
         this.accountDAO = new AccountDAO();
         this.employeeDAO = new EmployeeDAO();
-        setOpaque(true);
+        this.setOpaque(true);
         setBackground(DefaultColor);
         setLayout(new BorderLayout(0, 0));
 
@@ -77,7 +77,7 @@ public class MenuLeft extends JPanel {
         pnlTop.setLayout(new BorderLayout(0, 0));
         add(pnlTop, BorderLayout.NORTH);
 
-        // Add user information to top panel
+
         addUserInfo(pnlTop);
 
         bar1 = new JPanel();
@@ -124,7 +124,12 @@ public class MenuLeft extends JPanel {
             listItems.get(0).pnlContent.setForeground(HowerFontColor);
         }
     }
-
+   @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g); // Quan trọng để không bị "mờ"
+        g.setColor(getBackground()); // Nên dùng getBackground() nếu có thay đổi nền
+        g.fillRect(0, 0, getWidth(), getHeight());
+    }
     private void addUserInfo(JPanel info) {
         JPanel pnlInfo = new JPanel();
         pnlInfo.setOpaque(false);
@@ -185,7 +190,7 @@ public class MenuLeft extends JPanel {
         item.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println("Menu clicked: " + menuName);
+                // System.out.println("Menu clicked: " + menuName);
                 handleMenuClick(menuName);
                 updateSelection(item);
             }
@@ -263,10 +268,10 @@ public class MenuLeft extends JPanel {
         for (itemTaskbar item : listItems) {
             if (item == selectedItem) {
                 item.setSelected(true);
-                item.pnlContent.setForeground(HowerFontColor);
+                // item.pnlContent.setForeground(HowerFontColor);
             } else {
                 item.setSelected(false);
-                item.pnlContent.setForeground(FontColor);
+                // item.pnlContent.setForeground(FontColor);
             }
         }
     }

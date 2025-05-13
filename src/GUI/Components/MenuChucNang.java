@@ -6,7 +6,7 @@ import GUI.ActionListener.EmployeeActionListener;
 import GUI.ActionListener.ProductActionListener;
 import GUI.ActionListener.ProductDetailActionListener;
 import GUI.ActionListener.PromotionActionListener;
-import GUI.ActionListener.SupplierActionListener;
+import GUI.ActionListener.PhieuNhapActionListener;
 import GUI.Main;
 import GUI.Panel.*;
 import java.awt.Color;
@@ -77,7 +77,7 @@ public class MenuChucNang {
         
         else if (panel instanceof PhieuNhapPanel) {
             PhieuNhapPanel phieuNhapPanel = (PhieuNhapPanel) panel;
-            SupplierActionListener actionListener = new SupplierActionListener(phieuNhapPanel,MainFrame);
+            PhieuNhapActionListener actionListener = new PhieuNhapActionListener(phieuNhapPanel,MainFrame);
             btnAdd.addActionListener(actionListener);
             btnEdit.addActionListener(actionListener);
             btnDelete.addActionListener(actionListener);
@@ -129,11 +129,11 @@ public class MenuChucNang {
             //     }
             // });
 
-            actionPanel.add(btnAdd);
-            actionPanel.add(btnEdit);
-            actionPanel.add(btnDelete);
-            actionPanel.add(btnExport);
-            actionPanel.add(btnDetail);
+            // actionPanel.add(btnAdd);
+            // actionPanel.add(btnEdit);
+            // actionPanel.add(btnDelete);
+            // actionPanel.add(btnExport);
+            // actionPanel.add(btnDetail);
         } else if (panel instanceof PromotionPanel) {
             PromotionPanel promotionPanel = (PromotionPanel) panel;
             PromotionActionListener actionListener = new PromotionActionListener(promotionPanel);

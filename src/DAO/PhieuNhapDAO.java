@@ -2,6 +2,7 @@ package DAO;
 
 import DTO.ChiTietDonNhap;
 import DTO.HoaDonNhap;
+import DTO.ProductDetail;
 import config.DatabaseConnection;
 
 import java.sql.*;
@@ -116,4 +117,84 @@ public class PhieuNhapDAO {
 
         return danhsach;
     }
+public String insertHoaDonNhap(HoaDonNhap hdn) {
+    String maHoaDon = null;
+
+    String sql = "INSERT INTO hoadonnhap (idNhanVien, idNhaCungCap,ngayTao,tongTien) VALUES (?, ?, ?,?)";
+    
+    try (Connection conn = DatabaseConnection.getConnection(); // <-- dùng kết nối tới DB
+         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+         System.out.println("Tổng tiền"+hdn.getTongTien());
+        stmt.setString(2, hdn.getNhaCungCap().getId());        // idNhaCungCap
+        stmt.setString(1, hdn.getNhanVien().getId());          // idNhanVien
+        stmt.setDate(3, hdn.getNgayTao());
+        stmt.setDouble(4,hdn.getTongTien());                 // java.sql.Date
+
+        int affectedRows = stmt.executeUpdate();
+
+        if (affectedRows > 0) {
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    maHoaDon = String.valueOf(generatedKeys.getInt(1));
+                }
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return maHoaDon;
+}
+
+public boolean insertChitietSP(ProductDetail productDetail) {
+    boolean Save = false;
+    String sql = "INSERT INTO chitietsp (SerialNumber, idPhanLoai) VALUES (?, ?)";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        stmt.setString(1, productDetail.getSerialNumber());
+        stmt.setInt(2, productDetail.getIdPhanLoai());
+
+        int affectedRows = stmt.executeUpdate();
+
+        if (affectedRows > 0) {
+            Save = true; 
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return Save;
+}
+
+public boolean insertChitietPhieuNhap(ProductDetail productDetail) {
+    boolean Save = false;
+    System.out.println("Mã đơn hàng trong insert"+productDetail.getMaPhieuNhap());
+    String sql = "INSERT INTO chitietdonnhap (idDonHang,SN,donGia) VALUES (?,?,?)";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        stmt.setString(1, productDetail.getMaPhieuNhap());
+        stmt.setString(2, productDetail.getSerialNumber());
+        stmt.setDouble(3, productDetail.getGiaNhap());
+
+
+        int affectedRows = stmt.executeUpdate();
+
+        if (affectedRows > 0) {
+            Save = true; 
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return Save;
+}
+
+
 }

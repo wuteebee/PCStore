@@ -48,9 +48,9 @@ public class ProductDAO {
                     productMap.put(idSP, product);
                 }
 
-                String idVariant = rs.getString("idPhanLoai");
-                if (idVariant != null) {
-                    String phienBan = rs.getString("STTPL");
+                int idVariant = rs.getInt("idPhanLoai");
+                if (!rs.wasNull()) {
+                    int phienBan = rs.getInt("STTPL");
                     double gia = rs.getDouble("Gia");
                     int soLuong = rs.getInt("soLuongTonKho");
                     boolean tthai = rs.getBoolean("trangThai");
@@ -106,8 +106,8 @@ public class ProductDAO {
                     stmtVariants.setString(1, id);
                     ResultSet rsVar = stmtVariants.executeQuery();
                     while (rsVar.next()) {
-                        String idPL = rsVar.getString("idPhanLoai");
-                        String phienBan = rsVar.getString("STTPL");
+                        int idPL = rsVar.getInt("idPhanLoai");
+                        int phienBan = rsVar.getInt("STTPL");
                          gia = rsVar.getDouble("Gia");
                         int soLuong = rsVar.getInt("soLuongTonKho");
                         boolean tt = rsVar.getBoolean("trangThai");
@@ -169,7 +169,7 @@ public class ProductDAO {
         return products;
     }
 
-    public List<ChiTietCauHinh> getCauhinhTrucTiep(String idSP, String phienBan, String maDanhMuc) {
+    public List<ChiTietCauHinh> getCauhinhTrucTiep(String idSP, int phienBan, String maDanhMuc) {
         List<ChiTietCauHinh> ctch = new ArrayList<>();
 
         String sql;
@@ -178,13 +178,13 @@ public class ProductDAO {
                 sql = "SELECT * FROM cauhinhlaptop WHERE idSanPham = ? AND STTPL = ?";
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                     pstmt.setString(1, idSP);
-                    pstmt.setInt(2, Integer.parseInt(phienBan));
+                    pstmt.setInt(2, phienBan);
                     ResultSet rs = pstmt.executeQuery();
                     while (rs.next()) {
                         String idThongTin = rs.getString("idThongTin");
                         String thongTin = rs.getString("ThongTin");
                     //    System.out.println("ID: " + idThongTin + ", Thong Tin: " + thongTin + "Phiên bản: "+ phienBan); ;
-                        ctch.add(new CauHinhLaptop(idSP, idThongTin, Integer.parseInt(phienBan), thongTin));
+                        ctch.add(new CauHinhLaptop(idSP, idThongTin, phienBan, thongTin));
                         // System.out.println("ID: " + idThongTin + ", Thong Tin: " + thongTin);
                     }
                 }
@@ -192,14 +192,14 @@ public class ProductDAO {
                 sql = "SELECT * FROM cauhinhpc WHERE idSanPham = ? AND STTPL = ?";
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                     pstmt.setString(1, idSP);
-                    pstmt.setInt(2, Integer.parseInt(phienBan));
+                    pstmt.setInt(2, phienBan);
                     ResultSet rs = pstmt.executeQuery();
                     while (rs.next()) {
                         String idThongTin = rs.getString("idThongTin");
                         String idLinhKien = rs.getString("idLinhKien");
 
                         Product linhKien = getSanPhamLite(idLinhKien);
-                        ctch.add(new CauHinhPC(idSP, idThongTin, Integer.parseInt(phienBan), linhKien));
+                        ctch.add(new CauHinhPC(idSP, idThongTin, phienBan, linhKien));
                     }
                 }
             }
@@ -605,14 +605,14 @@ public String getIDPhanLoai(String idsp, int STTPL) {
             return false;
         }
     }
-    public boolean updateTrangThaiplsp(String idPhanLoai, boolean trangThai) {
+    public boolean updateTrangThaiplsp(int idPhanLoai, boolean trangThai) {
         String sql = "UPDATE phanloaisp SET trangThai = ? WHERE idPhanLoai = ?";
     
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setBoolean(1, trangThai);
-            stmt.setString(2, idPhanLoai);
+            stmt.setInt(2, idPhanLoai);
     
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;

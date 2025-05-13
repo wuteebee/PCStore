@@ -195,11 +195,12 @@ CREATE TABLE IF NOT EXISTS ChiTietHoaDonXuat (
 
 -- Create HoaDonNhap table
 CREATE TABLE IF NOT EXISTS HoaDonNhap (
-    idHoaDonNhap VARCHAR(20) PRIMARY KEY,
+    idHoaDonNhap INT PRIMARY KEY AUTO_INCREMENT,
+
     idNhanVien VARCHAR(20) NOT NULL,
     idNhaCungCap VARCHAR(20) NOT NULL,
     ngayTao DATE NOT NULL,
-    tongTien DECIMAL(10,2) NOT NULL,
+    tongTien DECIMAL(18,2) NOT NULL,
     FOREIGN KEY (idNhanVien) REFERENCES NhanVien(idNhanVien),
     FOREIGN KEY (idNhaCungCap) REFERENCES NhaCungCap(idNhaCungCap)
 );
@@ -210,8 +211,8 @@ CREATE TABLE IF NOT EXISTS HoaDonNhap (
 CREATE TABLE IF NOT EXISTS ChiTietDonNhap (
     idDonHang INT,
     SN VARCHAR(50) NOT NULL,  
-    donGia DECIMAL(12,2) NOT NULL, -- Đơn giá tại thời điểm mua
-    thanhTien DECIMAL(15,2) NOT NULL, 
+    donGia DECIMAL(15,2) NOT NULL, -- Đơn giá tại thời điểm mua
+
     PRIMARY KEY (idDonHang,SN),
     FOREIGN KEY (SN) REFERENCES ChiTietSP(SerialNumber)
 
