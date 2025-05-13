@@ -1,21 +1,11 @@
 package GUI.Components;
 
-import GUI.ActionListener.CustomerActionListener;
-import GUI.ActionListener.EmployeeActionListener;
-import GUI.ActionListener.ProductActionListener;
-import GUI.ActionListener.ProductDetailActionListener;
-import GUI.ActionListener.PromotionActionListener;
+import GUI.ActionListener.*;
 import GUI.Main;
 import GUI.Panel.*;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+
+import java.awt.*;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 public class MenuChucNang {
@@ -25,10 +15,14 @@ public class MenuChucNang {
     private static JButton btnReset = new Button().createStyledButton("Làm mới", null);
 
     public JPanel createActionPanel(JPanel panel, Main MainFrame) {
-        JPanel actionPanel = new JPanel(new GridLayout(1, 4, 10, 10)); 
+        JPanel actionPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         actionPanel.setPreferredSize(new Dimension(475, 100));  
         actionPanel.setBackground(Color.WHITE);  
-        Button buttonFactory = new Button();  
+        Button buttonFactory = new Button();
+        JButton btnFinance = buttonFactory.createStyledButton("Tài chính", "./resources/icon/add.png");
+        JButton btnEmployee = buttonFactory.createStyledButton("Nhân viên", "./resources/icon/add.png");
+        JButton btnProduct = buttonFactory.createStyledButton("Sản phẩm", "./resources/icon/add.png");
+
         JButton btnAdd = buttonFactory.createStyledButton("Thêm", "./resources/icon/add.png");
         JButton btnEdit = buttonFactory.createStyledButton("Sửa", "./resources/icon/edit.png");
         JButton btnDelete = buttonFactory.createStyledButton("Xóa", "./resources/icon/delete.png");
@@ -47,6 +41,18 @@ public class MenuChucNang {
             actionPanel.add(btnEdit);
             actionPanel.add(btnDelete);
             actionPanel.add(btnExport);
+        }
+        else if (panel instanceof DashboardPanel) {
+            DashboardPanel dashboardPanel = (DashboardPanel) panel;
+            DashboardActionListener actionListener = new DashboardActionListener(dashboardPanel);
+            btnFinance.addActionListener(actionListener);
+            btnEmployee.addActionListener(actionListener);
+            btnProduct.addActionListener(actionListener);
+            btnExport.addActionListener(actionListener);
+            actionPanel.add(btnFinance);
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnEmployee);
+            actionPanel.add(btnProduct);
         }
         else if (panel instanceof CustomerPanel) {
             CustomerPanel customerPanel = (CustomerPanel) panel;
@@ -196,7 +202,7 @@ public class MenuChucNang {
         Button buttonFactory = new Button();
         JButton btnSearch = buttonFactory.createStyledButton("Tìm kiếm", "./resources/icon/find.svg");
 
-        btnSearch.setHorizontalTextPosition(SwingConstants.RIGHT); 
+        btnSearch.setHorizontalTextPosition(SwingConstants.RIGHT);
         btnSearch.setVerticalTextPosition(SwingConstants.CENTER);
         btnSearch.setPreferredSize(new Dimension(100, 40)); 
         btnSearch.setFont(new Font("Arial", Font.BOLD, 12)); 

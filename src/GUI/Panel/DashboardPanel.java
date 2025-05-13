@@ -21,11 +21,11 @@ public class DashboardPanel extends JPanel {
 
 
     public DashboardPanel(Main mainFrame) {
-        this.salesInvoiceBUS = new InvoiceBUS(new InvoiceDAO());
-        this.comInvoiceBUS = new PhieuNhapBUS(new PhieuNhapDAO());
-        this.productBUS = new ProductBUS();
-        this.employeeBUS = new EmployeeBUS(new EmployeeDAO());
-        this.promotionBUS = new PromotionBUS();
+//        this.salesInvoiceBUS = new InvoiceBUS(new InvoiceDAO());
+//        this.comInvoiceBUS = new PhieuNhapBUS(new PhieuNhapDAO());
+//        this.productBUS = new ProductBUS();
+//        this.employeeBUS = new EmployeeBUS(new EmployeeDAO());
+//        this.promotionBUS = new PromotionBUS();
 
         this.mainFrame = mainFrame;
         this.statistics = new JPanel();
@@ -47,8 +47,6 @@ public class DashboardPanel extends JPanel {
         System.out.println(statistics.getSize());
 
 
-
-
     }
 
     public JPanel createDashboardToolbar() {
@@ -62,6 +60,8 @@ public class DashboardPanel extends JPanel {
 
     public void financeStatistics() {
         DashFinance financeStatistics = new DashFinance(salesInvoiceBUS, comInvoiceBUS, promotionBUS);
+
+
         setStatistics(financeStatistics);
     }
 

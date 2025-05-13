@@ -6,15 +6,7 @@ import DTO.Account;
 import DTO.Employee;
 import GUI.Login;
 import GUI.Main;
-import GUI.Panel.AccountPanel;
-import GUI.Panel.CustomerPanel;
-import GUI.Panel.EmployeePanel;
-import GUI.Panel.PhieuNhapPanel;
-import GUI.Panel.ProductPanel;
-import GUI.Panel.PromotionPanel;
-import GUI.Panel.SaleInvoicePanel;
-import GUI.Panel.SupplierPanel;
-import GUI.Panel.Trangchu;
+import GUI.Panel.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -246,6 +238,7 @@ public class MenuLeft extends JPanel {
             case "Nhà cung cấp" -> mainFrame.setMainPanel(new SupplierPanel(mainFrame));
             case "Tài khoản" -> mainFrame.setMainPanel(new AccountPanel(mainFrame));
             case "Khuyến mãi và ưu đãi" -> mainFrame.setMainPanel(new PromotionPanel(mainFrame));
+            case "Thống kê" -> mainFrame.setMainPanel(new DashboardPanel(mainFrame));
             case "Đăng xuất" -> {
                 int input = JOptionPane.showConfirmDialog(null,
                         "Bạn có chắc chắn muốn đăng xuất?", "Đăng xuất",
