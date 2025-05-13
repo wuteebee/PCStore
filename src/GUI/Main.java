@@ -20,7 +20,8 @@ public class Main extends JFrame {
     }
 
     private void initComponents() {
-        // this.setSize(new Dimension(1400, 800));
+//        this.setSize(new Dimension(1920, 1080));
+        this.setUndecorated(true);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         this.setLocationRelativeTo(null);
@@ -43,7 +44,7 @@ public class Main extends JFrame {
         this.add(MainContent, BorderLayout.CENTER);
     
         setMainPanel(new Trangchu()); // Mặc định mở Trang chủ
-    
+
         this.setVisible(true);
     }
 

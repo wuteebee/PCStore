@@ -4,13 +4,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import DTO.Supplier;
-import config.DatabaseConnection;
+import config.H2DatabaseConnection;
 
 public class SupplierDAO {
     private Connection conn;
 
     public SupplierDAO() {
-        conn = DatabaseConnection.getConnection();
+        conn = H2DatabaseConnection.getConnection();
     }
 
     public List<Supplier> getAllSuppliers() {

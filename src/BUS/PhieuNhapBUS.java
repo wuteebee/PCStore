@@ -12,6 +12,10 @@ public class PhieuNhapBUS {
         dao = new PhieuNhapDAO();
     }
 
+    public PhieuNhapBUS(PhieuNhapDAO dao) {
+        this.dao = dao;
+    }
+
     // Lấy tất cả hóa đơn nhập
     public List<HoaDonNhap> getAllPhieuNhap() {
         return dao.getAll();

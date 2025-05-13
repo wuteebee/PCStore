@@ -9,14 +9,7 @@ import javax.swing.*;
 
 // import GUI.BanHang;
 import GUI.Main;
-import GUI.Panel.SaleInvoicePanel;
-import GUI.Panel.CustomerPanel;
-import GUI.Panel.EmployeePanel;
-import GUI.Panel.PhieuNhapPanel;
-import GUI.Panel.ProductPanel;
-import GUI.Panel.PromotionPanel;
-import GUI.Panel.SupplierPanel;
-import GUI.Panel.Trangchu;
+import GUI.Panel.*;
 import net.miginfocom.swing.MigLayout;
 
 public class MenuLeft extends JPanel {
@@ -141,9 +134,13 @@ public class MenuLeft extends JPanel {
                 JOptionPane.showMessageDialog(mainFrame, "Đăng xuất thành công!");
                 System.exit(0);
                 break;
+            case "Thống kê":
+                mainFrame.setMainPanel(new DashboardPanel(mainFrame));
+                break;
             default:
                 JOptionPane.showMessageDialog(mainFrame, "Chức năng đang phát triển!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 break;
         }
+        System.out.println(getSize() + "Menuleft");
     }
 }

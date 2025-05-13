@@ -2,6 +2,7 @@ package DAO;
 
 import DTO.HoaDonNhap;
 import config.DatabaseConnection;
+import config.H2DatabaseConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class PhieuNhapDAO {
     private Connection conn;
 
     public PhieuNhapDAO() {
-        conn = DatabaseConnection.getConnection();
+        conn = H2DatabaseConnection.getConnection();
     }
 
     // Thêm hóa đơn nhập mới

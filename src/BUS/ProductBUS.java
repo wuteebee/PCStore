@@ -18,55 +18,52 @@ public class ProductBUS {
         Product product = new Product();
         ProductDAO productDAO = new ProductDAO();
         product = productDAO.getProductByIdFull(id);
-        
+
         return product;
     }
 
     public List<ChiTietCauHinh> getProductInfoconfig(String id, String version) {
-     
-        List <ChiTietCauHinh> danhsach= new ArrayList<>();
+
+        List<ChiTietCauHinh> danhsach = new ArrayList<>();
         Product product = new Product();
         ProductDAO productDAO = new ProductDAO();
         product = productDAO.getProductByIdFull(id);
-       
+
 
         if (product.getDanhMuc().getMaDanhMuc().equals("DM002")) {
-            
+
             product.getDanhSachPhienBan().forEach(item -> {
-                if(item.getPhienBan().equals(version)){
-                    item.getChitiet().forEach(item1->{
-                         danhsach.add(item1);
+                if (item.getPhienBan().equals(version)) {
+                    item.getChitiet().forEach(item1 -> {
+                        danhsach.add(item1);
                     });
                 }
-                
+
 
             });
-            
-        } 
-        else{
-            product.getDanhSachPhienBan().forEach(item->{
 
-                if(item.getPhienBan().equals(version+"")){
-                    item.getChitiet().forEach(item1->{
-                            // if(item1 instanceof CauHinhLaptop){
-                            //     CauHinhLaptop item2 = (CauHinhLaptop) item1;
-                            //     System.out.println("ID: " + item2.getIdThongTin()+ " " +"Thông tin "+item2.getThongTin());
-                            //     danhsach.add(item2);
-                            // }  
-                            danhsach.add(item1);
+        } else {
+            product.getDanhSachPhienBan().forEach(item -> {
+
+                if (item.getPhienBan().equals(version + "")) {
+                    item.getChitiet().forEach(item1 -> {
+                        // if(item1 instanceof CauHinhLaptop){
+                        //     CauHinhLaptop item2 = (CauHinhLaptop) item1;
+                        //     System.out.println("ID: " + item2.getIdThongTin()+ " " +"Thông tin "+item2.getThongTin());
+                        //     danhsach.add(item2);
+                        // }
+                        danhsach.add(item1);
                     });
                 }
-          
+
             });
 
-   
+
         }
-    
-        
 
 
-return danhsach;
-    }                            
+        return danhsach;
+    }
 
 
     public List<ProductDetail> getProductDetailList(int id) {
@@ -81,7 +78,6 @@ return danhsach;
         // productDetails = productDAO.getProductDetailById(id);
         return productDetails;
     }
-
 
 
 }

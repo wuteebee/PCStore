@@ -3,6 +3,7 @@ package DAO;
 import DTO.DetailedSalesInvoice;
 import DTO.SalesInvoice;
 import config.DatabaseConnection;
+import config.H2DatabaseConnection;
 
 import java.sql.*;
 import java.sql.Date;
@@ -17,7 +18,7 @@ public class InvoiceDAO {
 
 
     public InvoiceDAO() {
-        conn = DatabaseConnection.getConnection();
+        conn = H2DatabaseConnection.getConnection();
     }
 
     public List<SalesInvoice> getAllSalesInvoice() {
@@ -58,10 +59,8 @@ public class InvoiceDAO {
                 String fid = rs.getString("idHoaDonXuat");
                 String seri = rs.getString("SN");
                 double donGia = rs.getDouble("donGia");
-                int soLuong = rs.getInt("soLuong");
-                double thanhTien = rs.getDouble("thanhTien");
 
-                DetailedSalesInvoice detailedSalesInvoice = new DetailedSalesInvoice(id, fid, seri, soLuong, donGia);
+                DetailedSalesInvoice detailedSalesInvoice = new DetailedSalesInvoice(id, fid, seri, donGia);
                 (salesInvoiceMap.get(fid)).addDetailedSalesInvoice(detailedSalesInvoice);
                 detailedSalesInvoiceMap.put(id, detailedSalesInvoice);
             }
@@ -190,5 +189,23 @@ public class InvoiceDAO {
 
     public static Map<String, SalesInvoice> getSalesInvoiceMap() {
         return salesInvoiceMap;
+    }
+
+    public double getFirstPromotionInSalesInvoice() {
+        String sql = "SELECT km.giaTri, km.idKhuyenMai FROM KhuyenMai AS km\n" +
+                "LEFT JOIN HoaDonXuat AS hdx ON km.idKhuyenMai = hdx.idKhuyenMai\n" +
+                "ORDER BY hdx.ngayTao ASC\n" +
+                "LIMIT 1";
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            double giaTri = rs.getDouble("giaTri");
+            return giaTri;
+        } catch (SQLException e) {
+            System.out.println("Lỗi lấy khuyến mãi: " + e.getMessage());
+            e.printStackTrace();
+            return 0.0;
+        }
+        
     }
 }

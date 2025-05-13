@@ -206,7 +206,6 @@ CREATE TABLE IF NOT EXISTS ChiTietDonNhap (
     thanhTien DECIMAL(15,2) NOT NULL, 
     PRIMARY KEY (idDonHang,SN),
     FOREIGN KEY (SN) REFERENCES ChiTietSP(SerialNumber)
-
 );
 
 
