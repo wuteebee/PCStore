@@ -20,6 +20,7 @@ import BUS.ProductBUS;
 import BUS.SupplierBUS;
 import DAO.AtributeDAO;
 import DAO.EmployeeDAO;
+import DAO.PhieuNhapDAO;
 import DAO.ProductDAO;
 import DTO.CauHinhLaptop;
 import DTO.CauHinhPC;
@@ -156,11 +157,16 @@ private void updatePhieuNhap() {
     tfImeiTo.setText("");
 
     cbPhuongThuc.setSelectedIndex(0);
-    
+    PhieuNhapDAO phieuNhapDAO =new PhieuNhapDAO();
+
     if(rbTuNhap.isSelected()){
-        imei = tfMaImei.getText();
+ 
         List<ProductDetail> list = new ArrayList<>();
         System.out.println("imei nè" +imei);
+        if(phieuNhapDAO.isImeiExistInDatabase(imei)||isImeiExistInChiTietHDN(imei)){
+             JOptionPane.showMessageDialog(null, "IMEI " + imei + " đã tồn tại! Không thể thêm trùng.");
+            return;
+        }
         ProductDetail productDetail = new ProductDetail(imei, maphanloai, Double.parseDouble(giaNhap) , true);
         list.add(productDetail);
          chiTietHDN.put((modelChiTiet.getRowCount() + 1)+"", list);
@@ -169,10 +175,13 @@ private void updatePhieuNhap() {
     else if(rbTheoKhoang.isSelected()){
 
         imei = tfImeiFrom.getText() + " - " + tfImeiTo.getText();
-        System.out.println("imei: " + imei);
+        // System.out.println("imei: " + imei);
         List<ProductDetail> list = new ArrayList<>();
         for (String imeiNumber : generateImeiList(imeiFrom, imeiTo)) {
-            System.out.println("Ê"+ imeiNumber );
+              if(phieuNhapDAO.isImeiExistInDatabase(imeiNumber)||isImeiExistInChiTietHDN(imeiNumber)){
+             JOptionPane.showMessageDialog(null, "IMEI " + imeiNumber + " đã tồn tại! Không thể thêm trùng.");
+            return;
+        }
             ProductDetail productDetail = new ProductDetail(imeiNumber, maphanloai, Double.parseDouble(giaNhap) , true);
             list.add(productDetail);
         }
@@ -283,6 +292,17 @@ private List<String> generateImeiList(String from, String to) {
         JOptionPane.showMessageDialog(this, "IMEI không hợp lệ! Hãy nhập số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
     return imeiList;
+}
+
+public boolean isImeiExistInChiTietHDN(String imei) {
+    for (List<ProductDetail> list : chiTietHDN.values()) {
+        for (ProductDetail pd : list) {
+            if (pd.getSerialNumber().equals(imei)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
  private void initCenterPanel() {
@@ -529,7 +549,6 @@ private List<String> generateImeiList(String from, String to) {
     add(rightSection);
     add(rightPanel);
 }
-
     private void initBottomPanel() {
         JPanel bottomPanel = new JPanel(null);
         bottomPanel.setBounds(10, 420, 1110, 280);
@@ -638,7 +657,8 @@ for (int i = 0; i < modelChiTiet.getRowCount(); i++) {
     }
       
     });
-
+ JOptionPane.showMessageDialog(null, "Nhập hàng thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+  mainFrame.setMainPanel(new PhieuNhapPanel(mainFrame));
 }
 
 }

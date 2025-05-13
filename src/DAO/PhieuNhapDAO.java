@@ -197,5 +197,21 @@ public boolean insertChitietPhieuNhap(ProductDetail productDetail) {
     return Save;
 }
 
+public boolean isImeiExistInDatabase(String imei) {
+    try (Connection conn = DatabaseConnection.getConnection()) {
+        String sql = "SELECT COUNT(*) FROM chitietsp WHERE SerialNumber = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, imei);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+
 
 }
