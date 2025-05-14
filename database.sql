@@ -108,8 +108,8 @@ CREATE TABLE IF NOT EXISTS PhanLoaiSP (
 CREATE TABLE IF NOT EXISTS ChiTietSP (
     SerialNumber VARCHAR(50) PRIMARY KEY,  -- SerialNumber là khóa chính
     idPhanLoai INT,  
-    maphieunhap INT,
-    maphieuxuat INT,          
+    maphieunhap INT DEFAULT -1,
+    maphieuxuat INT DEFAULT  -1,          
     trangThai INT DEFAULT 1   ,         -- Liên kết với PhanLoaiSP
     FOREIGN KEY (idPhanLoai) REFERENCES PhanLoaiSP(idPhanLoai) -- Khóa ngoại
 );

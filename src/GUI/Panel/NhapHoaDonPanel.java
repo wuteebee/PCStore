@@ -53,6 +53,7 @@ public class NhapHoaDonPanel extends JPanel {
     private double tt;
     private boolean isEditing;
     private List<Product> products;
+    
     public NhapHoaDonPanel(Main mainFrame,boolean isEditing) {
         this.mainFrame = mainFrame;
         setBackground(Color.white);

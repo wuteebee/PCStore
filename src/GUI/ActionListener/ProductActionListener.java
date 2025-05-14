@@ -44,7 +44,6 @@ public class ProductActionListener implements ActionListener{
                 
                 break;
             case "Sửa":
-           System.out.println("Sửa nè");
                       id = panel.getSelectedProductId();
                      if(id.equals("-1")){
                           JOptionPane.showMessageDialog(panel, "Vui lòng chọn sản phẩm cần sửa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
