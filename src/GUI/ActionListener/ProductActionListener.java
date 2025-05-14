@@ -92,9 +92,11 @@ public class ProductActionListener implements ActionListener{
              
                      }
                 break;
-            case "search":
+            case "Tìm kiếm":
                 
                 System.out.println(panel.getTextField().getText().trim());
+                System.out.println("search nè: "+panel.getTextField().getText());
+                // panel.search();
                 // panel.printTableData();
                 break;
             case "Làm mới":
@@ -104,7 +106,7 @@ public class ProductActionListener implements ActionListener{
                 // panel.loadDataToTable();
                 break;
             case "Chi tiết":
-                System.out.println("Chi tiết nè");
+                System.out.println("Chi tiết nèee");
                       id = panel.getSelectedProductId();
                      if(id.equals("-1")){
                           JOptionPane.showMessageDialog(panel, "Vui lòng chọn sản phẩm cần xem chi tiết!", "Thông báo", JOptionPane.WARNING_MESSAGE);

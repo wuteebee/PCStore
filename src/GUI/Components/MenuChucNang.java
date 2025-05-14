@@ -223,6 +223,7 @@ public class MenuChucNang {
             new Color(100, 149, 237) 
         ));
 
+        
         return searchPanel;
     }
 
