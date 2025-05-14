@@ -684,7 +684,7 @@ for (int i = 0; i < modelChiTiet.getRowCount(); i++) {
     String soLuong = modelChiTiet.getValueAt(i, 5).toString();
   
     System.out.println("STT: " + stt + ", Mã SP: " + maSp + ", Tên SP: " + tenSp + ", Phân loại: " + phanLoai + ", Giá nhập: " + giaNhap + ", Số lượng: " + soLuong);
-   
+        phieuNhapBUS.updateSLTK(chiTietHDN.get(stt).get(0).getIdPhanLoai()+"", Integer.parseInt(soLuong));
     // Nhập chitietsp
  chiTietHDN.forEach((key, value) -> {
          if(key.equals(stt)){   

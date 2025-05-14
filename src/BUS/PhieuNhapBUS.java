@@ -44,6 +44,7 @@ public class PhieuNhapBUS {
 
     public String insertHoaDonNhap(HoaDonNhap hdn) {
         return dao.insertHoaDonNhap(hdn);
+
     }
 
     public boolean insertChitietSP(ProductDetail productDetail){
@@ -73,5 +74,9 @@ public class PhieuNhapBUS {
 
         
 
+    }
+
+    public boolean updateSLTK(String id,int soluong){
+        return dao.updateSTTK(id, soluong);
     }
 }

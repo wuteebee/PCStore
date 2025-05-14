@@ -21,6 +21,9 @@ public class Main extends JFrame {
     public Account getCurrentAccount() {
         return user;
     }
+    public Account getUser(){
+        return user;
+    }
 
     private void initComponents() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);

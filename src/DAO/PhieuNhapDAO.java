@@ -279,6 +279,32 @@ public boolean xoaHoaDonNhap(String maPhieuNhap) {
     return false;
 }
 
+public boolean updateSTTK(String idPL, int soLuong) {
+    Connection conn = null;
+    PreparedStatement stmt = null;
+    String sql = "UPDATE phanloaisp SET soLuongTonKho = soLuongTonKho + ? WHERE idPhanLoai = ?";
+
+    try {
+        conn = DatabaseConnection.getConnection();
+        stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, soLuong);    // số lượng cần cộng thêm
+        stmt.setString(2, idPL);    // mã phân loại sản phẩm
+
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    } finally {
+        try {
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
 
 
 

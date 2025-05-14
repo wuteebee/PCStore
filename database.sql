@@ -11,16 +11,14 @@ CREATE TABLE IF NOT EXISTS NhomQuyen (
     tenNhomQuyen VARCHAR(50) NOT NULL,
     trangThai INT DEFAULT 1
 );
-
 CREATE TABLE IF NOT EXISTS ChiTietQuyen (
     idNhomQuyen VARCHAR(20) NOT NULL,
     idChucNang VARCHAR(20) NOT NULL,
     hanhDong VARCHAR(5) NOT NULL,
-    PRIMARY KEY (idNhomQuyen, idChucNang),
+    PRIMARY KEY (idNhomQuyen, idChucNang,hanhDong),
     FOREIGN KEY (idNhomQuyen) REFERENCES NhomQuyen(idNhomQuyen),
     FOREIGN KEY (idChucNang) REFERENCES ChucNang(idChucNang)
 );
-
 -- Create DanhMuc table
 CREATE TABLE IF NOT EXISTS DanhMuc (
     idDanhMuc VARCHAR(20) PRIMARY KEY,
