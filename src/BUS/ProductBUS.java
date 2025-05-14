@@ -36,7 +36,7 @@ public class ProductBUS {
 
         if (product.getDanhMuc().getMaDanhMuc().equals("DM002")) {
             product.getDanhSachPhienBan().forEach(item -> {
-                if(item.getPhienBan().equals(version)){
+                if(item.getPhienBan()==Integer.parseInt(version)){
                     item.getChitiet().forEach(item1->{
                          danhsach.add(item1);
                     });
@@ -49,7 +49,7 @@ public class ProductBUS {
         else{
             product.getDanhSachPhienBan().forEach(item->{
 
-                if(item.getPhienBan().equals(version+"")){
+                if(item.getPhienBan()==Integer.parseInt(version)){
                     item.getChitiet().forEach(item1->{
                             // if(item1 instanceof CauHinhLaptop){
                             //     CauHinhLaptop item2 = (CauHinhLaptop) item1;
@@ -186,4 +186,13 @@ public Product getProductByIdHthi(String id) {
     System.out.println("Số item: " + product.getDanhSachPhienBan().size());
     return product;
 }
+
+   public String getmaSPbyIdPL(int id){
+    ProductDAO productDAO=new ProductDAO();
+    return productDAO.getProductIDbyMaPhanLoai(id);
+   }
+   public int getphienbanbyIdPL(int id){
+    ProductDAO productDAO=new ProductDAO();
+    return productDAO.getphienbanbyIdPL(id);
+   }
 }

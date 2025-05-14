@@ -19,6 +19,14 @@ public class HoaDonNhap {
         this.ngayTao = ngayTao;
         this.tongTien = tongTien;
     }
+    public HoaDonNhap( Employee idNhanVien, Supplier NhaCungCap, Date ngayTao, double tongTien) {
+
+        this.NhanVien = idNhanVien;
+        this.NhaCungCap = NhaCungCap;
+        this.ngayTao = ngayTao;
+        this.tongTien = tongTien;
+    }
+
 
     public String getIdHoaDonNhap() {
         return idHoaDonNhap;

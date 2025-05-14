@@ -18,9 +18,15 @@ public class Main extends JFrame {
         initComponents();
     }
 
+    public Account getCurrentAccount() {
+        return user;
+    }
+    public Account getUser(){
+        return user;
+    }
+
     private void initComponents() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(0, 0));
         this.setTitle("Hệ thống quản lý cửa hàng máy tính");
@@ -52,6 +58,8 @@ public class Main extends JFrame {
         } catch (Exception ex) {
             System.err.println("Failed to initialize FlatLaf");
         }
+
+        UIManager.put("Component.opaque", true);
 
         new Login();
     }

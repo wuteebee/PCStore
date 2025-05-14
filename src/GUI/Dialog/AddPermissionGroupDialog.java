@@ -1,5 +1,7 @@
 package GUI.Dialog;
 
+import BUS.PermissionBUS;
+import DTO.PermissionGroup;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,6 +16,9 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
     private JCheckBox[][] listCheckBox;
     private ButtonCustom btnAddNhomQuyen, btnHuyBo;
     private int sizeDmCn, sizeHanhDong;
+    private PermissionBUS permissionBUS;
+    private PermissionGroup existingGroup; // Dùng khi sửa
+    private boolean isEditMode;
 
     private String[] danhMucChucNang = {
         "Sản phẩm",
@@ -29,19 +34,25 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
         "Khuyến mãi và ưu đãi"
     };
 
-    private String[] hanhDong = {"Xem", "Tạo mới", "Cập nhật", "Xoá"};
+    private String[] hanhDong = {"Xem", "Tao", "Sua", "Xoa", "Xuat"};
 
-    public AddPermissionGroupDialog(JFrame owner, String title, boolean modal) {
+    public AddPermissionGroupDialog(JFrame owner, String title, boolean modal, PermissionGroup group) {
         super(owner, title, modal);
+        this.permissionBUS = new PermissionBUS();
+        this.existingGroup = group;
+        this.isEditMode = group != null;
         initComponents();
+        if (isEditMode) {
+            loadExistingGroupData();
+        }
     }
 
     private void initComponents() {
-        this.setSize(new Dimension(900, 500));
+        this.setSize(new Dimension(950, 500)); // Tăng chiều rộng để chứa cột mới
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(0, 0));
 
-        // Top Panel
+        // Panel trên
         jpTop = new JPanel(new BorderLayout(20, 10));
         jpTop.setBorder(new EmptyBorder(20, 20, 20, 20));
         jpTop.setBackground(Color.WHITE);
@@ -51,7 +62,7 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
         jpTop.add(lblTenNhomQuyen, BorderLayout.WEST);
         jpTop.add(txtTenNhomQuyen, BorderLayout.CENTER);
 
-        // Left Panel
+        // Panel trái
         sizeDmCn = danhMucChucNang.length;
         jpLeft = new JPanel(new GridLayout(sizeDmCn + 1, 1));
         jpLeft.setBackground(Color.WHITE);
@@ -64,21 +75,21 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
             jpLeft.add(lblChucNang);
         }
 
-        // Center Panel
+        // Panel giữa
         sizeHanhDong = hanhDong.length;
         jpCen = new JPanel(new GridLayout(sizeDmCn + 1, sizeHanhDong));
         jpCen.setBackground(Color.WHITE);
         listCheckBox = new JCheckBox[sizeDmCn][sizeHanhDong];
 
-        // Add action headers
+        // Thêm tiêu đề hành động
         for (String hd : hanhDong) {
-            JLabel lblHanhDong = new JLabel(hd);
+            JLabel lblHanhDong = new JLabel(hd.equals("Xuat") ? "Xuất Excel" : hd);
             lblHanhDong.setHorizontalAlignment(SwingConstants.CENTER);
             lblHanhDong.setFont(new Font(FlatRobotoFont.FAMILY, Font.BOLD, 14));
             jpCen.add(lblHanhDong);
         }
 
-        // Add checkboxes
+        // Thêm checkbox
         for (int i = 0; i < sizeDmCn; i++) {
             for (int j = 0; j < sizeHanhDong; j++) {
                 listCheckBox[i][j] = new JCheckBox();
@@ -87,12 +98,12 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
             }
         }
 
-        // Bottom Panel
+        // Panel dưới
         jpBottom = new JPanel(new FlowLayout());
         jpBottom.setBackground(Color.WHITE);
         jpBottom.setBorder(new EmptyBorder(20, 0, 20, 0));
 
-        btnAddNhomQuyen = new ButtonCustom("Thêm nhóm quyền", "success", 14);
+        btnAddNhomQuyen = new ButtonCustom(isEditMode ? "Cập nhật" : "Thêm nhóm quyền", "success", 14);
         btnAddNhomQuyen.addActionListener(this);
         jpBottom.add(btnAddNhomQuyen);
 
@@ -100,26 +111,74 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
         btnHuyBo.addActionListener(this);
         jpBottom.add(btnHuyBo);
 
-        // Add panels to dialog
+        // Thêm các panel vào dialog
         this.add(jpTop, BorderLayout.NORTH);
         this.add(jpLeft, BorderLayout.WEST);
         this.add(jpCen, BorderLayout.CENTER);
         this.add(jpBottom, BorderLayout.SOUTH);
     }
 
+    private void loadExistingGroupData() {
+        txtTenNhomQuyen.setText(existingGroup.getTenNhomQuyen());
+        for (int i = 0; i < sizeDmCn; i++) {
+            String chucNang = danhMucChucNang[i];
+            String idChucNang = permissionBUS.getChucNangIdByName(chucNang);
+            for (int j = 0; j < sizeHanhDong; j++) {
+                String hanhDong = this.hanhDong[j];
+                boolean hasPermission = permissionBUS.hasPermission(existingGroup.getIdNhomQuyen(), idChucNang, hanhDong);
+                listCheckBox[i][j].setSelected(hasPermission);
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnAddNhomQuyen || e.getSource() == btnHuyBo) {
+        if (e.getSource() == btnAddNhomQuyen) {
+            String tenNhomQuyen = txtTenNhomQuyen.getText().trim();
+            if (tenNhomQuyen.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên nhóm quyền!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            PermissionGroup group = new PermissionGroup();
+            group.setIdNhomQuyen(isEditMode ? existingGroup.getIdNhomQuyen() : permissionBUS.generateSequentialId());
+            group.setTenNhomQuyen(tenNhomQuyen);
+            group.setTrangThai(1);
+
+            // Thu thập quyền
+            for (int i = 0; i < sizeDmCn; i++) {
+                String chucNang = danhMucChucNang[i];
+                String idChucNang = permissionBUS.getChucNangIdByName(chucNang);
+                for (int j = 0; j < sizeHanhDong; j++) {
+                    if (listCheckBox[i][j].isSelected()) {
+                        group.addPermission(idChucNang, hanhDong[j]);
+                    }
+                }
+            }
+
+            boolean success;
+            if (isEditMode) {
+                success = permissionBUS.updatePermissionGroup(group);
+            } else {
+                success = permissionBUS.savePermissionGroup(group);
+            }
+
+            if (success) {
+                JOptionPane.showMessageDialog(this, (isEditMode ? "Cập nhật" : "Thêm") + " nhóm quyền thành công!");
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, (isEditMode ? "Cập nhật" : "Thêm") + " nhóm quyền thất bại!");
+            }
+        } else if (e.getSource() == btnHuyBo) {
             dispose();
         }
     }
 
-    public static void showAddPermissionGroupDialog(JFrame parent) {
-        AddPermissionGroupDialog dialog = new AddPermissionGroupDialog(parent, "Thêm Nhóm Quyền", true);
+    public static void showAddPermissionGroupDialog(JFrame parent, PermissionGroup group) {
+        AddPermissionGroupDialog dialog = new AddPermissionGroupDialog(parent, group == null ? "Thêm Nhóm Quyền" : "Sửa Nhóm Quyền", true, group);
         dialog.setVisible(true);
     }
 
-    // Class con giả lập ButtonCustom
     private class ButtonCustom extends JButton {
         public ButtonCustom(String text, String type, int fontSize) {
             super(text);
@@ -132,25 +191,5 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
             setForeground(Color.WHITE);
             setFocusPainted(false);
         }
-    }
-
-    // ✅ Hàm main để chạy trực tiếp class này
-    public static void main(String[] args) {
-        // Thiết lập giao diện FlatLaf nếu cần
-        try {
-            UIManager.setLookAndFeel("com.formdev.flatlaf.FlatLightLaf");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            JFrame dummyFrame = new JFrame(); // khung ẩn để làm cha của dialog
-            dummyFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            dummyFrame.setSize(0, 0); // không hiển thị
-            dummyFrame.setLocationRelativeTo(null);
-            dummyFrame.setVisible(false); // không hiển thị frame cha
-
-            showAddPermissionGroupDialog(dummyFrame);
-        });
     }
 }
