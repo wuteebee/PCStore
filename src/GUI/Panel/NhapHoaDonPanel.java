@@ -69,6 +69,10 @@ public class NhapHoaDonPanel extends JPanel {
         this.isEditing=isEditing;
         actionTable();
 
+        if(isEditing){
+            // Load data
+        }
+
      
     }
 

@@ -37,7 +37,22 @@ public class PhieuNhapActionListener implements ActionListener{
                 
                 break;
             case "Sửa":
-             System.out.println("Sửa nè");
+              System.out.println("Sửa nè");
+              id = panel.getSelectedPhieuId();
+                  if(id.equals("-1")){
+                          JOptionPane.showMessageDialog(panel, "Vui lòng chọn hoá đơn nhập cần sửa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                     }
+                     else{
+                       if (panel.fixHoadon()) {
+                            JOptionPane.showMessageDialog(null, "Sửa phiếu nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            MainFrame.setMainPanel(new PhieuNhapPanel(MainFrame)); // hoặc panel phù hợp bạn muốn quay về
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Xoá thất bại! Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+
+                     }
+             
+        
                 break;
             case "Xóa":
               System.out.println("Xoá nè");

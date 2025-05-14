@@ -262,11 +262,36 @@ public class PhieuNhapPanel extends JPanel {
     return false; 
 }
 
-    // Xoá chitietphieunhap
-    // Xoá chitietsp
-    // Xoá hoá đơn phiếu nhập
-    // Load laij table
+
+    
       deleted= phieuNhapBUS.deleteFull(idPhieuNhap);
         return deleted;
     }
+
+    public boolean fixHoadon(){
+        boolean fix=true;
+        int selectedRow = table.getSelectedRow(); 
+        String idPhieuNhap="";
+        if (selectedRow != -1) { 
+            idPhieuNhap = table.getValueAt(selectedRow, 0).toString(); 
+            System.out.println("ID Phiếu Nhập: " + idPhieuNhap);
+        }
+        // Kiểm tra từng sản phẩm trong phiếu nhập có thuộc phiếu xuất nào kkh
+        // lấy các chitietsp dựa vào mã phiếu nhập
+        PhieuNhapBUS phieuNhapBUS=new PhieuNhapBUS();
+        if (phieuNhapBUS.ktraXuatHang(idPhieuNhap)) {
+    JOptionPane.showMessageDialog(null, 
+        "Phiếu nhập này đã có sản phẩm được xuất kho, không thể chỉnh sửa!",
+        "Thông báo",
+        JOptionPane.WARNING_MESSAGE);
+    return false; 
+
+
+        
+    }
+
+    mainFrame.setMainPanel(new NhapHoaDonPanel(mainFrame, true));
+    return fix;
+
+}
 }
