@@ -186,4 +186,13 @@ public Product getProductByIdHthi(String id) {
     System.out.println("Số item: " + product.getDanhSachPhienBan().size());
     return product;
 }
+
+   public String getmaSPbyIdPL(int id){
+    ProductDAO productDAO=new ProductDAO();
+    return productDAO.getProductIDbyMaPhanLoai(id);
+   }
+   public int getphienbanbyIdPL(int id){
+    ProductDAO productDAO=new ProductDAO();
+    return productDAO.getphienbanbyIdPL(id);
+   }
 }

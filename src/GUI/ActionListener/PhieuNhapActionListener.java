@@ -31,7 +31,7 @@ public class PhieuNhapActionListener implements ActionListener{
               String id;
                 switch (e.getActionCommand()) {
             case "Thêm":
-              MainFrame.setMainPanel(new NhapHoaDonPanel(MainFrame));
+              MainFrame.setMainPanel(new NhapHoaDonPanel(MainFrame,false));
                 
                 break;
             case "Sửa":

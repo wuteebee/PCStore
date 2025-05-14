@@ -7,12 +7,15 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.Document;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.apache.poi.ss.formula.functions.T;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 
 import BUS.EmployeeBUS;
 import BUS.PhieuNhapBUS;
@@ -40,7 +43,7 @@ public class NhapHoaDonPanel extends JPanel {
     private DefaultTableModel modelSp, modelChiTiet,modelchsp;
     private JTextField tfMaSP, tfTenSP, tfGiaNhap, tfMaPhieu, tfNhanVien, tfMaImei,soluongsp, tfImeiFrom,tfImeiTo;
     private JComboBox<String> cbCauHinh, cbPhuongThuc, cbNhaCungCap;
-    private JLabel lbTongTien,soluong;
+    private JLabel lbTongTien,soluong,lbFrom,lbTo;
     private ProductDAO productDAO;
     private JButton Suasp, Xoasp, Luu, Huy,btnThem,submitbutton;
     private JRadioButton rbTuNhap, rbTheoKhoang;
@@ -48,14 +51,23 @@ public class NhapHoaDonPanel extends JPanel {
     private int maphanloai;
     private HashMap<String, List<ProductDetail>> chiTietHDN = new HashMap<>();
     private double tt;
-    public NhapHoaDonPanel(Main mainFrame) {
+    private boolean isEditing;
+    private List<Product> products;
+    public NhapHoaDonPanel(Main mainFrame,boolean isEditing) {
         this.mainFrame = mainFrame;
+        setBackground(Color.white);
         setLayout(null);
         setBounds(0, 0, 1150, 700);
+       productDAO=new ProductDAO();
+        this.products=productDAO.getAllProducts();
+   
         initLeftPanel();
         initCenterPanel();
         initRightPanel();
         initBottomPanel();
+        this.isEditing=isEditing;
+        actionTable();
+
      
     }
 
@@ -90,8 +102,7 @@ private void initLeftPanel() {
     JButton btnNhapExcel = new JButton("Nhập Excel");
     btnNhapExcel.setBounds(150, 310, 130, 30);
 
-    productDAO = new ProductDAO();
-    List<Product> products = productDAO.getAllProducts();
+  
     for (Product product : products) {
         modelSp.addRow(new Object[]{product.getMaSp(), product.getTenSp()});
     }
@@ -120,7 +131,7 @@ private void initLeftPanel() {
             String maSp = (String) modelSp.getValueAt(selectedRow, 0); 
 
             System.out.println("Selected Product: " + maSp + " - " ); 
-            updateCenterPanel(maSp);
+            updateCenterPanel(maSp,null);
             updateCauhinh(maSp,cbCauHinh.getSelectedItem().toString()); 
         
         }
@@ -140,7 +151,9 @@ private void initLeftPanel() {
 private void updatePhieuNhap() {
     String maSP = tfMaSP.getText();
     String tenSP = tfTenSP.getText();
-    String phienBan = cbCauHinh.getSelectedItem().toString();
+    String pb= cbCauHinh.getSelectedItem().toString();
+    int phienBanSo = Integer.parseInt(pb.replaceAll("\\D+", "")) ;
+
     String giaNhap = tfGiaNhap.getText();
     String imei = tfMaImei.getText();
     String soLuong = soluongsp.getText();
@@ -158,7 +171,10 @@ private void updatePhieuNhap() {
 
     cbPhuongThuc.setSelectedIndex(0);
     PhieuNhapDAO phieuNhapDAO =new PhieuNhapDAO();
-
+ maphanloai=productDAO.getIDPhanLoai(maSP, phienBanSo-1);
+ System.out.println("Mã sp: "+maSP);
+ System.out.println("Dòng 171: phiên bản số: "+phienBanSo);
+ System.out.println("Dòng 171: ma phan loại : "+maphanloai);
     if(rbTuNhap.isSelected()){
  
         List<ProductDetail> list = new ArrayList<>();
@@ -167,6 +183,8 @@ private void updatePhieuNhap() {
              JOptionPane.showMessageDialog(null, "IMEI " + imei + " đã tồn tại! Không thể thêm trùng.");
             return;
         }
+        ProductDAO productDAO=new ProductDAO();
+       
         ProductDetail productDetail = new ProductDetail(imei, maphanloai, Double.parseDouble(giaNhap) , true);
         list.add(productDetail);
          chiTietHDN.put((modelChiTiet.getRowCount() + 1)+"", list);
@@ -190,26 +208,18 @@ chiTietHDN.put(String.valueOf(stt), list);
 System.out.println("Đây là danh sách IMEI: " + stt);
 
     }
-    // Lưu gì giờ:))))
-    // Serial number, idphanloai
-    // Thêm dòng mới vào bảng
+
     modelChiTiet.addRow(new Object[]{
         modelChiTiet.getRowCount() + 1,
         maSP,
         tenSP,
-        phienBan,
+        phienBanSo,
        String.format("%,d", Integer.parseInt(giaNhap)).replace(",", "."),
         soLuong
     });
 
     // Tính tổng tiền
-    int tongTien = Integer.parseInt(giaNhap) * Integer.parseInt(soLuong);
-    tt=tongTien;
-    // Định dạng tiền (thêm dấu chấm ngăn cách hàng nghìn)
-    String tongTienFormatted = String.format("%,d", tongTien).replace(",", ".");
-
-    // Hiển thị tổng tiền
-    lbTongTien.setText("TỔNG TIỀN: " + tongTienFormatted + "đ");
+    updateTongTien();
 
   
    
@@ -223,7 +233,7 @@ private void searchProducts(String query) {
     modelSp.setRowCount(0);
 
     // Lấy danh sách sản phẩm từ cơ sở dữ liệu, lọc theo từ khóa tìm kiếm
-    List<Product> products = productDAO.getAllProducts();
+    
     for (Product product : products) {
         if(product.getTenSp().toLowerCase().contains(query.toLowerCase())) {
             modelSp.addRow(new Object[]{product.getMaSp(), product.getTenSp()});
@@ -231,25 +241,41 @@ private void searchProducts(String query) {
     }
 }
 
-    private void updateCenterPanel(String maSP){
-        Product product = productDAO.getProductByIdFull(maSP);
-        tfMaSP.setText(product.getMaSp());
-        tfTenSP.setText(product.getTenSp());
+private void updateCenterPanel(String maSP, Integer phienBan) {
+    
+    Product product = productDAO.getProductByIdFull(maSP);
+    
+    tfMaSP.setText(product.getMaSp());
+    tfTenSP.setText(product.getTenSp());
+    
     cbCauHinh.removeAllItems();
-        for(Variant variant: product.getDanhSachPhienBan()){
-            if(variant.isTrangThai()){
-                    cbCauHinh.addItem("Cấu hình "+variant.getPhienBan()+1 );
-                    maphanloai = variant.getIdVariant();
+    
+    List<Variant> danhSach = product.getDanhSachPhienBan();
+    int selectedIndex = -1;
+    
+    for (int i = 0, j = 0; i < danhSach.size(); i++) {
+        Variant variant = danhSach.get(i);
+        if (variant.isTrangThai()) {
+            cbCauHinh.addItem("Cấu hình " + (variant.getPhienBan() + 1));
+            
+            if (phienBan != null && variant.getPhienBan() == phienBan) {
+                selectedIndex = j; // lưu lại index trong combobox
             }
+            j++; // chỉ tăng khi variant được add vào combobox
         }
-        // }
-
-
-       
     }
 
+    if (selectedIndex != -1) {
+        cbCauHinh.setSelectedIndex(selectedIndex);
+        
+    }
+}
+
+
     private void updateCauhinh(String maSP, String phienBan) {
-    int soPhienBan =(Integer.parseInt(phienBan.substring(10))-1);
+        System.out.println("Phiên bản  nè:  "+phienBan);
+  String[] parts = phienBan.trim().split(" ");
+int soPhienBan = Integer.parseInt(parts[2]) - 1;
         System.out.println("Số phiên bản: " + soPhienBan);
         // int soPhienBan = Integer.parseInt(phienBan.substring(10)) - 1;
         // System.out.println("Số phiên bản: " + soPhienBan);
@@ -258,7 +284,6 @@ private void searchProducts(String query) {
 System.out.println(soPhienBan); // Output: 1
         Product product = productDAO.getProductByIdFull(maSP);
         for (Variant variant : product.getDanhSachPhienBan()) {
-            System.out.println("Có vào đâykhong");
             System.out.println(variant.getPhienBan());
             if (variant.getPhienBan()==soPhienBan) {
                 System.out.println("hiiiii");
@@ -362,12 +387,12 @@ public boolean isImeiExistInChiTietHDN(String imei) {
     tfMaImei = new JTextField();
     tfMaImei.setBounds(120, 200, 250, 25);
 
-    JLabel  lbFrom = new JLabel("Từ:");
+    lbFrom = new JLabel("Từ:");
     lbFrom.setBounds(120, 200, 30, 25);
     tfImeiFrom = new JTextField();
     tfImeiFrom.setBounds(150, 200, 100, 25);
 
-    JLabel lbTo = new JLabel("Đến:");
+    lbTo = new JLabel("Đến:");
     lbTo.setBounds(260, 200, 30, 25);
    tfImeiTo = new JTextField();
     tfImeiTo.setBounds(290, 200, 80, 25);
@@ -470,13 +495,19 @@ public boolean isImeiExistInChiTietHDN(String imei) {
     soluongsp.getDocument().addDocumentListener(listener);
 
 
+Suasp = new JButton("Sửa");
+Suasp.setBounds(10, 300, 100, 30);
+Suasp.setBackground(new Color(255, 165, 0)); // Cam
+Suasp.setForeground(Color.WHITE);     
+Suasp.addActionListener(e->{
+    xulySua();
+});
 
-    Suasp = new JButton("Sửa");
-    Suasp.setBounds(10, 300, 100, 30);
-    Suasp.setBackground(getBackground());
+Xoasp = new JButton("Xoá");
+Xoasp.setBounds(120, 300, 100, 30);
+Xoasp.setBackground(Color.RED);             // Đỏ
+Xoasp.setForeground(Color.WHITE);           // Chữ trắng
 
-    Xoasp=new JButton("Xoá");
-    Xoasp.setBounds(120, 300, 100, 30);
 
 
 
@@ -649,10 +680,6 @@ for (int i = 0; i < modelChiTiet.getRowCount(); i++) {
   
     System.out.println("STT: " + stt + ", Mã SP: " + maSp + ", Tên SP: " + tenSp + ", Phân loại: " + phanLoai + ", Giá nhập: " + giaNhap + ", Số lượng: " + soLuong);
    
-
-
-
-
     // Nhập chitietsp
  chiTietHDN.forEach((key, value) -> {
          if(key.equals(stt)){   
@@ -661,6 +688,7 @@ for (int i = 0; i < modelChiTiet.getRowCount(); i++) {
             System.out.println("Bảng chitietsp: " +productDetail.getSerialNumber() + " " + productDetail.getIdPhanLoai() );
             System.out.println("Bảng chitietdonnhap: "+productDetail.getSerialNumber()+" "+productDetail.getGiaNhap());
             productDetail.setMaPhieuNhap(idPhieuNhap);
+            
             if(phieuNhapBUS.insertChitietSP(productDetail)){
                 phieuNhapBUS.insertChitietPhieuNhap(productDetail);
             }
@@ -674,6 +702,162 @@ for (int i = 0; i < modelChiTiet.getRowCount(); i++) {
 
 }
 
+
+private void actionTable() {
+    tableChiTiet.getSelectionModel().addListSelectionListener(e -> {
+        int idphanloai = 0;
+
+        if (!e.getValueIsAdjusting()) {
+            int selectedRow = tableChiTiet.getSelectedRow();
+            System.out.println("Selected row: " + selectedRow);
+
+            for (ProductDetail tmp : chiTietHDN.get((selectedRow + 1) + "")) {
+                System.out.println(tmp.getSerialNumber());
+                idphanloai = tmp.getIdPhanLoai();
+            }
+
+            ProductBUS productBUS = new ProductBUS();
+            String masp = productBUS.getmaSPbyIdPL(idphanloai);
+            int phienBan = productBUS.getphienbanbyIdPL(idphanloai);
+
+            System.out.println("Mã phân loại nè: " + idphanloai);
+            System.out.println("Mã sp nè: " + masp);
+
+            updateCenterPanel(masp, phienBan);
+
+            updateCauhinh(masp,cbCauHinh.getSelectedItem().toString());
+            double giaNhap = chiTietHDN.get((selectedRow + 1) + "").get(0).getGiaNhap();
+            tfGiaNhap.setText(String.valueOf((long) giaNhap));
+
+            if (chiTietHDN.get((selectedRow + 1) + "").size() == 1) {
+                rbTuNhap.setSelected(true);
+                tfMaImei.setText(chiTietHDN.get((selectedRow + 1) + "").get(0).getSerialNumber());
+
+     
+                    tfMaImei.setVisible(true);
+                    lbFrom.setVisible(false);
+                    tfImeiFrom.setVisible(false);
+                    lbTo.setVisible(false);
+                    tfImeiTo.setVisible(false);
+                    soluongsp.setVisible(false);
+                    soluong.setVisible(false);
+          
+
+            } else {
+                rbTheoKhoang.setSelected(true);
+                soluongsp.setText(chiTietHDN.get((selectedRow + 1) + "").size() + "");
+                tfImeiFrom.setText(chiTietHDN.get((selectedRow + 1) + "").get(0).getSerialNumber());
+
+                tfMaImei.setVisible(false);
+                lbFrom.setVisible(true);
+                tfImeiFrom.setVisible(true);
+                lbTo.setVisible(true);
+                tfImeiTo.setVisible(true);
+                soluongsp.setVisible(true);
+                soluong.setVisible(true);
+            }
+
+  for (int i = 0; i < modelSp.getRowCount(); i++) {
+    Object value = modelSp.getValueAt(i, 0); 
+    if (value != null && value.toString().equalsIgnoreCase(masp)) {
+        tableSp.setRowSelectionInterval(i, i); 
+        tableSp.scrollRectToVisible(tableSp.getCellRect(i, 0, true)); 
+        break; 
+    }
+}
+     
+}
+    });
+}
+
+
+private void xulySua(){
+    if(isEditing==false){
+        // Lấy hàng đang chọn
+           int selectedRow = tableChiTiet.getSelectedRow();
+        // Sửa chitietHDN
+       
+        // Chỉ được đổi cấu hình
+
+        // Lấy cấu hình
+        
+    String pb= cbCauHinh.getSelectedItem().toString();
+    int phienBanSo = Integer.parseInt(pb.replaceAll("\\D+", "")) ;
+    String maSP = tfMaSP.getText();
+    String giaNhap = tfGiaNhap.getText();
+    String phuongThuc = cbPhuongThuc.getSelectedItem().toString();
+    String imeiFrom = tfImeiFrom.getText();
+    String imeiTo = tfImeiTo.getText();
+    String imei = tfMaImei.getText();
+    String soLuong = soluongsp.getText();
+    String tenSP = tfTenSP.getText();
+        PhieuNhapDAO phieuNhapDAO =new PhieuNhapDAO();
+ maphanloai=productDAO.getIDPhanLoai(maSP, phienBanSo-1);
+
+      
+        List<ProductDetail> tmp = chiTietHDN.get(selectedRow+"");
+        chiTietHDN.remove(selectedRow+"");
+     if(rbTuNhap.isSelected()){
+ 
+        List<ProductDetail> list = new ArrayList<>();
+        System.out.println("imei nè" +imei);
+        if(phieuNhapDAO.isImeiExistInDatabase(imei)||isImeiExistInChiTietHDN(imei)){
+             JOptionPane.showMessageDialog(null, "IMEI " + imei + " đã tồn tại! Không thể thêm trùng.");
+             chiTietHDN.put(selectedRow+"", tmp);
+            return;
+        }
+        productDAO=new ProductDAO();
+       
+        ProductDetail productDetail = new ProductDetail(imei, maphanloai, Double.parseDouble(giaNhap) , true);
+        list.add(productDetail);
+         chiTietHDN.put((selectedRow)+"", list);
+         soLuong="1";
+    }
+    else if(rbTheoKhoang.isSelected()){
+
+        imei = tfImeiFrom.getText() + " - " + tfImeiTo.getText();
+        // System.out.println("imei: " + imei);
+        List<ProductDetail> list = new ArrayList<>();
+        for (String imeiNumber : generateImeiList(imeiFrom, imeiTo)) {
+              if(phieuNhapDAO.isImeiExistInDatabase(imeiNumber)||isImeiExistInChiTietHDN(imeiNumber)){
+             JOptionPane.showMessageDialog(null, "IMEI " + imeiNumber + " đã tồn tại! Không thể thêm trùng.");
+             chiTietHDN.put(selectedRow+"", tmp);
+            return;
+        }
+            ProductDetail productDetail = new ProductDetail(imeiNumber, maphanloai, Double.parseDouble(giaNhap) , true);
+            list.add(productDetail);
+        }
+ chiTietHDN.put((selectedRow)+"", list);
+    }
+
+    if (selectedRow != -1) {
+    modelChiTiet.setValueAt(maSP, selectedRow, 1);         
+    modelChiTiet.setValueAt(tenSP, selectedRow, 2);        
+    modelChiTiet.setValueAt(phienBanSo, selectedRow, 3);  
+    modelChiTiet.setValueAt(String.format("%,d", Integer.parseInt(giaNhap)).replace(",", "."), selectedRow, 4); // cột 4: giá
+    modelChiTiet.setValueAt(soLuong, selectedRow, 5);  
+    
+    
+}
+}
+}
+private void updateTongTien() {
+    long tongTien = 0;
+
+    for (int i = 0; i < modelChiTiet.getRowCount(); i++) {
+        // Lấy giá và số lượng từ bảng
+        String giaStr = modelChiTiet.getValueAt(i, 4).toString().replace(".", "");
+        int gia = Integer.parseInt(giaStr);
+        int soLuong = Integer.parseInt(modelChiTiet.getValueAt(i, 5).toString());
+
+        tongTien += gia * soLuong;
+    }
+
+    tt=tongTien;
+    // Định dạng lại tổng tiền thành "1.000.000" rồi set lên label
+    String tongTienFormatted = String.format("%,d", tongTien).replace(",", ".");
+    lbTongTien.setText("TỔNG TIỀN: " + tongTienFormatted + "đ");
+}
 
 
 }
