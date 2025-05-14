@@ -97,7 +97,7 @@ public class MenuChucNang {
             PhieuNhapPanel phieuNhapPanel = (PhieuNhapPanel) panel;
             PhieuNhapActionListener actionListener = new PhieuNhapActionListener(phieuNhapPanel, MainFrame);
             btnAdd.addActionListener(actionListener);
-            btnEdit.addActionListener(actionListener);
+       
             btnDelete.addActionListener(actionListener);
             btnExport.addActionListener(actionListener);
             btnDetail.addActionListener(actionListener);
@@ -106,7 +106,6 @@ public class MenuChucNang {
             checkAndDisableButton(btnDelete, idNhomQuyen, "Phiếu nhập", "Xoa");
             checkAndDisableButton(btnExport, idNhomQuyen, "Phiếu nhập", "Xuat");
             actionPanel.add(btnAdd);
-            actionPanel.add(btnEdit);
             actionPanel.add(btnDelete);
             actionPanel.add(btnExport);
         } else if (panel instanceof PromotionPanel) {

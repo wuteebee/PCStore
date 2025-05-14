@@ -150,13 +150,14 @@ public String insertHoaDonNhap(HoaDonNhap hdn) {
 
 public boolean insertChitietSP(ProductDetail productDetail) {
     boolean Save = false;
-    String sql = "INSERT INTO chitietsp (SerialNumber, idPhanLoai) VALUES (?, ?)";
+    String sql = "INSERT INTO chitietsp (SerialNumber, idPhanLoai,maphieunhap) VALUES (?, ?,?)";
 
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
         stmt.setString(1, productDetail.getSerialNumber());
         stmt.setInt(2, productDetail.getIdPhanLoai());
+        stmt.setString(3, productDetail.getMaPhieuNhap());
 
         int affectedRows = stmt.executeUpdate();
 
@@ -211,6 +212,73 @@ public boolean isImeiExistInDatabase(String imei) {
     }
     return false;
 }
+
+public boolean ktraXuatHang(String maPhieuNhap) {
+    String sql = "SELECT COUNT(*) FROM chitietsp WHERE maphieunhap = ? AND maphieuxuat != -1";
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, maPhieuNhap);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            int count = rs.getInt(1);
+            return count > 0; // true nếu có ít nhất 1 sản phẩm đã được xuất
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+
+public boolean xoaChiTietPhieuNhap(String idPhieuNhap) {
+    String sql = "DELETE FROM chitietdonnhap WHERE idDonHang = ?";
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+         
+        ps.setString(1, idPhieuNhap);
+        int affectedRows = ps.executeUpdate();
+        
+        return affectedRows > 0; // Trả về true nếu có dòng bị xoá
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+
+public boolean xoaChiTietSPTheoPhieuNhap(String maPhieuNhap) {
+    String sql = "DELETE FROM chitietsp WHERE maphieunhap = ?";
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+         
+        ps.setString(1, maPhieuNhap);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0; // Trả về true nếu có dòng bị xóa
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+
+public boolean xoaHoaDonNhap(String maPhieuNhap) {
+    String sql = "DELETE FROM hoadonnhap WHERE idHoaDonNhap = ?";
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+         
+        ps.setString(1, maPhieuNhap);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0; // Trả về true nếu có dòng bị xóa
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
 
 
 

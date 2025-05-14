@@ -20,6 +20,8 @@ import GUI.Panel.Trangchu;
 public class PhieuNhapActionListener implements ActionListener{
     private PhieuNhapPanel panel;
     private Main MainFrame;
+     private String id;
+
 
     public PhieuNhapActionListener(PhieuNhapPanel panel, Main MainFrame) {
         this.panel = panel;
@@ -31,15 +33,43 @@ public class PhieuNhapActionListener implements ActionListener{
               String id;
                 switch (e.getActionCommand()) {
             case "Thêm":
-              MainFrame.setMainPanel(new NhapHoaDonPanel(MainFrame));
+              MainFrame.setMainPanel(new NhapHoaDonPanel(MainFrame,false));
                 
                 break;
             case "Sửa":
-             System.out.println("Sửa nè");
+              System.out.println("Sửa nè");
+              id = panel.getSelectedPhieuId();
+                  if(id.equals("-1")){
+                          JOptionPane.showMessageDialog(panel, "Vui lòng chọn hoá đơn nhập cần sửa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                     }
+                     else{
+                       if (panel.fixHoadon()) {
+                            JOptionPane.showMessageDialog(null, "Sửa phiếu nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            MainFrame.setMainPanel(new PhieuNhapPanel(MainFrame)); // hoặc panel phù hợp bạn muốn quay về
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Xoá thất bại! Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+
+                     }
+             
+        
                 break;
             case "Xóa":
               System.out.println("Xoá nè");
+              id = panel.getSelectedPhieuId();
+                  if(id.equals("-1")){
+                          JOptionPane.showMessageDialog(panel, "Vui lòng chọn hoá đơn nhập cần xoá!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                     }
+                     else{
+                       if (panel.deleteHoaDon()) {
+                            JOptionPane.showMessageDialog(null, "Xoá phiếu nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            MainFrame.setMainPanel(new PhieuNhapPanel(MainFrame)); // hoặc panel phù hợp bạn muốn quay về
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Xoá thất bại! Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
 
+                     }
+             
                 break;
             case "search":
                 System.out.println("Tìm kiếm nè");

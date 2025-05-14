@@ -23,13 +23,13 @@ public class Button extends JButton {
             try {
                 if (iconPath.endsWith(".svg")) {
                     // Xử lý SVG
-                    FlatSVGIcon icon = new FlatSVGIcon(iconPath, 20, 20);
+                    FlatSVGIcon icon = new FlatSVGIcon(iconPath, 32, 32);
                     button.setIcon(icon);
                 } else if (iconPath.endsWith(".png")) {
                     java.net.URL imageURL = getClass().getResource(iconPath.startsWith("/") ? iconPath : "/" + iconPath);
                     if (imageURL != null) {
                         ImageIcon icon = new ImageIcon(imageURL);
-                        Image img = icon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH); // Đồng nhất kích thước icon
+                        Image img = icon.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH); // Đồng nhất kích thước icon
                         button.setIcon(new ImageIcon(img));
                     } else {
                         JOptionPane.showMessageDialog(null, "Không tìm thấy icon: " + iconPath, "Lỗi", JOptionPane.ERROR_MESSAGE);

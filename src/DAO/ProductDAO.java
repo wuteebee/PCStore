@@ -451,9 +451,9 @@ public class ProductDAO {
     }
     
 
-public String getIDPhanLoai(String idsp, int STTPL) {
+public int getIDPhanLoai(String idsp, int STTPL) {
     String sql = "SELECT idPhanLoai FROM phanloaisp WHERE idSanPham = ? AND STTPL = ?";
-    String idPhanLoai = null;
+    int idPhanLoai = 1;
 
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -463,7 +463,7 @@ public String getIDPhanLoai(String idsp, int STTPL) {
 
         ResultSet rs = stmt.executeQuery();
         if (rs.next()) {
-            idPhanLoai = rs.getString("idPhanLoai");
+            idPhanLoai = rs.getInt("idPhanLoai");
         }
     } catch (SQLException e) {
         e.printStackTrace();
@@ -622,5 +622,52 @@ public String getIDPhanLoai(String idsp, int STTPL) {
             e.printStackTrace();
             return false;
         }
+    }
+
+
+    public String getProductIDbyMaPhanLoai(int idPhanLoai){
+            String sql = "SELECT idSanPham FROM phanloaisp WHERE idPhanLoai=?";
+           String masp="";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, idPhanLoai);
+       
+
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+          masp=  rs.getString("idSanPham");
+            return masp;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    System.out.println("hihihihihihi");
+
+    return masp; 
+    }
+
+
+    public int getphienbanbyIdPL(int idPhanLoai){
+                    String sql = "SELECT * FROM phanloaisp WHERE idPhanLoai=?";
+           int phienBan=0;
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, idPhanLoai);
+       
+
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+          phienBan=  rs.getInt("STTPL");
+            
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return phienBan; 
     }
 }
