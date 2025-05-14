@@ -4,21 +4,18 @@ import BUS.PermissionBUS;
 import DTO.PermissionGroup;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-public class AddPermissionGroupDialog extends JDialog implements ActionListener {
-    private JLabel lblTenNhomQuyen;
-    private JTextField txtTenNhomQuyen;
+public class ViewPermissionGroupDialog extends JDialog {
+    private JLabel lblIdNhomQuyen, lblTenNhomQuyen;
+    private JTextField txtIdNhomQuyen, txtTenNhomQuyen;
     private JPanel jpTop, jpLeft, jpCen, jpBottom;
     private JCheckBox[][] listCheckBox;
-    private ButtonCustom btnAddNhomQuyen, btnHuyBo;
+    private ButtonCustom btnClose;
     private int sizeDmCn, sizeHanhDong;
     private PermissionBUS permissionBUS;
-    private PermissionGroup existingGroup; // Dùng khi sửa
-    private boolean isEditMode;
+    private PermissionGroup group;
 
     private String[] danhMucChucNang = {
         "Sản phẩm",
@@ -36,15 +33,12 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
 
     private String[] hanhDong = {"Xem", "Tao", "Sua", "Xoa", "Xuat"};
 
-    public AddPermissionGroupDialog(JFrame owner, String title, boolean modal, PermissionGroup group) {
-        super(owner, title, modal);
+    public ViewPermissionGroupDialog(JFrame owner, PermissionGroup group) {
+        super(owner, "Chi tiết Nhóm Quyền", true);
         this.permissionBUS = new PermissionBUS();
-        this.existingGroup = group;
-        this.isEditMode = group != null;
+        this.group = group;
         initComponents();
-        if (isEditMode) {
-            loadExistingGroupData();
-        }
+        loadGroupData();
     }
 
     private void initComponents() {
@@ -53,14 +47,21 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
         this.setLayout(new BorderLayout(0, 0));
 
         // Panel trên
-        jpTop = new JPanel(new BorderLayout(20, 10));
+        jpTop = new JPanel(new GridLayout(2, 2, 20, 10));
         jpTop.setBorder(new EmptyBorder(20, 20, 20, 20));
         jpTop.setBackground(Color.WHITE);
+        lblIdNhomQuyen = new JLabel("Mã nhóm quyền");
+        txtIdNhomQuyen = new JTextField();
+        txtIdNhomQuyen.setPreferredSize(new Dimension(150, 35));
+        txtIdNhomQuyen.setEditable(false);
         lblTenNhomQuyen = new JLabel("Tên nhóm quyền");
         txtTenNhomQuyen = new JTextField();
         txtTenNhomQuyen.setPreferredSize(new Dimension(150, 35));
-        jpTop.add(lblTenNhomQuyen, BorderLayout.WEST);
-        jpTop.add(txtTenNhomQuyen, BorderLayout.CENTER);
+        txtTenNhomQuyen.setEditable(false);
+        jpTop.add(lblIdNhomQuyen);
+        jpTop.add(txtIdNhomQuyen);
+        jpTop.add(lblTenNhomQuyen);
+        jpTop.add(txtTenNhomQuyen);
 
         // Panel trái
         sizeDmCn = danhMucChucNang.length;
@@ -94,6 +95,7 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
             for (int j = 0; j < sizeHanhDong; j++) {
                 listCheckBox[i][j] = new JCheckBox();
                 listCheckBox[i][j].setHorizontalAlignment(SwingConstants.CENTER);
+                listCheckBox[i][j].setEnabled(false); // Chỉ đọc
                 jpCen.add(listCheckBox[i][j]);
             }
         }
@@ -103,13 +105,9 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
         jpBottom.setBackground(Color.WHITE);
         jpBottom.setBorder(new EmptyBorder(20, 0, 20, 0));
 
-        btnAddNhomQuyen = new ButtonCustom(isEditMode ? "Cập nhật" : "Thêm nhóm quyền", "success", 14);
-        btnAddNhomQuyen.addActionListener(this);
-        jpBottom.add(btnAddNhomQuyen);
-
-        btnHuyBo = new ButtonCustom("Huỷ bỏ", "danger", 14);
-        btnHuyBo.addActionListener(this);
-        jpBottom.add(btnHuyBo);
+        btnClose = new ButtonCustom("Đóng", "danger", 14);
+        btnClose.addActionListener(e -> dispose());
+        jpBottom.add(btnClose);
 
         // Thêm các panel vào dialog
         this.add(jpTop, BorderLayout.NORTH);
@@ -118,64 +116,22 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
         this.add(jpBottom, BorderLayout.SOUTH);
     }
 
-    private void loadExistingGroupData() {
-        txtTenNhomQuyen.setText(existingGroup.getTenNhomQuyen());
+    private void loadGroupData() {
+        txtIdNhomQuyen.setText(group.getIdNhomQuyen());
+        txtTenNhomQuyen.setText(group.getTenNhomQuyen());
         for (int i = 0; i < sizeDmCn; i++) {
             String chucNang = danhMucChucNang[i];
             String idChucNang = permissionBUS.getChucNangIdByName(chucNang);
             for (int j = 0; j < sizeHanhDong; j++) {
                 String hanhDong = this.hanhDong[j];
-                boolean hasPermission = permissionBUS.hasPermission(existingGroup.getIdNhomQuyen(), idChucNang, hanhDong);
+                boolean hasPermission = permissionBUS.hasPermission(group.getIdNhomQuyen(), idChucNang, hanhDong);
                 listCheckBox[i][j].setSelected(hasPermission);
             }
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnAddNhomQuyen) {
-            String tenNhomQuyen = txtTenNhomQuyen.getText().trim();
-            if (tenNhomQuyen.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên nhóm quyền!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            PermissionGroup group = new PermissionGroup();
-            group.setIdNhomQuyen(isEditMode ? existingGroup.getIdNhomQuyen() : permissionBUS.generateSequentialId());
-            group.setTenNhomQuyen(tenNhomQuyen);
-            group.setTrangThai(1);
-
-            // Thu thập quyền
-            for (int i = 0; i < sizeDmCn; i++) {
-                String chucNang = danhMucChucNang[i];
-                String idChucNang = permissionBUS.getChucNangIdByName(chucNang);
-                for (int j = 0; j < sizeHanhDong; j++) {
-                    if (listCheckBox[i][j].isSelected()) {
-                        group.addPermission(idChucNang, hanhDong[j]);
-                    }
-                }
-            }
-
-            boolean success;
-            if (isEditMode) {
-                success = permissionBUS.updatePermissionGroup(group);
-            } else {
-                success = permissionBUS.savePermissionGroup(group);
-            }
-
-            if (success) {
-                JOptionPane.showMessageDialog(this, (isEditMode ? "Cập nhật" : "Thêm") + " nhóm quyền thành công!");
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, (isEditMode ? "Cập nhật" : "Thêm") + " nhóm quyền thất bại!");
-            }
-        } else if (e.getSource() == btnHuyBo) {
-            dispose();
-        }
-    }
-
-    public static void showAddPermissionGroupDialog(JFrame parent, PermissionGroup group) {
-        AddPermissionGroupDialog dialog = new AddPermissionGroupDialog(parent, group == null ? "Thêm Nhóm Quyền" : "Sửa Nhóm Quyền", true, group);
+    public static void showViewPermissionGroupDialog(JFrame parent, PermissionGroup group) {
+        ViewPermissionGroupDialog dialog = new ViewPermissionGroupDialog(parent, group);
         dialog.setVisible(true);
     }
 
