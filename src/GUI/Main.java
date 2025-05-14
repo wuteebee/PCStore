@@ -20,6 +20,7 @@ public class Main extends JFrame {
 
     private void initComponents() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(0, 0));
         this.setTitle("Hệ thống quản lý cửa hàng máy tính");

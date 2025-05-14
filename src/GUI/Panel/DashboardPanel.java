@@ -21,32 +21,21 @@ public class DashboardPanel extends JPanel {
 
 
     public DashboardPanel(Main mainFrame) {
-//        this.salesInvoiceBUS = new InvoiceBUS(new InvoiceDAO());
-//        this.comInvoiceBUS = new PhieuNhapBUS(new PhieuNhapDAO());
-//        this.productBUS = new ProductBUS();
-//        this.employeeBUS = new EmployeeBUS(new EmployeeDAO());
-//        this.promotionBUS = new PromotionBUS();
-
         this.mainFrame = mainFrame;
         this.statistics = new JPanel();
+        this.statistics.setPreferredSize(new Dimension(1670,890));
         DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-        int height = dm.getHeight();
-        int width = dm.getWidth();
-        statistics.setPreferredSize(new Dimension(width - 250,height - 100));
         initComponent();
+        financeStatistics();
     }
 
     private void initComponent() {
         this.setLayout(new BorderLayout(10, 10));
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+        setSize(1920,890);
         add(createDashboardToolbar(), BorderLayout.NORTH);
         this.statistics.setLayout(new BorderLayout());
         this.add(statistics);
-        financeStatistics();
-        System.out.println(statistics.getSize());
-
-
     }
 
     public JPanel createDashboardToolbar() {
@@ -58,21 +47,15 @@ public class DashboardPanel extends JPanel {
         return toolbar;
     }
 
-    public void financeStatistics() {
-        DashFinance financeStatistics = new DashFinance(salesInvoiceBUS, comInvoiceBUS, promotionBUS);
-
-
+    public DashFinance financeStatistics() {
+        DashFinance financeStatistics = new DashFinance();
         setStatistics(financeStatistics);
+        return financeStatistics;
     }
 
     public void productStatistics() {
         DashProduct productStatistics = new DashProduct();
         setStatistics(productStatistics);
-    }
-
-    public void employeeStatistics() {
-        DashEmployee employeeStatistics = new DashEmployee();
-        setStatistics(employeeStatistics);
     }
 
     public void setStatistics(JPanel panel) {
@@ -81,5 +64,4 @@ public class DashboardPanel extends JPanel {
         statistics.revalidate();
         statistics.repaint();
     }
-
 }

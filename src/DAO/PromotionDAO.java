@@ -14,7 +14,7 @@ public class PromotionDAO {
     private Connection conn;
 
     public PromotionDAO() {
-        conn = DatabaseConnection.getConnection();
+        conn = H2DatabaseConnection.getConnection();
     }
 
     public List<Promotion> getAllPromotions() {
@@ -146,6 +146,9 @@ public class PromotionDAO {
         }
         return products;
     }
+
+
+
 
 
 }

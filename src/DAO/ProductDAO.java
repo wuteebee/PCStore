@@ -27,7 +27,7 @@ public class ProductDAO {
         String sql = "SELECT sp.*, pl.idPhanLoai, pl.STTPL, pl.Gia AS giaPhienBan, pl.soLuongTonKho " +
                      "FROM sanpham sp LEFT JOIN phanloaisp pl ON sp.idSanPham = pl.idSanPham";
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -85,7 +85,7 @@ public class ProductDAO {
 
         String sql = "SELECT * FROM sanpham WHERE idSanPham = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, id);
@@ -145,7 +145,7 @@ public class ProductDAO {
 
         String sql = "SELECT * FROM sanpham";
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -174,7 +174,7 @@ public class ProductDAO {
         List<ChiTietCauHinh> ctch = new ArrayList<>();
 
         String sql;
-        try (Connection conn = DatabaseConnection.getConnection()) {
+        try (Connection conn = H2DatabaseConnection.getConnection()) {
             if (maDanhMuc.equals("Laptop")) {
                 sql = "SELECT * FROM cauhinhlaptop WHERE idSanPham = ? AND STTPL = ?";
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -215,7 +215,7 @@ public class ProductDAO {
         Product product = null;
         String sql = "SELECT * FROM sanpham WHERE idSanPham = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, id);
@@ -251,7 +251,7 @@ public class ProductDAO {
             ? "SELECT * FROM chitietsp"
             : "SELECT * FROM chitietsp WHERE idPhanLoai = ?";
     
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
     
             if (id != null) {
@@ -295,7 +295,7 @@ public class ProductDAO {
         boolean exists = false;
         String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, idSanPham);
@@ -315,7 +315,7 @@ public class ProductDAO {
         String sql = "SELECT idDanhMucCha, tenDanhMuc FROM DanhMuc WHERE idDanhMuc = ?";
         String danhMucCha = null;
     
-        try (Connection conn = DatabaseConnection.getConnection() ;
+        try (Connection conn = H2DatabaseConnection.getConnection() ;
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, idDanhMuc); 
@@ -339,7 +339,7 @@ public class ProductDAO {
     }
     public boolean checkMaSPDaTonTai(String idsp) {
         String sql = "SELECT idSanPham FROM SanPham WHERE idSanPham = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, idsp);
@@ -356,7 +356,7 @@ public class ProductDAO {
         List<Product> ds = new ArrayList<>();
     
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = H2DatabaseConnection.getConnection();
             String sql = "SELECT * FROM sanpham WHERE idDanhMuc = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, idDM);
@@ -406,7 +406,7 @@ public class ProductDAO {
     public boolean insertSP(Product sp) {
         String idsp = RandomIdSP(getDanhMucCha(sp.getDanhMuc().getMaDanhMuc()));
         String sql = "INSERT INTO SanPham (idSanPham, tenSanPham, idDanhMuc, idThuongHieu, moTaSanPham, anhSanPham, Gia, trangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setString(1, idsp);
@@ -433,7 +433,7 @@ public class ProductDAO {
     
     public boolean insertplsp(String idsp, int STTPL, double gia, int soLuongTonKho) {
         String sql = "INSERT INTO phanloaisp (idSanPham, STTPL, Gia, soLuongTonKho) VALUES (?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setString(1, idsp);
@@ -455,7 +455,7 @@ public String getIDPhanLoai(String idsp, int STTPL) {
     String sql = "SELECT idPhanLoai FROM phanloaisp WHERE idSanPham = ? AND STTPL = ?";
     String idPhanLoai = null;
 
-    try (Connection conn = DatabaseConnection.getConnection();
+    try (Connection conn = H2DatabaseConnection.getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
 
         stmt.setString(1, idsp);
@@ -477,7 +477,7 @@ public String getIDPhanLoai(String idsp, int STTPL) {
     public boolean updateplsp(String idPhanLoai,String idsp, int STTPL, double gia, int soLuongTonKho,boolean trangThai) {
         String sql = "UPDATE phanloaisp SET Gia = ?, soLuongTonKho = ? ,idSanPham = ?,STTPL = ? WHERE  idPhanLoai = ?";
     
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setDouble(1, gia);
@@ -496,7 +496,7 @@ public String getIDPhanLoai(String idsp, int STTPL) {
     public boolean insertCauHinhPC(String idSP, String idThongTin, String idLinhKien, int STTPL) {
         String sql = "INSERT INTO cauhinhpc (idSanPham, idThongTin, idLinhKien, STTPL) VALUES (?, ?, ?, ?)";
     
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setString(1, idSP);
@@ -515,7 +515,7 @@ public String getIDPhanLoai(String idsp, int STTPL) {
     public boolean insertCauHinh(String idSP, String idThongTin, String ThongTin, int STTPL) {
         String sql = "INSERT INTO cauhinhlaptop (idSanPham, idThongTin, ThongTin, STTPL) VALUES (?, ?, ?, ?)";
     
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setString(1, idSP);
@@ -535,7 +535,7 @@ public String getIDPhanLoai(String idsp, int STTPL) {
     public boolean updateProduct(Product sp) {
         String sql = "UPDATE sanpham SET tenSanPham = ?, idDanhMuc = ?, idThuongHieu = ?, moTaSanPham = ?, anhSanPham = ?, Gia = ? WHERE idSanPham = ?";
     
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setString(1, sp.getTenSp());
@@ -558,7 +558,7 @@ public String getIDPhanLoai(String idsp, int STTPL) {
     public boolean deleteProduct(String id) {
         String sql = "UPDATE sanpham SET trangThai = ? WHERE idSanPham = ?";
     
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setBoolean(1, false);
@@ -575,7 +575,7 @@ public String getIDPhanLoai(String idsp, int STTPL) {
     public boolean deleteCauhinhLaptop(String idSp,int STTPL) {
         String sql = "DELETE FROM cauhinhlaptop WHERE idSanPham = ? AND STTPL = ?";
     
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setString(1, idSp);
@@ -592,7 +592,7 @@ public String getIDPhanLoai(String idsp, int STTPL) {
     public boolean deleteCauhinhPC(String idSp,int STTPL) {
         String sql = "DELETE FROM cauhinhpc WHERE idSanPham = ? AND STTPL = ?";
     
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setString(1, idSp);
@@ -609,7 +609,7 @@ public String getIDPhanLoai(String idsp, int STTPL) {
     public boolean updateTrangThaiplsp(String idPhanLoai, boolean trangThai) {
         String sql = "UPDATE phanloaisp SET trangThai = ? WHERE idPhanLoai = ?";
     
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setBoolean(1, trangThai);
@@ -623,4 +623,6 @@ public String getIDPhanLoai(String idsp, int STTPL) {
             return false;
         }
     }
+
+
 }

@@ -12,7 +12,7 @@ public class AccountDAO {
     private Connection conn;
 
     public AccountDAO() {
-        conn = DatabaseConnection.getConnection();
+        conn = H2DatabaseConnection.getConnection();
     }
 
     public Account getAccountByUsername(String username) {

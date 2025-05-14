@@ -4,6 +4,7 @@ import DAO.AccountDAO;
 import DAO.EmployeeDAO;
 import DTO.Account;
 import DTO.Employee;
+import GUI.ActionListener.DashboardActionListener;
 import GUI.Login;
 import GUI.Main;
 import GUI.Panel.*;
@@ -238,7 +239,10 @@ public class MenuLeft extends JPanel {
             case "Nhà cung cấp" -> mainFrame.setMainPanel(new SupplierPanel(mainFrame));
             case "Tài khoản" -> mainFrame.setMainPanel(new AccountPanel(mainFrame));
             case "Khuyến mãi và ưu đãi" -> mainFrame.setMainPanel(new PromotionPanel(mainFrame));
-            case "Thống kê" -> mainFrame.setMainPanel(new DashboardPanel(mainFrame));
+            case "Thống kê" -> {
+                DashboardPanel dp = new DashboardPanel(mainFrame);
+                mainFrame.setMainPanel(dp);
+            }
             case "Đăng xuất" -> {
                 int input = JOptionPane.showConfirmDialog(null,
                         "Bạn có chắc chắn muốn đăng xuất?", "Đăng xuất",

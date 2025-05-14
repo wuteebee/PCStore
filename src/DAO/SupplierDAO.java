@@ -11,7 +11,7 @@ public class SupplierDAO {
     private Connection conn;
 
     public SupplierDAO() {
-        conn = DatabaseConnection.getConnection();
+        conn = H2DatabaseConnection.getConnection();
     }
 
     public List<Supplier> getAllSuppliers() {

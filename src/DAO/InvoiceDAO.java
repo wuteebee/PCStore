@@ -16,9 +16,8 @@ public class InvoiceDAO {
     static private Map<String, DetailedSalesInvoice> detailedSalesInvoiceMap = new HashMap<>();
 
 
-
     public InvoiceDAO() {
-        conn = DatabaseConnection.getConnection();
+        conn = H2DatabaseConnection.getConnection();
     }
 
     public List<SalesInvoice> getAllSalesInvoice() {
@@ -127,7 +126,7 @@ public class InvoiceDAO {
 
         try {
             PreparedStatement ps = conn.prepareStatement(chiTietHoaDonXuatsql);
-            for(DetailedSalesInvoice detailedSalesInvoice : detailedSalesInvoices) {
+            for (DetailedSalesInvoice detailedSalesInvoice : detailedSalesInvoices) {
                 ps.setString(1, detailedSalesInvoice.getSeri());
                 ps.setDouble(2, detailedSalesInvoice.getDonGia());
                 ps.setString(3, detailedSalesInvoice.getFid());
@@ -206,6 +205,69 @@ public class InvoiceDAO {
             e.printStackTrace();
             return 0.0;
         }
-        
+
+    }
+
+    public List<SalesInvoice> getByDateRange(Date startDate, Date endDate) {
+        List<SalesInvoice> salesInvoices = new ArrayList<>();
+        String sql = "SELECT * FROM hoadonxuat WHERE ngayTao BETWEEN ? AND ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setDate(1, startDate);
+            ps.setDate(2, endDate);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String id = rs.getString("idHoaDonXuat");
+                String eid = rs.getString("idNhanVien");
+                String cid = rs.getString("idKhachHang");
+                LocalDate date = rs.getDate("ngayTao").toLocalDate();
+                double tongTien = rs.getDouble("tongTien");
+                String did = rs.getString("idKhuyenMai");
+
+                SalesInvoice salesInvoice = new SalesInvoice(id, eid, cid, date, tongTien, did);
+                salesInvoiceMap.put(id, salesInvoice);
+                salesInvoices.add(salesInvoice);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println("Lỗi lấy hóa đơn xuất: " + e.getMessage());
+            e.printStackTrace();
+        }
+        attachDetailedSalesInvoice();
+        return salesInvoices;
+    }
+
+    public List<SalesInvoice> getByPeriod(String period) {
+        List<SalesInvoice> result = new ArrayList<>();
+        String sql;
+        if ("Month".equals(period)) {
+            sql = "SELECT *, TO_CHAR(ngayTao, 'YYYY-MM') AS period " +
+                    "FROM hoadonxuat " +
+                    "ORDER BY period";
+        } else {
+            sql = "SELECT *, EXTRACT(YEAR FROM ngayTao) AS period " +
+                    "FROM hoadonxuat " +
+                    "ORDER BY period";
+        }
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                String id = rs.getString("idHoaDonXuat");
+                String eid = rs.getString("idNhanVien");
+                String cid = rs.getString("idKhachHang");
+                LocalDate date = rs.getDate("ngayTao").toLocalDate();
+                double totalPayment = rs.getDouble("tongTien");
+                String did = rs.getString("idKhuyenMai");
+
+                SalesInvoice invoice = new SalesInvoice(id, eid, cid, date, totalPayment, did);
+                result.add(invoice);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi lấy hóa đơn xuất: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return result;
     }
 }

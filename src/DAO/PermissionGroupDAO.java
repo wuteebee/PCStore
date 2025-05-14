@@ -12,7 +12,7 @@ public class PermissionGroupDAO {
     private Connection conn;
 
     public PermissionGroupDAO() {
-        conn = DatabaseConnection.getConnection();
+        conn = H2DatabaseConnection.getConnection();
     }
 
     public List<PermissionGroup> getAllPermissionGroups() {
