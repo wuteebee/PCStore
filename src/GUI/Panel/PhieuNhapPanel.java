@@ -39,6 +39,8 @@ public class PhieuNhapPanel extends JPanel {
         addTableSelectionListener();
     }
 
+  
+
     private void initComponent() {
         this.setLayout(new BorderLayout(10, 10));
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -48,6 +50,7 @@ public class PhieuNhapPanel extends JPanel {
         add(createMainContent(), BorderLayout.CENTER);
     }
 
+     
     private JPanel createMainContent() {
         JPanel mainContent = new JPanel(new BorderLayout(10, 0));
         mainContent.setBackground(Color.WHITE);
@@ -238,4 +241,57 @@ public class PhieuNhapPanel extends JPanel {
             }
         }
     }
+
+
+    public boolean deleteHoaDon(){
+        boolean deleted=true;
+        int selectedRow = table.getSelectedRow(); 
+        String idPhieuNhap="";
+        if (selectedRow != -1) { 
+            idPhieuNhap = table.getValueAt(selectedRow, 0).toString(); 
+            System.out.println("ID Phiếu Nhập: " + idPhieuNhap);
+        }
+        // Kiểm tra từng sản phẩm trong phiếu nhập có thuộc phiếu xuất nào kkh
+        // lấy các chitietsp dựa vào mã phiếu nhập
+        PhieuNhapBUS phieuNhapBUS=new PhieuNhapBUS();
+        if (phieuNhapBUS.ktraXuatHang(idPhieuNhap)) {
+    JOptionPane.showMessageDialog(null, 
+        "Phiếu nhập này đã có sản phẩm được xuất kho, không thể xoá!",
+        "Thông báo",
+        JOptionPane.WARNING_MESSAGE);
+    return false; 
+}
+
+
+    
+      deleted= phieuNhapBUS.deleteFull(idPhieuNhap);
+        return deleted;
+    }
+
+    public boolean fixHoadon(){
+        boolean fix=true;
+        int selectedRow = table.getSelectedRow(); 
+        String idPhieuNhap="";
+        if (selectedRow != -1) { 
+            idPhieuNhap = table.getValueAt(selectedRow, 0).toString(); 
+            System.out.println("ID Phiếu Nhập: " + idPhieuNhap);
+        }
+        // Kiểm tra từng sản phẩm trong phiếu nhập có thuộc phiếu xuất nào kkh
+        // lấy các chitietsp dựa vào mã phiếu nhập
+        PhieuNhapBUS phieuNhapBUS=new PhieuNhapBUS();
+        if (phieuNhapBUS.ktraXuatHang(idPhieuNhap)) {
+    JOptionPane.showMessageDialog(null, 
+        "Phiếu nhập này đã có sản phẩm được xuất kho, không thể chỉnh sửa!",
+        "Thông báo",
+        JOptionPane.WARNING_MESSAGE);
+    return false; 
+
+
+        
+    }
+
+    mainFrame.setMainPanel(new NhapHoaDonPanel(mainFrame, true));
+    return fix;
+
+}
 }

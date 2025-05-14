@@ -11,16 +11,14 @@ CREATE TABLE IF NOT EXISTS NhomQuyen (
     tenNhomQuyen VARCHAR(50) NOT NULL,
     trangThai INT DEFAULT 1
 );
-
 CREATE TABLE IF NOT EXISTS ChiTietQuyen (
     idNhomQuyen VARCHAR(20) NOT NULL,
     idChucNang VARCHAR(20) NOT NULL,
     hanhDong VARCHAR(5) NOT NULL,
-    PRIMARY KEY (idNhomQuyen, idChucNang),
+    PRIMARY KEY (idNhomQuyen, idChucNang,hanhDong),
     FOREIGN KEY (idNhomQuyen) REFERENCES NhomQuyen(idNhomQuyen),
     FOREIGN KEY (idChucNang) REFERENCES ChucNang(idChucNang)
 );
-
 -- Create DanhMuc table
 CREATE TABLE IF NOT EXISTS DanhMuc (
     idDanhMuc VARCHAR(20) PRIMARY KEY,
@@ -107,7 +105,9 @@ CREATE TABLE IF NOT EXISTS PhanLoaiSP (
 
 CREATE TABLE IF NOT EXISTS ChiTietSP (
     SerialNumber VARCHAR(50) PRIMARY KEY,  -- SerialNumber là khóa chính
-    idPhanLoai INT,            
+    idPhanLoai INT,  
+    maphieunhap INT DEFAULT -1,
+    maphieuxuat INT DEFAULT  -1,          
     trangThai INT DEFAULT 1   ,         -- Liên kết với PhanLoaiSP
     FOREIGN KEY (idPhanLoai) REFERENCES PhanLoaiSP(idPhanLoai) -- Khóa ngoại
 );
@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS KhachHang (
 
 -- Create HoaDonXuat table
 CREATE TABLE IF NOT EXISTS HoaDonXuat (
-    idHoaDonXuat VARCHAR(20) PRIMARY KEY,
+    idHoaDonXuat INT AUTO_INCREMENT PRIMARY KEY,
     idNhanVien VARCHAR(20) NOT NULL,
     idKhachHang INT NOT NULL,
     ngayTao DATE NOT NULL,
@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS HoaDonXuat (
 -- Create ChiTietHoaDonXuat table
 CREATE TABLE IF NOT EXISTS ChiTietHoaDonXuat (
     idChiTietHoaDonXuat VARCHAR(20) PRIMARY KEY,
-    idHoaDonXuat VARCHAR(20) NOT NULL,
+    idHoaDonXuat INT NOT NULL,
     SN VARCHAR(50) NOT NULL,  
 	  donGia DECIMAL(12,2) NOT NULL, 
     FOREIGN KEY (idHoaDonXuat) REFERENCES HoaDonXuat(idHoaDonXuat),
@@ -195,11 +195,12 @@ CREATE TABLE IF NOT EXISTS ChiTietHoaDonXuat (
 
 -- Create HoaDonNhap table
 CREATE TABLE IF NOT EXISTS HoaDonNhap (
-    idHoaDonNhap VARCHAR(20) PRIMARY KEY,
+    idHoaDonNhap INT PRIMARY KEY AUTO_INCREMENT,
+
     idNhanVien VARCHAR(20) NOT NULL,
     idNhaCungCap VARCHAR(20) NOT NULL,
     ngayTao DATE NOT NULL,
-    tongTien DECIMAL(10,2) NOT NULL,
+    tongTien DECIMAL(18,2) NOT NULL,
     FOREIGN KEY (idNhanVien) REFERENCES NhanVien(idNhanVien),
     FOREIGN KEY (idNhaCungCap) REFERENCES NhaCungCap(idNhaCungCap)
 );
@@ -210,8 +211,8 @@ CREATE TABLE IF NOT EXISTS HoaDonNhap (
 CREATE TABLE IF NOT EXISTS ChiTietDonNhap (
     idDonHang INT,
     SN VARCHAR(50) NOT NULL,  
-    donGia DECIMAL(12,2) NOT NULL, -- Đơn giá tại thời điểm mua
-    thanhTien DECIMAL(15,2) NOT NULL, 
+    donGia DECIMAL(15,2) NOT NULL, -- Đơn giá tại thời điểm mua
+
     PRIMARY KEY (idDonHang,SN),
     FOREIGN KEY (SN) REFERENCES ChiTietSP(SerialNumber)
 );
@@ -635,3 +636,70 @@ VALUES
   ('Phan Thị Rạng',   '0968901234', 'phanthirang@example.com',    '2024-06-12', 1),
   ('Bùi Văn Sơn',     '0979012345', 'buivanson@example.com',      '2024-07-07', 1),
   ('Đặng Thị Thanh',  '0980123456', 'dangthithanh@example.com',   '2024-08-19', 1);
+
+
+
+   -- Add sample data for NhomQuyen
+INSERT INTO NhomQuyen (idNhomQuyen, tenNhomQuyen, trangThai) VALUES
+('NQ001', 'Quản lý', 1),
+('NQ002', 'Nhân viên bán hàng', 1),
+('NQ003', 'Nhân viên kho', 1);
+
+
+INSERT INTO TaiKhoan (idTaiKhoan, idNhanVien, idNhomQuyen, tenDangNhap, matKhau, trangThai) VALUES
+('TK001', 'NV001', 'NQ001', 'admin', '123456', 1),
+('TK002', 'NV002', 'NQ002', 'staff', '123456', 1);
+
+-- Thêm nhóm quyền Quản trị viên
+INSERT INTO NhomQuyen (idNhomQuyen, tenNhomQuyen, trangThai)
+SELECT 'NQ001', 'Quản trị viên', 1
+WHERE NOT EXISTS (
+    SELECT 1 FROM NhomQuyen WHERE idNhomQuyen = 'NQ001'
+);
+
+
+
+
+-- Cập nhật nhóm quyền cho tài khoản admin (nếu đã tồn tại)
+UPDATE TaiKhoan
+SET idNhomQuyen = 'NQ001'
+WHERE idTaiKhoan = 'admin';
+
+-- Thêm các chức năng (nếu chưa có)
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN001', 'Sản phẩm' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN001');
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN002', 'Thuộc tính' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN002');
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN003', 'Phiếu nhập' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN003');
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN004', 'Phiếu xuất' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN004');
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN005', 'Khách hàng' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN005');
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN006', 'Nhà cung cấp' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN006');
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN007', 'Nhân viên' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN007');
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN008', 'Tài khoản' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN008');
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN009', 'Thống kê' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN009');
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN010', 'Phân quyền' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN010');
+INSERT INTO ChucNang (idChucNang, tenChucNang)
+SELECT 'CN011', 'Khuyến mãi và ưu đãi' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN011');
+
+-- Gán tất cả quyền cho nhóm Quản trị viên
+INSERT INTO ChiTietQuyen (idNhomQuyen, idChucNang, hanhDong)
+SELECT 'NQ001', idChucNang, hanhDong
+FROM ChucNang
+CROSS JOIN (SELECT 'Xem' AS hanhDong
+            UNION SELECT 'Tao'
+            UNION SELECT 'Sua'
+            UNION SELECT 'Xoa'
+            UNION SELECT 'Xuat') AS HanhDong
+WHERE NOT EXISTS (
+    SELECT 1 FROM ChiTietQuyen ctq
+    WHERE ctq.idNhomQuyen = 'NQ001' AND ctq.idChucNang = ChucNang.idChucNang AND ctq.hanhDong = HanhDong.hanhDong
+);
+SELECT idNhomQuyen, idChucNang, hanhDong FROM ChiTietQuyen WHERE idNhomQuyen = 'NQ001';

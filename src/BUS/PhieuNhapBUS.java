@@ -3,6 +3,7 @@ package BUS;
 import DAO.PhieuNhapDAO;
 import DTO.ChiTietDonNhap;
 import DTO.HoaDonNhap;
+import DTO.ProductDetail;
 
 import java.util.List;
 
@@ -39,5 +40,43 @@ public class PhieuNhapBUS {
 
     public List<ChiTietDonNhap> getAll_ChiTietDonNhap(){
         return dao.getAll_CTDonNhap();
+    }
+
+    public String insertHoaDonNhap(HoaDonNhap hdn) {
+        return dao.insertHoaDonNhap(hdn);
+
+    }
+
+    public boolean insertChitietSP(ProductDetail productDetail){
+        PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
+        return phieuNhapDAO.insertChitietSP(productDetail);
+    }
+    public boolean insertChitietPhieuNhap(ProductDetail productDetail){
+        PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
+        return phieuNhapDAO.insertChitietPhieuNhap(productDetail);    }
+
+    public boolean ktraXuatHang(String id){
+        PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
+        return phieuNhapDAO.ktraXuatHang(id);
+    }
+
+    public boolean deleteFull(String id){
+        boolean deleted=false;
+        PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
+
+        deleted=phieuNhapDAO.xoaChiTietPhieuNhap(id);
+        
+        deleted=phieuNhapDAO.xoaChiTietSPTheoPhieuNhap(id);
+        deleted=phieuNhapDAO.xoaHoaDonNhap(id);
+
+
+        return deleted;
+
+        
+
+    }
+
+    public boolean updateSLTK(String id,int soluong){
+        return dao.updateSTTK(id, soluong);
     }
 }

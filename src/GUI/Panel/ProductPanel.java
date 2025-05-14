@@ -17,6 +17,10 @@ public class ProductPanel extends JPanel {
     private JTable productTable;
     private String selectedProductId = "-1";
     private Main mainFrame;
+    private JTextField searchField;
+       private JButton btnSearch;
+    private JButton btnReset;
+    private   List<Product> products;
 
     public ProductPanel(Main mainFrame) {
         this.mainFrame = mainFrame;
@@ -38,23 +42,97 @@ public class ProductPanel extends JPanel {
         tableModel.addRow(newRow);
     }
     public JPanel createCustomToolbar() {
-        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+   JPanel toolbar = new JPanel(new GridLayout(1, 2, 10, 10));
         toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         toolbar.setPreferredSize(new Dimension(980, 90));
         toolbar.setBackground(Color.WHITE);
         MenuChucNang menu = new MenuChucNang();
         toolbar.add(menu.createActionPanel(this, mainFrame));
-        toolbar.add(MenuChucNang.createSearchPanel());
+         JPanel searchPanel=MenuChucNang.createSearchPanel();
+        toolbar.add(searchPanel);
+
+
+         // Lấy tham chiếu đến các thành phần trong searchPanel để xử lý tìm kiếm
+        Component[] components = searchPanel.getComponents();
+        for (Component comp : components) {
+            if (comp instanceof JButton) {
+                JButton button = (JButton) comp;
+                if (button.getText().equals("Tìm kiếm")) {
+                    btnSearch = button;
+                } else if (button.getText().equals("Làm mới")) {
+                    btnReset = button;
+                }
+            } else if (comp instanceof JTextField) {
+                searchField = (JTextField) comp;
+            }
+        }
+
+        // Gán sự kiện tìm kiếm và làm mới
+        btnSearch.addActionListener(e -> searchProduct());
+        btnReset.addActionListener(e -> {
+            searchField.setText("");
+            loadData();
+        });
 
         return toolbar;
     }
+
+   private void searchProduct() {
+    String keyword = searchField.getText().trim().toLowerCase();
+    if (keyword.isEmpty()) {
+        loadData();
+        return;
+    }
+
+    tableModel.setRowCount(0); // Xóa dữ liệu cũ
+
+    ProductDAO productDAO = new ProductDAO();
+    List<Product> products = productDAO.getAllProducts(); // lấy lại dữ liệu
+
+    for (Product product : products) {
+        if (!product.isTrangThai()) continue;
+
+        String maSP = product.getMaSp();
+        String tenSP = product.getTenSp();
+        String tenLoai = product.getDanhMuc() != null ? product.getDanhMuc().getTenDanhMuc() : "N/A";
+        String thuongHieu = product.getThuongHieu() != null ? product.getThuongHieu().getTenThuongHieu() : "N/A";
+        String moTa = product.getMoTaSanPham();
+
+        if (maSP.toLowerCase().contains(keyword) ||
+            tenSP.toLowerCase().contains(keyword) ||
+            moTa.toLowerCase().contains(keyword)) {
+            Object[] row = { maSP, tenSP, tenLoai, thuongHieu, moTa };
+            tableModel.addRow(row);
+        }
+    }
+}
+
+private void loadData() {
+    ProductDAO productDAO = new ProductDAO();
+    products = productDAO.getAllProducts(); // Lưu danh sách vào biến class
+
+    tableModel.setRowCount(0); // Xoá hết dữ liệu cũ
+
+    for (Product product : products) {
+        if (!product.isTrangThai()) continue;
+
+        String maSP = product.getMaSp();
+        String tenSP = product.getTenSp();
+        String tenLoai = product.getDanhMuc() != null ? product.getDanhMuc().getTenDanhMuc() : "N/A";
+        String thuongHieu = product.getThuongHieu() != null ? product.getThuongHieu().getTenThuongHieu() : "N/A";
+        String moTa = product.getMoTaSanPham();
+
+        Object[] row = { maSP, tenSP, tenLoai, thuongHieu, moTa };
+        tableModel.addRow(row);
+    }
+}
 
     private JPanel createTablePanel() {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setBackground(Color.WHITE);
 
     ProductDAO productDAO = new ProductDAO();
-    List<Product> products = productDAO.getAllProducts();
+   products = productDAO.getAllProducts();
 
     String[] columnNames = { "Mã sản phẩm", "Tên sản phẩm", "Loại sản phẩm", "Thương hiệu", "Mô tả" };
     tableModel = new DefaultTableModel(columnNames, 0);

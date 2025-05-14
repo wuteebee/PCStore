@@ -7,9 +7,11 @@ import java.util.List;
 
 public class AccountBUS {
     private final AccountDAO accountDAO;
+    private final PermissionBUS permissionBUS;
 
     public AccountBUS() {
         accountDAO = new AccountDAO();
+        permissionBUS = new PermissionBUS();
     }
 
     public List<Account> getAllAccounts() {
@@ -69,5 +71,17 @@ public class AccountBUS {
 
     public String getPermissionGroupName(String idNhomQuyen) {
         return accountDAO.getPermissionGroupName(idNhomQuyen);
+    }
+
+    public boolean hasPermission(String idTaiKhoan, String chucNang, String hanhDong) {
+        Account account = accountDAO.getAllAccounts().stream()
+                .filter(a -> a.getIdTaiKhoan().equals(idTaiKhoan))
+                .findFirst()
+                .orElse(null);
+        if (account == null) {
+            return false;
+        }
+        String idChucNang = permissionBUS.getChucNangIdByName(chucNang);
+        return permissionBUS.hasPermission(account.getIdNhomQuyen(), idChucNang, hanhDong);
     }
 }
