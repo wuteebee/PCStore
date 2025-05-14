@@ -372,9 +372,7 @@ public boolean isImeiExistInChiTietHDN(String imei) {
    tfImeiTo = new JTextField();
     tfImeiTo.setBounds(290, 200, 80, 25);
 
-
-    Suasp = new JButton("Sửa");
-    // Ẩn mặc định
+   
     lbFrom.setVisible(false);
     tfImeiFrom.setVisible(false);
     lbTo.setVisible(false);
@@ -471,6 +469,17 @@ public boolean isImeiExistInChiTietHDN(String imei) {
     tfImeiTo.getDocument().addDocumentListener(listener);
     soluongsp.getDocument().addDocumentListener(listener);
 
+
+
+    Suasp = new JButton("Sửa");
+    Suasp.setBounds(10, 300, 100, 30);
+    Suasp.setBackground(getBackground());
+
+    Xoasp=new JButton("Xoá");
+    Xoasp.setBounds(120, 300, 100, 30);
+
+
+
     // --- Add tất cả component vào panel ---
     centerPanel.add(lbMaSP); centerPanel.add(tfMaSP);
     centerPanel.add(lbTenSP); centerPanel.add(tfTenSP);
@@ -482,6 +491,8 @@ public boolean isImeiExistInChiTietHDN(String imei) {
     centerPanel.add(lbFrom); centerPanel.add(tfImeiFrom);
     centerPanel.add(lbTo); centerPanel.add(tfImeiTo);
     centerPanel.add(soluong); centerPanel.add(soluongsp);
+    centerPanel.add(Suasp);
+    centerPanel.add(Xoasp);
 
     add(centerPanel);
 }

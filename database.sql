@@ -107,7 +107,9 @@ CREATE TABLE IF NOT EXISTS PhanLoaiSP (
 
 CREATE TABLE IF NOT EXISTS ChiTietSP (
     SerialNumber VARCHAR(50) PRIMARY KEY,  -- SerialNumber là khóa chính
-    idPhanLoai INT,            
+    idPhanLoai INT,  
+    maphieunhap INT,
+    maphieuxuat INT,          
     trangThai INT DEFAULT 1   ,         -- Liên kết với PhanLoaiSP
     FOREIGN KEY (idPhanLoai) REFERENCES PhanLoaiSP(idPhanLoai) -- Khóa ngoại
 );
@@ -172,7 +174,7 @@ CREATE TABLE IF NOT EXISTS KhachHang (
 
 -- Create HoaDonXuat table
 CREATE TABLE IF NOT EXISTS HoaDonXuat (
-    idHoaDonXuat VARCHAR(20) PRIMARY KEY,
+    idHoaDonXuat INT AUTO_INCREMENT PRIMARY KEY,
     idNhanVien VARCHAR(20) NOT NULL,
     idKhachHang INT NOT NULL,
     ngayTao DATE NOT NULL,
@@ -186,7 +188,7 @@ CREATE TABLE IF NOT EXISTS HoaDonXuat (
 -- Create ChiTietHoaDonXuat table
 CREATE TABLE IF NOT EXISTS ChiTietHoaDonXuat (
     idChiTietHoaDonXuat VARCHAR(20) PRIMARY KEY,
-    idHoaDonXuat VARCHAR(20) NOT NULL,
+    idHoaDonXuat INT NOT NULL,
     SN VARCHAR(50) NOT NULL,  
 	  donGia DECIMAL(12,2) NOT NULL, 
     FOREIGN KEY (idHoaDonXuat) REFERENCES HoaDonXuat(idHoaDonXuat),
