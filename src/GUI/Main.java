@@ -18,9 +18,10 @@ public class Main extends JFrame {
         initComponents();
     }
 
-    public Account getUser() {
+    public Account getCurrentAccount() {
         return user;
     }
+
     private void initComponents() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setLocationRelativeTo(null);
@@ -46,7 +47,6 @@ public class Main extends JFrame {
         MainContent.add(panel, BorderLayout.CENTER);
         MainContent.revalidate();
         MainContent.repaint();
-
     }
 
     public static void main(String[] args) {
@@ -60,4 +60,4 @@ public class Main extends JFrame {
 
         new Login();
     }
-}
+}   
