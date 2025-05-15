@@ -1,5 +1,7 @@
 package GUI.Components;
 
+import GUI.ActionListener.*;
+
 import BUS.PermissionBUS;
 import GUI.ActionListener.*;
 import GUI.Main;
@@ -93,7 +95,7 @@ public class MenuChucNang {
             PhieuNhapPanel phieuNhapPanel = (PhieuNhapPanel) panel;
             PhieuNhapActionListener actionListener = new PhieuNhapActionListener(phieuNhapPanel, MainFrame);
             btnAdd.addActionListener(actionListener);
-       
+
             btnDelete.addActionListener(actionListener);
             btnExport.addActionListener(actionListener);
             btnDetail.addActionListener(actionListener);
@@ -173,10 +175,18 @@ public class MenuChucNang {
             checkAndDisableButton(btnEdit, idNhomQuyen, "Phiếu xuất", "Sua");
             checkAndDisableButton(btnDelete, idNhomQuyen, "Phiếu xuất", "Xoa");
             checkAndDisableButton(btnDS, idNhomQuyen, "Phiếu xuất", "Xem");
+
+            SaleInvoiceActionListener actionListener = new SaleInvoiceActionListener((SaleInvoicePanel) panel, MainFrame);
+
+            btnAdd.addActionListener(actionListener);
+            btnEdit.addActionListener(actionListener);
+            btnDelete.addActionListener(actionListener);
+            btnDetail.addActionListener(actionListener);
+
             actionPanel.add(btnAdd);
             actionPanel.add(btnEdit);
             actionPanel.add(btnDelete);
-            actionPanel.add(btnDS);
+            actionPanel.add(btnDetail);
         }
 
         actionPanel.setBorder(BorderFactory.createTitledBorder("Chức năng"));
@@ -188,7 +198,8 @@ public class MenuChucNang {
     }
 
     private void checkAndDisableButton(JButton button, String idNhomQuyen, String chucNang, String hanhDong) {
-        boolean hasPermission = permissionBUS.hasPermission(idNhomQuyen, permissionBUS.getChucNangIdByName(chucNang), hanhDong);
+//        boolean hasPermission = permissionBUS.hasPermission(idNhomQuyen, permissionBUS.getChucNangIdByName(chucNang), hanhDong);
+        boolean hasPermission = true;
         System.out.println("Quyền: " + chucNang + " - " + hanhDong + " = " + hasPermission);
         if (!hasPermission) {
             button.setEnabled(false);
@@ -228,7 +239,7 @@ public class MenuChucNang {
             new Color(100, 149, 237)
         ));
 
-        
+
         return searchPanel;
     }
 

@@ -3,7 +3,6 @@ package DAO;
 import DTO.DetailedSalesInvoice;
 import DTO.SalesInvoice;
 import config.DatabaseConnection;
-import config.H2DatabaseConnection;
 
 import java.sql.*;
 import java.sql.Date;
@@ -17,7 +16,7 @@ public class InvoiceDAO {
 
 
     public InvoiceDAO() {
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     public List<SalesInvoice> getAllSalesInvoice() {
@@ -81,7 +80,7 @@ public class InvoiceDAO {
 //    }
 
     public boolean addSalesInvoice(SalesInvoice salesInvoice) {
-        String sql = "INSERT INTO hoadonxuat (idHoaDonXuat, idNhanVien, idKhachHang, idNgayTao, tongTien, idKhuyenMai)";
+        String sql = "INSERT INTO hoadonxuat (idHoaDonXuat, idNhanVien, idKhachHang, ngayTao, tongTien, idKhuyenMai) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, salesInvoice.getId());
             ps.setString(2, salesInvoice.getEid());
@@ -99,7 +98,7 @@ public class InvoiceDAO {
     }
 
     public boolean addDetailedSalesInvoice(SalesInvoice salesInvoice) {
-        String sql = "INSERT INTO chitiethoadonxuat (idChiTietHoaDonXuat, idHoaDonXuat, SN, donGia)";
+        String sql = "INSERT INTO chitiethoadonxuat (idChiTietHoaDonXuat, idHoaDonXuat, SN, donGia) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             List<DetailedSalesInvoice> detailedSalesInvoices = salesInvoice.getDetailedSalesInvoices();
             for (DetailedSalesInvoice detailedSalesInvoice : detailedSalesInvoices) {

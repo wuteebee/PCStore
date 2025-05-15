@@ -30,7 +30,7 @@ public class InvoiceBUS {
         // thêm truy vấn kiểm tra
 
         SalesInvoice newSalesInvoice = new SalesInvoice(
-                generateSalesInvoiceUniqueID(invoiceDAO.getSalesInvoiceMap()) ,
+                salesInvoice.getId() ,
                 salesInvoice.getEid(),
                 salesInvoice.getCid(),
                 salesInvoice.getDate(),
