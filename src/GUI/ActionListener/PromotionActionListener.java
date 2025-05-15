@@ -2,7 +2,12 @@ package GUI.ActionListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+
 import javax.swing.JOptionPane;
+
+import BUS.ExcelBUS;
+import GUI.Components.Excel;
 import GUI.Panel.PromotionPanel;
 
 public class PromotionActionListener implements ActionListener {
@@ -46,7 +51,18 @@ public class PromotionActionListener implements ActionListener {
                 }
                 break;
             case "Xuất Excel":
-                JOptionPane.showMessageDialog(panel, "Chức năng Xuất Excel đang được phát triển.");
+                System.out.println("Xuất Excel");
+                Excel panelExcel = new Excel();
+                String filePath = panelExcel.ChooseFile();
+                if (filePath != null) {
+                    ExcelBUS excelBUS = new ExcelBUS();
+                    try {
+                        excelBUS.ExcelListPromotion(filePath);
+                    } catch (IOException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
                 break;
         }
     }

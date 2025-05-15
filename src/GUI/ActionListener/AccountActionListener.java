@@ -1,9 +1,14 @@
 package GUI.ActionListener;
 
+import GUI.Components.Excel;
 import GUI.Panel.AccountPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+
 import javax.swing.JOptionPane;
+
+import BUS.ExcelBUS;
 
 public class AccountActionListener implements ActionListener {
     private AccountPanel accountPanel;
@@ -40,7 +45,18 @@ public class AccountActionListener implements ActionListener {
                 }
                 break;
             case "Xuất Excel":
-                JOptionPane.showMessageDialog(accountPanel, "Chức năng Xuất Excel đang được phát triển!");
+                System.out.println("Xuất Excel");
+                Excel panelExcel = new Excel();
+                String filePath = panelExcel.ChooseFile();
+                if (filePath != null) {
+                    ExcelBUS excelBUS = new ExcelBUS();
+                    try {
+                        excelBUS.ExcelListAccount(filePath);
+                    } catch (IOException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
                 break;
             case "Chi tiết":
                 String idDetail = accountPanel.getSelectedAccountId();

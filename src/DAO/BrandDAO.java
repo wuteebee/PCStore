@@ -104,4 +104,19 @@ public class BrandDAO {
         }
         return null;
     }
+
+    public String getNextBrandId() {
+        String sql = "SELECT idThuongHieu FROM ThuongHieu WHERE idThuongHieu REGEXP '^TH[0-9]+$' ORDER BY LENGTH(idThuongHieu) DESC, idThuongHieu DESC LIMIT 1";
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                String lastId = rs.getString("idThuongHieu"); // đúng tên cột
+                int number = Integer.parseInt(lastId.replace("TH", ""));
+                return String.format("TH%03d", number + 1);  // => TH006
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "TH001"; // Nếu chưa có dữ liệu
+    }
 }

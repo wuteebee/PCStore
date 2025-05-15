@@ -1,14 +1,22 @@
 package BUS;
 
+import DAO.AccountDAO;
 import DAO.BrandDAO;
+import DAO.CustomerDAO;
 import DAO.EmployeeDAO;
+import DAO.PermissionGroupDAO;
 import DAO.PhieuNhapDAO;
 import DAO.ProductDAO;
+import DAO.PromotionDAO;
 import DAO.SupplierDAO;
+import DTO.Account;
 import DTO.Brand;
+import DTO.Customer;
 import DTO.Employee;
 import DTO.HoaDonNhap;
+import DTO.PermissionGroup;
 import DTO.Product;
+import DTO.Promotion;
 import DTO.Supplier;
 import DTO.Brand;
 
@@ -250,6 +258,225 @@ public class ExcelBUS {
         }
 
         // 6. Auto-size
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // 7. Ghi ra file
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+        }
+        workbook.close();
+    }
+
+    public void ExcelListCustomer(String filePath) throws IOException {
+        // 1. Lấy dữ liệu
+        CustomerDAO customerDAO = new CustomerDAO();
+        List<Customer> dsCustomers = customerDAO.getAllCustomers();
+
+        // 2. Tạo workbook và sheet
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Danh sách khách hàng");
+
+        // 3. Style header
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        // 4. Header
+        String[] headers = {
+            "Mã KH", "Tên KH", "SĐT", "Email", "Ngày tham gia", "Trạng thái"
+        };
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // 5. Ghi dữ liệu
+        int rowIdx = 1;
+        for (Customer kh : dsCustomers) {
+            Row row = sheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(kh.getId());
+            row.createCell(1).setCellValue(kh.getName());
+            row.createCell(2).setCellValue(kh.getPhoneNumber());
+            row.createCell(3).setCellValue(kh.getEmail());
+            row.createCell(4).setCellValue(kh.getDateOfJoining().toString());
+            row.createCell(5).setCellValue(kh.getTrangThai() ? "Hoạt động" : "Không hoạt động");
+        }
+
+        // 6. Auto-size cột
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // 7. Ghi ra file
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+        }
+        workbook.close();
+    }
+
+    public void ExcelListAccount(String filePath) throws IOException {
+        // 1. Lấy dữ liệu
+        AccountDAO accountDAO = new AccountDAO();
+        List<Account> dsAccounts = accountDAO.getAllAccounts();
+
+        // 2. Tạo workbook và sheet
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Danh sách tài khoản");
+
+        // 3. Style header
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        // 4. Header
+        String[] headers = {
+            "Mã tài khoản",
+            "Mã nhân viên",
+            "Mã nhóm quyền",
+            "Tên đăng nhập",
+            "Mật khẩu",
+            "Trạng thái",
+            "Mã OTP"
+        };
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // 5. Ghi dữ liệu
+        int rowIdx = 1;
+        for (Account acc : dsAccounts) {
+            Row row = sheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(acc.getIdTaiKhoan());
+            row.createCell(1).setCellValue(acc.getIdNhanVien());
+            row.createCell(2).setCellValue(acc.getIdNhomQuyen());
+            row.createCell(3).setCellValue(acc.getTenDangNhap());
+            row.createCell(4).setCellValue(acc.getMatKhau());
+            row.createCell(5).setCellValue(acc.getTrangThai() == 1 ? "Hoạt động" : "Bị khóa");
+            row.createCell(6).setCellValue(acc.getMaOTP());
+        }
+
+        // 6. Auto-size cột
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // 7. Ghi file
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+        }
+        workbook.close();
+    }
+
+    public void ExcelListPromotion(String filePath) throws IOException {
+        // 1. Lấy dữ liệu
+        PromotionDAO promotionDAO = new PromotionDAO();
+        List<Promotion> dsPromotions = promotionDAO.getAllPromotions();
+
+        // 2. Tạo workbook và sheet
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Danh sách khuyến mãi");
+
+        // 3. Style header
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        // 4. Header
+        String[] headers = {
+            "Mã KM", "Tên chương trình", "Giá trị", "Ngày bắt đầu", "Ngày kết thúc", "Loại", "Trạng thái"
+        };
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // 5. Ghi dữ liệu
+        int rowIdx = 1;
+        for (Promotion km : dsPromotions) {
+            Row row = sheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(km.getIdKhuyenMai());
+            row.createCell(1).setCellValue(km.getTenKhuyenMai());
+            row.createCell(2).setCellValue(km.getGiaTri());
+            row.createCell(3).setCellValue(km.getNgayBatDau().toString());
+            row.createCell(4).setCellValue(km.getNgayKetThuc().toString());
+            row.createCell(5).setCellValue(km.getLoai());
+            row.createCell(6).setCellValue(km.getTrangThai() == 1 ? "Hoạt động" : "Không hoạt động");
+        }
+
+        // 6. Auto-size cột
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // 7. Ghi ra file
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+        }
+        workbook.close();
+    }
+
+    public void ExcelListPermissionGroup(String filePath) throws IOException {
+        // 1. Lấy dữ liệu
+        PermissionGroupDAO pgDAO = new PermissionGroupDAO();
+        List<PermissionGroup> dsGroups = pgDAO.getAllPermissionGroups();
+
+        // 2. Tạo workbook và sheet
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Danh sách nhóm quyền");
+
+        // 3. Style header
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        // 4. Header
+        String[] headers = {
+            "Mã nhóm quyền",
+            "Tên nhóm quyền",
+            "Trạng thái"
+        };
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // 5. Ghi dữ liệu
+        int rowIdx = 1;
+        for (PermissionGroup pg : dsGroups) {
+            Row row = sheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(pg.getIdNhomQuyen());
+            row.createCell(1).setCellValue(pg.getTenNhomQuyen());
+            row.createCell(2).setCellValue(pg.getTrangThai() == 1 ? "Hoạt động" : "Không hoạt động");
+        }
+
+        // 6. Auto-size cột
         for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
         }
