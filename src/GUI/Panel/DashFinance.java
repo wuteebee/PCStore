@@ -4,6 +4,8 @@ import BUS.InvoiceBUS;
 import BUS.PhieuNhapBUS;
 import BUS.ProductBUS;
 import BUS.PromotionBUS;
+import DAO.ProductDAO;
+import DTO.ComboProduct;
 import DTO.HoaDonNhap;
 import DTO.Promotion;
 import DTO.SalesInvoice;
@@ -43,10 +45,12 @@ public class DashFinance extends JPanel {
     private List<SalesInvoice> salesInvoices;
     private List<HoaDonNhap> comInvoices;
     private List<Promotion> promos;
+    private List<ComboProduct> compro;
     private Map<String, Double> promoMap;
     private Map<String, BigDecimal> comMap;
     private Map<String, BigDecimal> salesMap;
     private Map<String, BigDecimal> promoValues;
+
 
     private JDateChooser startDateChooser;
     private JDateChooser endDateChooser;
@@ -59,9 +63,20 @@ public class DashFinance extends JPanel {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(1670, 890));
 
+        sales.clear();
+        coms.clear();
+        proms.clear();
+        salesRects.clear();
+        promoRects.clear();
+        comRects.clear();
+        promoMap = new HashMap<>();
+        comMap = new HashMap<>();
+        promoValues = new HashMap<>();
+        salesMap = new HashMap<>();
+
         initializePanel();
         setupComponents();
-        generateSampleData();
+        getData();
         generateBars();
     }
 
@@ -102,12 +117,25 @@ public class DashFinance extends JPanel {
                     if (comMap.containsKey(monthName)) {
                         BigDecimal a = comMap.get(monthName);
                         a = a.add(bdCon(salesInvoice.getTotalPayment()));
-                        BigDecimal b = promoValues.get(monthName).add(bdCon(salesInvoice.getTotalPayment() / (1 - promoMap.get(salesInvoice.getDid()))));
+                        BigDecimal b = new BigDecimal(0);
+                        if (new PromotionDAO().isComboPromotion(salesInvoice.getDid())) {
+                            compro = new PromotionDAO().getComboProducts(salesInvoice.getDid());
+                            ProductDAO c = new ProductDAO();
+                            BigDecimal first = new BigDecimal(0);
+                            BigDecimal second = new BigDecimal(0);
+                            for (ComboProduct cp : compro) {
+                                first = first.add(bdCon((new ProductDAO().getProductById(cp.getIdSanPham()).getGiasp())));
+                                second = second.add(first.divide(bdCon(100 - promoMap.get(salesInvoice.getDid()))));
+                            }
+                            b = bdCon(salesInvoice.getTotalPayment()).subtract(first).add(second);
+                        } else {
+                            b = promoValues.get(monthName).add(bdCon(salesInvoice.getTotalPayment() / (100 - promoMap.get(salesInvoice.getDid()))));
+                        }
                         comMap.put(monthName, a);
                         promoValues.put(monthName, b);
                     } else {
                         comMap.put(monthName, bdCon(salesInvoice.getTotalPayment()));
-                        promoValues.put(monthName, bdCon(salesInvoice.getTotalPayment() /(1 - promoMap.get(salesInvoice.getDid()))));
+                        promoValues.put(monthName, bdCon(salesInvoice.getTotalPayment() / (100 - promoMap.get(salesInvoice.getDid()))));
                     }
                 }
             } else {
@@ -116,7 +144,6 @@ public class DashFinance extends JPanel {
                     calendar.setTime(comInvoice.getNgayTao());
                     int yearNumber = calendar.get(Calendar.YEAR);
                     String yearString = Integer.toString(yearNumber);
-
                     comMap.merge(yearString, bdCon(comInvoice.getTongTien()), BigDecimal::add);
                 }
 
@@ -127,12 +154,25 @@ public class DashFinance extends JPanel {
                     if (comMap.containsKey(yearName)) {
                         BigDecimal a = comMap.get(yearName);
                         a = a.add(bdCon(salesInvoice.getTotalPayment()));
-                        BigDecimal b = promoValues.get(yearName).add(bdCon(salesInvoice.getTotalPayment() / (1 - promoMap.get(salesInvoice.getDid()))));
+                        BigDecimal b = new BigDecimal(0);
+                        if (new PromotionDAO().isComboPromotion(salesInvoice.getDid())) {
+                            compro = new PromotionDAO().getComboProducts(salesInvoice.getDid());
+                            ProductDAO c = new ProductDAO();
+                            BigDecimal first = new BigDecimal(0);
+                            BigDecimal second = new BigDecimal(0);
+                            for (ComboProduct cp : compro) {
+                                first = first.add(bdCon((new ProductDAO().getProductById(cp.getIdSanPham()).getGiasp())));
+                                second = second.add(first.divide(bdCon(100 - promoMap.get(salesInvoice.getDid()))));
+                            }
+                            b = bdCon(salesInvoice.getTotalPayment()).subtract(first).add(second);
+                        } else {
+                            b = promoValues.get(yearName).add(bdCon(salesInvoice.getTotalPayment() / (100 - promoMap.get(salesInvoice.getDid()))));
+                        }
                         comMap.put(yearName, a);
                         promoValues.put(yearName, b);
                     } else {
                         comMap.put(yearName, bdCon(salesInvoice.getTotalPayment()));
-                        promoValues.put(yearName, bdCon(salesInvoice.getTotalPayment() / (1 - promoMap.get(salesInvoice.getDid()))));
+                        promoValues.put(yearName, bdCon(salesInvoice.getTotalPayment() / (100 - promoMap.get(salesInvoice.getDid()))));
                     }
                 }
             }
@@ -147,7 +187,7 @@ public class DashFinance extends JPanel {
                     key = String.valueOf(invoice.getDate().getYear());
                 }
                 salesMap.put(key, bdCon(invoice.getTotalPayment()));
-                promoValues.put(key, bdCon(invoice.getTotalPayment() / (1 - promoMap.get(invoice.getDid()))));
+                promoValues.put(key, bdCon(invoice.getTotalPayment() / (100 - promoMap.get(invoice.getDid()))));
             }
         }
 
@@ -240,7 +280,7 @@ public class DashFinance extends JPanel {
         int heightGap = 50;
         double topGap = 0.12;
 
-
+        printData();
         int dataSize = Math.max(Math.max(sales.size(), coms.size()), proms.size());
         int groupWidth = (width - widthGap) / dataSize;
         int barWidth = (groupWidth - 20) / 3;
@@ -287,6 +327,7 @@ public class DashFinance extends JPanel {
             ));
         }
     }
+
     private BigDecimal getMaxValue() {
         BigDecimal max = BigDecimal.ZERO;
         for (BigDecimal val : sales) max = max.max(val);

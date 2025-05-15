@@ -52,11 +52,9 @@ public class MenuChucNang {
         } else if (panel instanceof DashboardPanel) {
             DashboardPanel dashboardPanel = (DashboardPanel) panel;
             DashboardActionListener actionListener = new DashboardActionListener(dashboardPanel);
-            btnFinance.addActionListener(actionListener);
-            btnProduct.addActionListener(actionListener);
+            btnFinance.addActionListener(actionListener)
             btnExport.addActionListener(actionListener);
             actionPanel.add(btnFinance);
-            actionPanel.add(btnProduct);
             actionPanel.add(btnExport);
         } else if (panel instanceof CustomerPanel) {
             CustomerPanel customerPanel = (CustomerPanel) panel;

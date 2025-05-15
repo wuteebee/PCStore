@@ -53,7 +53,7 @@ public class H2DatabaseConnection {
         String[] sqlStatements = {
                 "CREATE TABLE IF NOT EXISTS ChucNang (idChucNang VARCHAR(20) PRIMARY KEY, tenChucNang VARCHAR(50) NOT NULL);",
                 "CREATE TABLE IF NOT EXISTS NhomQuyen (idNhomQuyen VARCHAR(20) PRIMARY KEY, tenNhomQuyen VARCHAR(50) NOT NULL, trangThai INT DEFAULT 1);",
-                "CREATE TABLE IF NOT EXISTS ChiTietQuyen (idNhomQuyen VARCHAR(20) NOT NULL, idChucNang VARCHAR(20) NOT NULL, hanhDong VARCHAR(5) NOT NULL, PRIMARY KEY (idNhomQuyen, idChucNang), FOREIGN KEY (idNhomQuyen) REFERENCES NhomQuyen(idNhomQuyen), FOREIGN KEY (idChucNang) REFERENCES ChucNang(idChucNang));",
+                "CREATE TABLE IF NOT EXISTS ChiTietQuyen (idNhomQuyen VARCHAR(20) NOT NULL, idChucNang VARCHAR(20) NOT NULL, hanhDong VARCHAR(5) NOT NULL, PRIMARY KEY (idNhomQuyen, idChucNang, hanhDong), FOREIGN KEY (idNhomQuyen) REFERENCES NhomQuyen(idNhomQuyen), FOREIGN KEY (idChucNang) REFERENCES ChucNang(idChucNang));",
                 "CREATE TABLE IF NOT EXISTS DanhMuc (idDanhMuc VARCHAR(20) PRIMARY KEY, tenDanhMuc VARCHAR(50) NOT NULL, idDanhMucCha VARCHAR(20), trangThai INT DEFAULT 1, FOREIGN KEY (idDanhMucCha) REFERENCES DanhMuc(idDanhMuc));",
                 "CREATE TABLE IF NOT EXISTS ThuongHieu (idThuongHieu VARCHAR(20) PRIMARY KEY, tenThuongHieu VARCHAR(50) NOT NULL, idDanhMuc VARCHAR(20), trangThai INT DEFAULT 1, CONSTRAINT fk_thuonghieu_danhmuc FOREIGN KEY (idDanhMuc) REFERENCES DanhMuc(idDanhMuc));",
                 "CREATE TABLE IF NOT EXISTS NhaCungCap (idNhaCungCap VARCHAR(20) PRIMARY KEY, tenNhaCungCap VARCHAR(255) NOT NULL, diaChi VARCHAR(500), soDienThoai VARCHAR(20), email VARCHAR(255), trangThai INT DEFAULT 1);",
@@ -116,7 +116,70 @@ public class H2DatabaseConnection {
                 "INSERT INTO phanloaisp (idSanPham, STTPL, Gia, SoLuongTonKho) VALUES ('SP106', 0, 8500000, 0), ('SP007', 0, 7690000, 0), ('SP108', 0, 5590000, 0), ('SP109', 0, 4690000, 0), ('SP110', 0, 3890000, 0), ('SP111', 0, 3290000, 0), ('SP112', 0, 2190000, 0), ('SP013', 0, 2890000, 0), ('SP114', 0, 1190000, 0), ('SP115', 0, 1490000, 0);",
                 "INSERT INTO NhanVien (idNhanVien, TenNhanVien, SDT, Mail, NgayVaoLam, ViTri, Luong, trangThai) VALUES ('NV001', 'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', '2020-05-01', 'Quản lý', 10000.00, 1), ('NV002', 'Trần Thị B', '0123456790', 'tranthib@example.com', '2019-03-15', 'Nhân viên bán hàng', 7500.00, 1), ('NV003', 'Lê Minh C', '0123456791', 'leminhc@example.com', '2021-06-20', 'Tư vấn', 8000.00, 1), ('NV004', 'Phạm Quang D', '0123456792', 'phamquangd@example.com', '2018-02-10', 'Kế toán', 8500.00, 1), ('NV005', 'Hoàng Lan E', '0123456793', 'hoanglane@example.com', '2020-11-05', 'Lễ tân', 6000.00, 1), ('NV006', 'Vũ Hoàng F', '0123456794', 'vuhoangf@example.com', '2022-08-18', 'Nhân viên kho', 7000.00, 1), ('NV007', 'Nguyễn Thi G', '0123456795', 'nguyenthig@example.com', '2021-01-12', 'Nhân viên bán hàng', 7500.00, 1), ('NV008', 'Trần Minh H', '0123456796', 'tranminhh@example.com', '2021-07-21', 'Tư vấn', 8000.00, 1), ('NV009', 'Lê Minh I', '0123456797', 'leminhi@example.com', '2022-05-23', 'Nhân viên kho', 7000.00, 1), ('NV010', 'Phạm Lan J', '0123456798', 'phamlanj@example.com', '2019-09-13', 'Quản lý', 10000.00, 1), ('NV011', 'Hoàng Quang K', '0123456799', 'hoangquangk@example.com', '2020-04-03', 'Kế toán', 8500.00, 1), ('NV012', 'Vũ Lan L', '0123456800', 'vulanl@example.com', '2021-02-25', 'Lễ tân', 6000.00, 1), ('NV013', 'Nguyễn Thi M', '0123456801', 'nguyenthim@example.com', '2022-06-15', 'Nhân viên bán hàng', 7500.00, 1), ('NV014', 'Trần Hoàng N', '0123456802', 'tranhoangn@example.com', '2021-03-11', 'Nhân viên kho', 7000.00, 1), ('NV015', 'Lê Minh O', '0123456803', 'leminho@example.com', '2020-07-19', 'Tư vấn', 8000.00, 1), ('NV016', 'Phạm Quang P', '0123456804', 'phamquangp@example.com', '2019-04-09', 'Quản lý', 10000.00, 1), ('NV017', 'Hoàng Lan Q', '0123456805', 'hoanglanq@example.com', '2021-09-22', 'Kế toán', 8500.00, 1), ('NV018', 'Vũ Hoàng R', '0123456806', 'vuhoangr@example.com', '2022-10-17', 'Lễ tân', 6000.00, 1), ('NV019', 'Nguyễn Thi S', '0123456807', 'nguyenthis@example.com', '2020-11-03', 'Nhân viên bán hàng', 7500.00, 1), ('NV020', 'Trần Minh T', '0123456808', 'tranminht@example.com', '2021-08-30', 'Tư vấn', 8000.00, 1);",
                 "INSERT INTO KhachHang (tenKhachHang, soDienThoai, Mail, NgayThamGia, trangThai) VALUES ('Nguyễn Văn An', '0912345678', 'nguyenvanan@example.com', '2023-01-15', 1), ('Trần Thị Bích', '0987654321', 'tranthibich@example.com', '2023-02-20', 1), ('Lê Văn Bình', '0901234567', 'levanbinh@example.com', '2023-03-05', 1), ('Phạm Thị Dung', '0918765432', 'phamthidung@example.com', '2023-04-10', 1), ('Hoàng Anh Em', '0923456789', 'hoanganhem@example.com', '2023-05-01', 1), ('Đỗ Minh Phúc', '0934567890', 'dominphuc@example.com', '2023-06-18', 1), ('Vũ Thị Giang', '0945678901', 'vuthigiang@example.com', '2023-07-22', 1), ('Phan Văn Hoàng', '0956789012', 'phanvanhoang@example.com', '2023-08-30', 1), ('Bùi Thị Hồng', '0967890123', 'buithihong@example.com', '2023-09-15', 1), ('Đặng Văn Hưng', '0978901234', 'dangvanhung@example.com', '2023-10-05', 1), ('Trịnh Thị Kim', '0989012345', 'trinhthikim@example.com', '2023-11-11', 1), ('Nguyễn Thị Lan', '0902345678', 'nguyenthilan@example.com', '2023-12-20', 1), ('Lê Thị Mai', '0913456789', 'lethimai@example.com', '2024-01-10', 1), ('Phạm Văn Nam', '0924567890', 'phamvannam@example.com', '2024-02-05', 1), ('Hoàng Thị Oanh', '0935678901', 'hoangthioanh@example.com', '2024-03-18', 1), ('Đỗ Văn Phong', '0946789012', 'dovanphong@example.com', '2024-04-25', 1), ('Vũ Văn Quân', '0957890123', 'vuvanquan@example.com', '2024-05-30', 1), ('Phan Thị Rạng', '0968901234', 'phanthirang@example.com', '2024-06-12', 1), ('Bùi Văn Sơn', '0979012345', 'buivanson@example.com', '2024-07-07', 1), ('Đặng Thị Thanh', '0980123456', 'dangthithanh@example.com', '2024-08-19', 1);",
+                "INSERT INTO NhomQuyen (idNhomQuyen, tenNhomQuyen, trangThai) VALUES ('NQ001', 'Quản lý', 1), ('NQ002', 'Nhân viên bán hàng', 1), ('NQ003', 'Nhân viên kho', 1);",
+                "INSERT INTO TaiKhoan (idTaiKhoan, idNhanVien, idNhomQuyen, tenDangNhap, matKhau, trangThai) VALUES ('TK001', 'NV001', 'NQ001', 'admin', '123456', 1), ('TK002', 'NV002', 'NQ002', 'staff', '123456', 1);",
+                "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN001', 'Sản phẩm' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN001'); " +
+                        "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN002', 'Thuộc tính' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN002'); " +
+                        "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN003', 'Phiếu nhập' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN003'); " +
+                        "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN004', 'Phiếu xuất' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN004'); " +
+                        "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN005', 'Khách hàng' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN005'); " +
+                        "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN006', 'Nhà cung cấp' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN006'); " +
+                        "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN007', 'Nhân viên' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN007'); " +
+                        "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN008', 'Tài khoản' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN008'); " +
+                        "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN009', 'Thống kê' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN009'); " +
+                        "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN010', 'Phân quyền' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN010'); " +
+                        "INSERT INTO ChucNang (idChucNang, tenChucNang) " +
+                        "SELECT 'CN011', 'Khuyến mãi và ưu đãi' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN011');",
+
+                "INSERT INTO ChiTietQuyen (idNhomQuyen, idChucNang, hanhDong) " +
+                "SELECT 'NQ001', cn.idChucNang, hd.hanhDong " +
+                        "FROM ChucNang cn " +
+                        "CROSS JOIN (SELECT 'Xem' AS hanhDong UNION SELECT 'Tao' UNION SELECT 'Sua' UNION SELECT 'Xoa' UNION SELECT 'Xuat') AS hd " +
+                        "LEFT JOIN ChiTietQuyen ctq " +
+                        "ON ctq.idNhomQuyen = 'NQ001' AND ctq.idChucNang = cn.idChucNang AND ctq.hanhDong = hd.hanhDong " +
+                        "WHERE ctq.idChucNang IS NULL;",
+                "INSERT INTO HoaDonNhap (idHoaDonNhap, idNhanVien, idNhaCungCap, ngayTao, tongTien) VALUES "
+                        + "('HDN001', 'NV006', 'NCC001', '2024-01-05', 150000000),"
+                        + "('HDN002', 'NV009', 'NCC002', '2024-02-15', 75000000),"
+                        + "('HDN003', 'NV006', 'NCC003', '2024-03-20', 200000000),"
+                        + "('HDN004', 'NV014', 'NCC004', '2024-04-10', 90000000),"
+                        + "('HDN005', 'NV009', 'NCC005', '2024-05-25', 120000000);",
+
+                "INSERT INTO ChiTietDonNhap (idDonHang, SN, donGia, thanhTien) VALUES "
+                        + "('HDN001', 'SN001', 7000000, 7000000),"
+                        + "('HDN001', 'SN002', 3500000, 3500000),"
+                        + "('HDN002', 'SN003', 2500000, 5000000),"
+                        + "('HDN003', 'SN004', 8000000, 16000000),"
+                        + "('HDN004', 'SN005', 4500000, 4500000),"
+                        + "('HDN005', 'SN006', 6000000, 12000000);",
+
+                "INSERT INTO HoaDonXuat (idHoaDonXuat, idNhanVien, idKhachHang, ngayTao, tongTien, idKhuyenMai) VALUES "
+                        + "('HDX001', 'NV002', 1, '2024-01-10', 56799000, 'KM001'),"
+                        + "('HDX002', 'NV007', 3, '2024-02-15', 135199000, 'KMCombo001'),"
+                        + "('HDX003', 'NV013', 5, '2024-03-20', 7490000, NULL),"
+                        + "('HDX004', 'NV019', 7, '2024-04-25', 28450000, 'KM002'),"
+                        + "('HDX005', 'NV002', 2, '2024-05-30', 65800000, 'KM003');",
+
+                "INSERT INTO ChiTietHoaDonXuat (idChiTietHoaDonXuat, idHoaDonXuat, SN, donGia) VALUES "
+                        + "('CTHDX001', 'HDX001', 'SN001', 56799000),"
+                        + "('CTHDX002', 'HDX002', 'SN002', 7990000),"
+                        + "('CTHDX002', 'HDX002', 'SN003', 1499000),"
+                        + "('CTHDX003', 'HDX003', 'SN004', 7490000),"
+                        + "('CTHDX004', 'HDX004', 'SN005', 2590000),"
+                        + "('CTHDX005', 'HDX005', 'SN006', 3490000);"
         };
+
+
 
         try (Statement stmt = conn.createStatement()) {
             for (String sql : insertStatements) {
