@@ -2,6 +2,7 @@ package BUS;
 
 import DAO.BrandDAO;
 import DTO.Brand;
+import DAO.DanhMucDAO;
 import java.util.List;
 
 public class BrandBUS {
@@ -25,5 +26,13 @@ public class BrandBUS {
 
     public boolean deleteBrand(String id) {
         return dao.delete(id);
+    }
+
+    public String getNextBrandId() {
+        return dao.getNextBrandId();
+    }
+
+    public List<String> getAllDanhMucIds() {
+        return new DanhMucDAO().getAllDanhMucIds();
     }
 }

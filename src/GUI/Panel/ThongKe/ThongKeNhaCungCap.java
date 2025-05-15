@@ -117,9 +117,9 @@ public class ThongKeNhaCungCap extends JPanel implements ActionListener, KeyList
         pnlTaskbar.setBorder(new EmptyBorder(10, 10, 10, 10));
         pnlTaskbar.setPreferredSize(new Dimension(0, 120));
         listitem = new itemTaskbar[3];
-        listitem[0] = new itemTaskbar("supplier.svg", "0", "Tổng nhà cung cấp", 0);
-        listitem[1] = new itemTaskbar("import.svg", "0", "Tổng nhập", 0);
-        listitem[2] = new itemTaskbar("money.svg", "0", "Tổng tiền nhập", 0);
+        listitem[0] = new itemTaskbar("factory_100px.svg", "0", "Tổng nhà cung cấp", 0);
+        listitem[1] = new itemTaskbar("tinhhieuqua_128px.svg", "0", "Tổng nhập", 0);
+        listitem[2] = new itemTaskbar("1.svg", "0", "Tổng tiền nhập", 0);
         for (itemTaskbar item : listitem) {
             pnlTaskbar.add(item);
         }

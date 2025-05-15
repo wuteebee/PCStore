@@ -118,8 +118,8 @@ public class ThongKeKhachHang extends JPanel implements ActionListener, KeyListe
         pnlTaskbar.setPreferredSize(new Dimension(0, 120));
         listitem = new itemTaskbar[3];
         listitem[0] = new itemTaskbar("client.svg", "0", "Tổng khách hàng", 0);
-        listitem[1] = new itemTaskbar("order.svg", "0", "Tổng phiếu", 0);
-        listitem[2] = new itemTaskbar("money.svg", "0", "Tổng tiền", 0);
+        listitem[1] = new itemTaskbar("tinhhieuqua_128px.svg", "0", "Tổng phiếu", 0);
+        listitem[2] = new itemTaskbar("1.svg", "0", "Tổng tiền", 0);
         for (itemTaskbar item : listitem) {
             pnlTaskbar.add(item);
         }

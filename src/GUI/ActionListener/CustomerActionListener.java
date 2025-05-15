@@ -2,9 +2,12 @@ package GUI.ActionListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+import BUS.ExcelBUS;
+import GUI.Components.Excel;
 import GUI.Panel.CustomerPanel;
 
 public class CustomerActionListener implements ActionListener{
@@ -47,8 +50,6 @@ public class CustomerActionListener implements ActionListener{
                     panel.openRemoveEmployeeDialog(id);
                      
                 }
-
-
             } else {
            
             JOptionPane.showMessageDialog(panel, "Vui lòng chọn nhân viên cần xoá!", "Thông báo", JOptionPane.WARNING_MESSAGE);
@@ -59,7 +60,18 @@ public class CustomerActionListener implements ActionListener{
                 System.out.println("Tìm khách hàng nè");
                 break;
             case "Xuất Excel":
-                System.out.println("Xuất Excel khách hàng nè");
+                System.out.println("Xuất Excel");
+                Excel panelExcel = new Excel();
+                String filePath = panelExcel.ChooseFile();
+                if (filePath != null) {
+                    ExcelBUS excelBUS = new ExcelBUS();
+                    try {
+                        excelBUS.ExcelListCustomer(filePath);
+                    } catch (IOException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
                 break;
             case "Nhập Excel":  
                 System.out.println("Nhập Excel khách hàng nè");

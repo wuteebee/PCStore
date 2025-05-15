@@ -38,16 +38,17 @@ public class Login extends JFrame implements KeyListener {
 
         Account account = accountDAO.getAccountByUsername(username);
         if (account == null) {
-//            JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
-            new Main(new Account());
+            JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            return; // Không mở Main, giữ màn hình đăng nhập
         } else if (account.getTrangThai() == 0) {
-//            JOptionPane.showMessageDialog(this, "Tài khoản của bạn đang bị khóa", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
-            new Main(new Account());
+            JOptionPane.showMessageDialog(this, "Tài khoản của bạn đang bị khóa", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            return; // Không mở Main, giữ màn hình đăng nhập
         } else if (password.equals(account.getMatKhau())) {
             this.dispose();
-            new Main(account);
+            new Main(account); // Chỉ mở Main khi đăng nhập thành công
         } else {
             JOptionPane.showMessageDialog(this, "Mật khẩu không khớp", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            return; // Không mở Main, giữ màn hình đăng nhập
         }
     }
 

@@ -8,7 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ThemThuongHieu extends JDialog {
-    private JTextField txtId, txtTen, txtDanhMuc;
+    private JTextField txtId, txtTen;
+    private JComboBox<String> comboDanhMuc;
     private JCheckBox chkTrangThai;
     private final BrandPanel parent;
     private final boolean isEdit;
@@ -34,13 +35,28 @@ public class ThemThuongHieu extends JDialog {
         String[] labels = {"Mã thương hiệu", "Tên thương hiệu", "Mã danh mục", "Trạng thái"};
 
         txtId = new JTextField(20);
+        if (!isEdit) {
+            BrandBUS bus = new BrandBUS();
+            txtId.setText(bus.getNextBrandId());
+            txtId.setEditable(false);
+        }
+
         txtTen = new JTextField(20);
-        txtDanhMuc = new JTextField(20);
+
+        // Tạo combo box danh mục
+        comboDanhMuc = new JComboBox<>();
+        comboDanhMuc.setPreferredSize(new Dimension(200, 25));
+        BrandBUS bus = new BrandBUS();
+        for (String id : bus.getAllDanhMucIds()) {
+            comboDanhMuc.addItem(id);
+        }
+
         chkTrangThai = new JCheckBox("Hoạt động");
         chkTrangThai.setBackground(Color.WHITE);
         chkTrangThai.setSelected(true);
 
-        JComponent[] components = {txtId, txtTen, txtDanhMuc, chkTrangThai};
+        // ✅ Thay txtDanhMuc bằng comboDanhMuc
+        JComponent[] components = {txtId, txtTen, comboDanhMuc, chkTrangThai};
 
         for (int i = 0; i < labels.length; i++) {
             gbc.gridx = 0;
@@ -57,7 +73,7 @@ public class ThemThuongHieu extends JDialog {
             txtId.setText(brand.getMaThuongHieu());
             txtId.setEditable(false);
             txtTen.setText(brand.getTenThuongHieu());
-            txtDanhMuc.setText(brand.getmaDanhMuc());
+            comboDanhMuc.setSelectedItem(brand.getmaDanhMuc());
             chkTrangThai.setSelected(brand.isTrangThai());
         }
 
@@ -79,10 +95,10 @@ public class ThemThuongHieu extends JDialog {
     private void saveBrand() {
         String id = txtId.getText().trim();
         String ten = txtTen.getText().trim();
-        String dm = txtDanhMuc.getText().trim();
+        String dm = (String) comboDanhMuc.getSelectedItem();  // ✅ Lấy từ combo box
         boolean tt = chkTrangThai.isSelected();
 
-        if (id.isEmpty() || ten.isEmpty() || dm.isEmpty()) {
+        if (ten.isEmpty() || dm == null || dm.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.", "Lỗi", JOptionPane.WARNING_MESSAGE);
             return;
         }
