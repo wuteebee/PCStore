@@ -3,21 +3,23 @@ package DTO;
 import java.util.*;
 
 public class Variant {
-    private String idVariant;
-    private String PhienBan;
+    private int idVariant;
+    private int PhienBan;
     private Double gia;
     private int soLuong;
     private List<ChiTietCauHinh> chitiet;
+    private boolean trangThai;
 
 
     public Variant() {
     }
 
-    public Variant(String idVariant, String PhienBan, Double gia, int soLuong) {
+    public Variant(int idVariant, int PhienBan, Double gia, int soLuong,boolean trangThai) {
         this.idVariant = idVariant;
         this.PhienBan = PhienBan;
         this.gia = gia;
         this.soLuong = soLuong;
+        this.trangThai=trangThai;
     }
 
     public void setChitiet(List<ChiTietCauHinh> chitiet) {
@@ -28,7 +30,7 @@ public class Variant {
         this.gia = gia;
     }
 
-    public void setPhienBan(String phienBan) {
+    public void setPhienBan(int phienBan) {
         PhienBan = phienBan;
     }
 
@@ -44,11 +46,17 @@ public class Variant {
         return gia;
     }
 
-    public String getPhienBan() {
+    public int getPhienBan() {
         return PhienBan;
     }
 
     public int getSoLuong() {
         return soLuong;
+    }
+    public int getIdVariant() {
+        return idVariant;
+    }
+    public boolean isTrangThai() {
+        return trangThai;
     }
 }

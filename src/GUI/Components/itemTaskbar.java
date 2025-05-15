@@ -21,13 +21,12 @@ public class itemTaskbar extends JPanel {
 
     public itemTaskbar(String linkIcon, String content) {
         setLayout(new FlowLayout(FlowLayout.LEFT, 10, 7));
-        setPreferredSize(new Dimension(100, 30));
+        setPreferredSize(new Dimension(230, 45));
         setBackground(DefaultColor);
         putClientProperty(FlatClientProperties.STYLE, "arc: 15");
-
         lblIcon = new JLabel();
-        lblIcon.setBorder(new EmptyBorder(0, 1, 0, 0));
-        lblIcon.setPreferredSize(new Dimension(15, 15));
+        lblIcon.setBorder(new EmptyBorder(0, 10, 0, 0));
+        lblIcon.setPreferredSize(new Dimension(40, 40));
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         if (!linkIcon.isEmpty()) {
             try {
@@ -80,7 +79,7 @@ public class itemTaskbar extends JPanel {
         lblIcon.setBorder(new EmptyBorder(0, 20, 0, 0));
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         try {
-            lblIcon.setIcon(new FlatSVGIcon("./icon/" + linkIcon));
+lblIcon.setIcon(new FlatSVGIcon("./icon/" + linkIcon));
         } catch (Exception e) {
             // Không hiển thị gì nếu icon không load được
         }

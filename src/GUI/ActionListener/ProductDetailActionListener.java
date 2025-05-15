@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import GUI.Main;
 import GUI.Dialog.DanhSachChiTietSP;
+import GUI.Dialog.ThemCauHinh;
 import GUI.Panel.ProductDetailPanel;
 
 public class ProductDetailActionListener implements ActionListener{
@@ -21,11 +22,14 @@ public class ProductDetailActionListener implements ActionListener{
        switch (e.getActionCommand()) {
         case "Thêm":
             System.out.println("Thêm cấu hình mới nè");
+            ThemCauHinh tch=new ThemCauHinh(productPanel,null);
+            // tch.formThemCauhinh();
             // panel.openAddCustomerDialog();
             break;
         case "Sửa":
         System.out.println("Sửa cấu hình nè");
-            
+            System.out.println("ID cấu hình nè"+ productPanel.getPhienban());
+              ThemCauHinh tch1=new ThemCauHinh(productPanel,productPanel.getProduct().getDanhSachPhienBan().get(productPanel.getPhienban()-1));
             break;
         case "Xóa":
         System.out.println("Xoá cấu hình nè");
@@ -42,6 +46,7 @@ public class ProductDetailActionListener implements ActionListener{
             //         panel.openRemoveEmployeeDialog(id);
                       
             //     }
+            break;
 
         case "Xem DS":
             System.out.println("Xem danh sách cấu hình nè");

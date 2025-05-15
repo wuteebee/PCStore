@@ -60,4 +60,9 @@ public class InvoiceBUS {
         int idChiTietHoaDonXuat = detailedSalesInvoiceMap.size();
         return String.format("%017d", idChiTietHoaDonXuat);
     }
+
+    public double getFirstPromotionInSalesInvoice() {
+        return invoiceDAO.getFirstPromotionInSalesInvoice();
+    }
+
 }

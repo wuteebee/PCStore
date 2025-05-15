@@ -1,5 +1,6 @@
 package DAO;
 
+//import config.H2DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,9 +16,9 @@ import config.DatabaseConnection;
 public class CustomerDAO {
     private Connection conn;
 
-    public CustomerDAO() {
-        conn = DatabaseConnection.getConnection();
-    }
+    //public CustomerDAO() {
+        //conn = H2DatabaseConnection.getConnection();
+    //}
 
     public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();

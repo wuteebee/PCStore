@@ -14,7 +14,7 @@ public class DetailedSalesInvoice {
         this.donGia = 0;
     }
 
-    public DetailedSalesInvoice(String id, String fid, String seri, int soLuong, double donGia) {
+    public DetailedSalesInvoice(String id, String fid, String seri, double donGia) {
         this.id = id;
         this.fid = fid;
         this.seri = seri;

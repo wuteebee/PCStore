@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import DTO.Supplier;
 import config.DatabaseConnection;
+//import config.H2DatabaseConnection;
 
 public class SupplierDAO {
     private Connection conn;
 
-    public SupplierDAO() {
-        conn = DatabaseConnection.getConnection();
-    }
+    //public SupplierDAO() {
+        //conn = H2DatabaseConnection.getConnection();
+    //}
 
     public List<Supplier> getAllSuppliers() {
         List<Supplier> suppliers = new ArrayList<>();

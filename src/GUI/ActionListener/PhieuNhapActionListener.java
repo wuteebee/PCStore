@@ -1,63 +1,102 @@
 package GUI.ActionListener;
 
-import BUS.PhieuNhapBUS;
-import DTO.HoaDonNhap;
-import GUI.Dialog.ThemPhieuNhap;
-import GUI.Panel.PhieuNhapPanel;
-import GUI.Main;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
-public class PhieuNhapActionListener implements ActionListener {
-    private final PhieuNhapPanel panel;
-    private final Main mainFrame;
+import javax.swing.JOptionPane;
 
-    public PhieuNhapActionListener(PhieuNhapPanel panel, Main mainFrame) {
+import BUS.ExcelBUS;
+import BUS.ProductBUS;
+import DTO.Product;
+import GUI.Main;
+import GUI.Components.Excel;
+import GUI.Dialog.ThemSanPham;
+import GUI.Panel.NhapHoaDonPanel;
+import GUI.Panel.PhieuNhapPanel;
+import GUI.Panel.ProductDetailPanel;
+import GUI.Panel.Trangchu;
+
+public class PhieuNhapActionListener implements ActionListener{
+    private PhieuNhapPanel panel;
+    private Main MainFrame;
+     private String id;
+
+
+    public PhieuNhapActionListener(PhieuNhapPanel panel, Main MainFrame) {
         this.panel = panel;
-        this.mainFrame = mainFrame;
+        this.MainFrame = MainFrame;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String command = e.getActionCommand();
-
-        switch (command) {
+              String id;
+                switch (e.getActionCommand()) {
             case "Thêm":
-                new ThemPhieuNhap(mainFrame, panel, false, null).setVisible(true);
+              MainFrame.setMainPanel(new NhapHoaDonPanel(MainFrame,false));
+                
                 break;
             case "Sửa":
-                String id = panel.getSelectedPhieuId();
-                if (!id.equals("-1")) {
-                    HoaDonNhap hdn = new PhieuNhapBUS().getPhieuNhapById(id);
-                    new ThemPhieuNhap(mainFrame, panel, true, hdn).setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một phiếu nhập để sửa.");
-                }
+              System.out.println("Sửa nè");
+              id = panel.getSelectedPhieuId();
+                  if(id.equals("-1")){
+                          JOptionPane.showMessageDialog(panel, "Vui lòng chọn hoá đơn nhập cần sửa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                     }
+                     else{
+                       if (panel.fixHoadon()) {
+                            JOptionPane.showMessageDialog(null, "Sửa phiếu nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            MainFrame.setMainPanel(new PhieuNhapPanel(MainFrame)); // hoặc panel phù hợp bạn muốn quay về
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Xoá thất bại! Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+
+                     }
+             
+        
                 break;
             case "Xóa":
-                String idDel = panel.getSelectedPhieuId();
-                if (!idDel.equals("-1")) {
-                    int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa phiếu này không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        new PhieuNhapBUS().xoaPhieuNhap(idDel);
-                        panel.refreshTable();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một phiếu nhập để xóa.");
-                }
+              System.out.println("Xoá nè");
+              id = panel.getSelectedPhieuId();
+                  if(id.equals("-1")){
+                          JOptionPane.showMessageDialog(panel, "Vui lòng chọn hoá đơn nhập cần xoá!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                     }
+                     else{
+                       if (panel.deleteHoaDon()) {
+                            JOptionPane.showMessageDialog(null, "Xoá phiếu nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            MainFrame.setMainPanel(new PhieuNhapPanel(MainFrame)); // hoặc panel phù hợp bạn muốn quay về
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Xoá thất bại! Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+
+                     }
+             
+                break;
+            case "search":
+                System.out.println("Tìm kiếm nè");
+                break;
+            case "Làm mới":
+                System.out.println("Làm mới nè");
+                // panel.getTextField().setText("");
+                // panel.getTable().setRowCount(0);
+                // panel.loadDataToTable();
                 break;
             case "Chi tiết":
-                String idDetail = panel.getSelectedPhieuId();
-                if (!idDetail.equals("-1")) {
-                    JOptionPane.showMessageDialog(null, "Chi tiết phiếu nhập: " + idDetail + "\n(Tạm thời chỉ hiển thị đơn giản)");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một phiếu để xem chi tiết.");
-                }
+                System.out.println("Chi tiết nè");
+                  
                 break;
+            case "Xuất Excel":
+               System.out.println("Excel");
+               
+                break;
+            case "Nhập Excel":  
+                System.out.println("Nhập Excel khách hàng nè");
+                break;
+            
             default:
-                JOptionPane.showMessageDialog(null, "Hành động không hợp lệ: " + command);
-        }
+                break;
+        } 
     }
+    
+
+
 }
