@@ -28,6 +28,7 @@ import javax.swing.text.Document;
 import BUS.InvoiceBUS;
 import BUS.PhieuNhapBUS;
 import BUS.ProductBUS;
+import BUS.PromotionBUS;
 import BUS.SupplierBUS;
 import DAO.EmployeeDAO;
 import DAO.PhieuNhapDAO;
@@ -37,6 +38,7 @@ import DTO.CauHinhPC;
 import DTO.Employee;
 import DTO.Product;
 import DTO.ProductDetail;
+import DTO.Promotion;
 import DTO.Supplier;
 import DTO.Variant;
 import GUI.Main;
@@ -481,58 +483,73 @@ private void themImei() {
     add(rightSection);
     add(rightPanel);
 }
-    private void initBottomPanel() {
-        JPanel bottomPanel = new JPanel(null);
-        bottomPanel.setBounds(10, 420, 1110, 280);
-        bottomPanel.setBorder(BorderFactory.createTitledBorder("Chi tiết phiếu nhập"));
+   private void initBottomPanel() {
+    JPanel bottomPanel = new JPanel(null);
+    bottomPanel.setBounds(10, 420, 1110, 280);
+    bottomPanel.setBorder(BorderFactory.createTitledBorder("Chi tiết phiếu nhập"));
 
-        String[] columns = {"STT", "Mã sản phẩm", "Tên sản phẩm", "Mã phân loại", "Đơn giá", "Số lượng"};
-        modelChiTiet = new DefaultTableModel(columns, 0) {
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false; 
-    }
-        };
-        tableChiTiet = new JTable(modelChiTiet);
-
-        TableColumnModel columnModel = tableChiTiet.getColumnModel();
-        int[] columnWidths = {40, 80, 250, 120, 100, 80};
-        for (int i = 0; i < columnWidths.length; i++) {
-            columnModel.getColumn(i).setPreferredWidth(columnWidths[i]);
+    String[] columns = {"STT", "Mã sản phẩm", "Tên sản phẩm", "Mã phân loại", "Đơn giá", "Số lượng"};
+    modelChiTiet = new DefaultTableModel(columns, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
         }
+    };
+    tableChiTiet = new JTable(modelChiTiet);
 
-        
-        JScrollPane scroll = new JScrollPane(tableChiTiet);
-        scroll.setBounds(10, 20, 1080, 180);
-
-        lbTongTien = new JLabel("TỔNG TIỀN: ");
-        lbTongTien.setForeground(Color.RED);
-        lbTongTien.setFont(new Font("Arial", Font.BOLD, 16));
-        lbTongTien.setBounds(900, 200, 200, 30);
-
-
-        submitbutton=new JButton("Xuất kho");
-        submitbutton.setBackground(new Color(0, 123, 255)); // Màu xanh dương hiện đại
-        submitbutton.setForeground(Color.WHITE);            // Chữ trắng
-        submitbutton.setFont(new Font("Segoe UI", Font.BOLD, 16)); // Font lớn, dễ nhìn
-        submitbutton.setFocusPainted(false);                // Bỏ viền khi nhấn
-        submitbutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15)); // Viền padding
-        submitbutton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Con trỏ tay khi hover
-        submitbutton.setBounds(450, 240, 200, 30);
-
-
-        
-        submitbutton.addActionListener(e -> {
-            System.out.println("Xử lý xuất hàng nè");
-            //  xulyNhapHang();
-        });
-
-        bottomPanel.add(scroll);
-        bottomPanel.add(lbTongTien);
-        bottomPanel.add(submitbutton);
-
-        add(bottomPanel);
+    TableColumnModel columnModel = tableChiTiet.getColumnModel();
+    int[] columnWidths = {40, 80, 250, 120, 100, 80};
+    for (int i = 0; i < columnWidths.length; i++) {
+        columnModel.getColumn(i).setPreferredWidth(columnWidths[i]);
     }
+
+    JScrollPane scroll = new JScrollPane(tableChiTiet);
+    scroll.setBounds(10, 20, 1080, 180);
+
+    lbTongTien = new JLabel("TỔNG TIỀN: ");
+    lbTongTien.setForeground(Color.RED);
+    lbTongTien.setFont(new Font("Arial", Font.BOLD, 16));
+    lbTongTien.setBounds(900, 200, 200, 30);
+
+    submitbutton = new JButton("Xuất kho");
+    submitbutton.setBackground(new Color(0, 123, 255));
+    submitbutton.setForeground(Color.WHITE);
+    submitbutton.setFont(new Font("Segoe UI", Font.BOLD, 16));
+    submitbutton.setFocusPainted(false);
+    submitbutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+    submitbutton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    submitbutton.setBounds(450, 240, 200, 30);
+
+
+    JLabel lblMaKhuyenMai = new JLabel("Mã khuyến mãi:");
+
+   
+   PromotionBUS promotionbus=new PromotionBUS();
+ JComboBox<String> cbMaKhuyenMai = new JComboBox<>();
+
+List<Promotion> promotions = promotionbus.getAllPromotions();
+for (Promotion tmp : promotions) {
+    cbMaKhuyenMai.addItem(tmp.getTenKhuyenMai()); // hoặc tmp.getMaKhuyenMai() nếu bạn muốn mã
+}
+
+    lblMaKhuyenMai.setBounds(10, 200, 120, 25);
+    cbMaKhuyenMai.setBounds(130, 200, 150, 25);
+
+    submitbutton.addActionListener(e -> {
+        String maKM = (String) cbMaKhuyenMai.getSelectedItem();
+        System.out.println("Xuất kho với mã khuyến mãi: " + maKM);
+    
+    });
+
+    bottomPanel.add(scroll);
+    bottomPanel.add(lbTongTien);
+    bottomPanel.add(submitbutton);
+
+    bottomPanel.add(lblMaKhuyenMai);
+    bottomPanel.add(cbMaKhuyenMai);
+
+    add(bottomPanel);
+}
 
 
 
