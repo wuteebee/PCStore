@@ -201,7 +201,9 @@ public void refreshTable() {
                 p.getKhachhang().getName(),
                 p.getDate(),
                 String.format("%,.0f VND", p.getTotalPayment()),
-                p.getKhuyenmai().getTenKhuyenMai()
+                (p.getKhuyenmai() != null) ? p.getKhuyenmai().getTenKhuyenMai() : "Không có KM",
+
+
             };
             tableModel.addRow(row);
         }
