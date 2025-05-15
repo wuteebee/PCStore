@@ -22,7 +22,7 @@ public class AddPermissionGroupDialog extends JDialog implements ActionListener 
 
     private String[] danhMucChucNang = {
         "Sản phẩm",
-        "Thuộc tính",
+        "Thương hiệu",
         "Phiếu nhập",
         "Phiếu xuất",
         "Khách hàng",

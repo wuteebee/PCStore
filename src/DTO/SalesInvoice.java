@@ -1,9 +1,7 @@
 package DTO;
 
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class SalesInvoice {
     private String id;              // id hóa đơn xuất

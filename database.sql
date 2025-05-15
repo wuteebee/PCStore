@@ -672,7 +672,7 @@ WHERE idTaiKhoan = 'admin';
 INSERT INTO ChucNang (idChucNang, tenChucNang)
 SELECT 'CN001', 'Sản phẩm' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN001');
 INSERT INTO ChucNang (idChucNang, tenChucNang)
-SELECT 'CN002', 'Thuộc tính' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN002');
+SELECT 'CN002', 'Thương hiệu' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN002');
 INSERT INTO ChucNang (idChucNang, tenChucNang)
 SELECT 'CN003', 'Phiếu nhập' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN003');
 INSERT INTO ChucNang (idChucNang, tenChucNang)
@@ -706,6 +706,73 @@ WHERE NOT EXISTS (
     WHERE ctq.idNhomQuyen = 'NQ001' AND ctq.idChucNang = ChucNang.idChucNang AND ctq.hanhDong = HanhDong.hanhDong
 );
 SELECT idNhomQuyen, idChucNang, hanhDong FROM ChiTietQuyen WHERE idNhomQuyen = 'NQ001';
+
+
+-- chi tiêt sản phẩm
+INSERT INTO ChiTietSP (SerialNumber, idPhanLoai, trangThai) VALUES
+('SN001', 1, 1), -- LAP001 (idPhanLoai = 1, soLuongTonKho = 3)
+('SN002', 1, 1), -- LAP001
+('SN003', 1, 1), -- LAP001
+('SN004', 6, 1), -- PC001 (idPhanLoai = 6, soLuongTonKho = 2)
+('SN005', 6, 1), -- PC001
+('SN006', 11, 1), -- SP001 (Intel Core i9-13900K, idPhanLoai = 11, soLuongTonKho = 10)
+('SN007', 11, 1), -- SP001
+('SN008', 11, 1), -- SP001
+('SN009', 16, 1), -- SP006 (NVIDIA GeForce RTX 3080, idPhanLoai = 16, soLuongTonKho = 8)
+('SN010', 16, 1), -- SP006
+('SN011', 21, 1), -- SP011 (Corsair Vengeance LPX 16GB, idPhanLoai = 21, soLuongTonKho = 20)
+('SN012', 21, 1), -- SP011
+('SN013', 26, 1), -- SP016 (Samsung 970 EVO Plus 1TB, idPhanLoai = 26, soLuongTonKho = 15)
+('SN014', 26, 1), -- SP016
+('SN015', 31, 1), -- SP021 (LG 27GN950-B, idPhanLoai = 31, soLuongTonKho = 5)
+('SN016', 36, 1), -- SP026 (NZXT H510, idPhanLoai = 36, soLuongTonKho = 12)
+('SN017', 41, 1), -- SP031 (Noctua NH-D15, idPhanLoai = 41, soLuongTonKho = 10)
+('SN018', 46, 1), -- SP036 (Samsung 990 PRO 1TB, idPhanLoai = 46, soLuongTonKho = 18)
+('SN019', 51, 1), -- SP041 (Creative Sound Blaster AE-7, idPhanLoai = 51, soLuongTonKho = 6)
+('SN020', 56, 1); -- SP046 (ASUS PCE-AX3000, idPhanLoai = 56, soLuongTonKho = 25)
+
+-- chi tiết hóa đơn nhập
+INSERT INTO HoaDonNhap (idNhanVien, idNhaCungCap, ngayTao, tongTien) VALUES
+('NV001', 'NCC001', '2025-05-01', 108099000.00), -- Nhập LAP001 (3 chiếc) và PC001 (2 chiếc)
+('NV002', 'NCC002', '2025-05-02', 14970000.00), -- Nhập SP001 (3 CPU)
+('NV003', 'NCC003', '2025-05-03', 14950000.00); -- Nhập SP006 (2 GPU) và SP011 (5 RAM)
+
+INSERT INTO ChiTietDonNhap (idDonHang, SN, donGia) VALUES
+-- Hóa đơn nhập 1: LAP001 (3 chiếc, giá bán 56799000, giá nhập 45439200), PC001 (2 chiếc, giá bán 25000000, giá nhập 20000000)
+(1, 'SN001', 45439200.00), -- LAP001
+(1, 'SN002', 45439200.00), -- LAP001
+(1, 'SN003', 45439200.00), -- LAP001
+(1, 'SN004', 20000000.00), -- PC001
+(1, 'SN005', 20000000.00), -- PC001
+-- Hóa đơn nhập 2: SP001 (3 CPU, giá bán 7490000, giá nhập 5992000)
+(2, 'SN006', 5992000.00), -- SP001
+(2, 'SN007', 5992000.00), -- SP001
+(2, 'SN008', 5992000.00), -- SP001
+-- Hóa đơn nhập 3: SP006 (2 GPU, giá bán 6990000, giá nhập 5592000), SP011 (5 RAM, giá bán 799000, giá nhập 639200)
+(3, 'SN009', 5592000.00), -- SP006
+(3, 'SN010', 5592000.00), -- SP006
+(3, 'SN011', 639200.00),  -- SP011
+(3, 'SN012', 639200.00);  -- SP011
+
+
+-- hóa đơn xuất
+INSERT INTO HoaDonXuat (idNhanVien, idKhachHang, ngayTao, tongTien, idKhuyenMai) VALUES
+('NV003', 1, '2025-05-10', 51119100.00, 'KM001'), -- Xuất LAP001 (1 chiếc, giá bán 56799000, giảm 10% = 51119100)
+('NV004', 2, '2025-05-11', 32490000.00, NULL),    -- Xuất PC001 (1 chiếc, giá bán 25000000) và SP001 (1 CPU, giá bán 7490000)
+('NV005', 3, '2025-05-12', 14780000.00, NULL);    -- Xuất SP006 (1 GPU, giá bán 6990000) và SP011 (2 RAM, giá bán 799000)
+
+
+-- thông tin chi tiết hóa đơn xuất
+INSERT INTO ChiTietHoaDonXuat (idChiTietHoaDonXuat, idHoaDonXuat, SN, donGia) VALUES
+-- Hóa đơn xuất 1: LAP001 (1 chiếc, giá bán 56799000, giảm 10% = 51119100)
+('CTHDX001', 1, 'SN001', 51119100.00),
+-- Hóa đơn xuất 2: PC001 (1 chiếc, giá bán 25000000), SP001 (1 CPU, giá bán 7490000)
+('CTHDX002', 2, 'SN004', 25000000.00),
+('CTHDX003', 2, 'SN006', 7490000.00),
+-- Hóa đơn xuất 3: SP006 (1 GPU, giá bán 6990000), SP011 (2 RAM, giá bán 799000)
+('CTHDX004', 3, 'SN009', 6990000.00),
+('CTHDX005', 3, 'SN011', 799000.00),
+('CTHDX006', 3, 'SN012', 799000.00);
 
 
 
