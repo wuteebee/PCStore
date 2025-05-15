@@ -147,6 +147,31 @@ public class PromotionDAO {
         return products;
     }
 
+    
+
+ public Promotion getPromotionById(String id) {
+    String sql = "SELECT * FROM KhuyenMai WHERE idKhuyenMai = ? AND trangThai = 1";
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, id);
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return new Promotion(
+                    rs.getString("idKhuyenMai"),
+                    rs.getString("tenKhuyenMai"),
+                    rs.getDouble("giaTri"),
+                    rs.getDate("ngayBatDau") != null ? rs.getDate("ngayBatDau").toLocalDate() : null,
+                    rs.getDate("ngayKetThuc") != null ? rs.getDate("ngayKetThuc").toLocalDate() : null,
+                    rs.getString("loai"),
+                    rs.getInt("trangThai")
+                );
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
 
 }
 

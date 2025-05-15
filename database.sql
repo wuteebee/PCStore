@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS SanPham (
     idThuongHieu VARCHAR(20) NOT NULL,
 	Gia DECIMAL(12,2) NOT NULL,
     moTaSanPham VARCHAR(1000),
-    anhSanPham BLOB,
+    anhSanPham LONGTEXT,
     trangThai INT DEFAULT 1,
     FOREIGN KEY (idDanhMuc) REFERENCES DanhMuc(idDanhMuc),
     FOREIGN KEY (idThuongHieu) REFERENCES ThuongHieu(idThuongHieu)
@@ -572,7 +572,17 @@ VALUES
 ('SP037', 0, 2190000, 0),
 ('SP038', 0, 2990000, 0),
 ('SP039', 0, 5490000, 0),
-('SP040', 0, 1890000, 0);
+('SP040', 0, 1890000, 0),
+('SP041',0,2590000,0),
+('SP042',0,3990000,0),
+('SP043',0,3490000,0),
+('SP044',0,1290000,0),
+('SP045',0,890000,0),
+('SP046',0,4790000,0),
+('SP047',0,2190000,0),
+('SP048',0,2990000,0),
+('SP049',0,5490000,0),
+('SP050',0,1890000,0);
 
 
 

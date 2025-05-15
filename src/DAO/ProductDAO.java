@@ -262,10 +262,9 @@ public class ProductDAO {
                 while (rs.next()) {
                     String serialNumber = rs.getString("SerialNumber");
                     int idSP = rs.getInt("idPhanLoai");
-                    double giaNhap = rs.getDouble("giaNhap");
                     boolean trangThai = rs.getBoolean("trangThai");
                     
-                    ProductDetail tmp = new ProductDetail(serialNumber, idSP, giaNhap, trangThai);
+                    ProductDetail tmp = new ProductDetail(serialNumber, idSP,0, trangThai);
                     productDetails.add(tmp);
                 }
             }
@@ -670,4 +669,6 @@ public int getIDPhanLoai(String idsp, int STTPL) {
 
     return phienBan; 
     }
+
+    
 }

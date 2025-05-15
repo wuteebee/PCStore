@@ -5,7 +5,9 @@ import DTO.ChiTietDonNhap;
 import DTO.HoaDonNhap;
 import DTO.ProductDetail;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PhieuNhapBUS {
     private PhieuNhapDAO dao;
@@ -79,4 +81,23 @@ public class PhieuNhapBUS {
     public boolean updateSLTK(String id,int soluong){
         return dao.updateSTTK(id, soluong);
     }
+
+
+    public HoaDonNhap getHoaDonNhapbyId(String id){
+        PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
+        
+
+        return phieuNhapDAO.getPhieuNhapbyId(id);
+    }
+
+    public Map<String,Integer> getSoLuongTheoPhanLoai (String maPhieuNhap){
+        PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
+        return phieuNhapDAO.getSoLuongTheoPhanLoai(maPhieuNhap);
+    }
+
+    public double getGiabySN(String id){
+        PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
+        return phieuNhapDAO.getGiabySN(id);
+    }
+   
 }

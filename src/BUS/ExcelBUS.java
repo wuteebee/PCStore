@@ -1,8 +1,10 @@
 package BUS;
 
 import DAO.EmployeeDAO;
+import DAO.PhieuNhapDAO;
 import DAO.ProductDAO;
 import DTO.Employee;
+import DTO.HoaDonNhap;
 import DTO.Product;
 
 import org.apache.poi.ss.usermodel.*;
@@ -134,4 +136,13 @@ public class ExcelBUS {
         }
         workbook.close();
     }
+
+     public void ExcelHoaDonNhap(String filePath) throws IOException{
+        PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
+        List<HoaDonNhap> danhsach =phieuNhapDAO.getAll();
+
+
+          Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Danh sách sản phẩm");
+     }
 }

@@ -25,6 +25,9 @@ public class CustomerPanel extends JPanel{
     private JTable customerTable;
     private String selectedCustomerId="-1";
     private Main mainFrame;
+        private JButton btnSearch;
+    private JButton btnReset;
+        private JTextField searchField;
 
     public CustomerPanel(Main mainFrame) {
         this.mainFrame = mainFrame;
@@ -60,7 +63,7 @@ public class CustomerPanel extends JPanel{
         customerDAO = new CustomerDAO();
         Customer customer = customerDAO.getCustomerbyId(id);
         // System.out.println("Hiii"+customer.getId());
-        khmoi.FormThemKhachHang("Chỉnh sửa thông tin nhân viên","Cập nhật",customer);
+        khmoi.FormThemKhachHang("Chỉnh sửa thông tin khách hàng","Cập nhật",customer);
         loadCustomerTable();
     }
         public JPanel createCustomToolbar() {
@@ -70,10 +73,60 @@ public class CustomerPanel extends JPanel{
         
         MenuChucNang menu = new MenuChucNang();
         toolbar.add(menu.createActionPanel(this,mainFrame));
-        toolbar.add(MenuChucNang.createSearchPanel()); 
+        JPanel tmp=MenuChucNang.createSearchPanel();
+       
+        toolbar.add(tmp); 
+        Component[]components=tmp.getComponents();
+            for (Component comp : components) {
+            if (comp instanceof JButton) {
+                JButton button = (JButton) comp;
+                if (button.getText().equals("Tìm kiếm")) {
+                    btnSearch = button;
+                } else if (button.getText().equals("Làm mới")) {
+                    btnReset = button;
+                }
+            } else if (comp instanceof JTextField) {
+                searchField = (JTextField) comp;
+            }
+        }
+            btnSearch.addActionListener(e -> searchCustomer());
+        btnReset.addActionListener(e -> {
+            searchField.setText("");
+            loadCustomerTable();
+        });
         
         return toolbar;
     }
+    private void searchCustomer() {
+    String keyword = searchField.getText().trim().toLowerCase();
+
+    if (keyword.isEmpty()) {
+       
+        loadCustomerTable();
+        return;
+    }
+
+  
+    List<Customer> filtered = customers.stream()
+        .filter(c -> c.getName().toLowerCase().contains(keyword)
+                  || c.getPhoneNumber().toLowerCase().contains(keyword)
+                  || c.getEmail().toLowerCase().contains(keyword))
+        .toList();
+
+    // Cập nhật bảng với danh sách lọc được
+    tableModel.setRowCount(0);
+    for (Customer c : filtered) {
+        Object[] rowData = {
+            c.getId(),
+            c.getName(),
+            c.getPhoneNumber(),
+            c.getEmail(),
+            c.getDateOfJoining()
+        };
+        tableModel.addRow(rowData);
+    }
+}
+
 
        private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
