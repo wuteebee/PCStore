@@ -4,7 +4,9 @@ import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import BUS.PhieuNhapBUS;
 import DTO.HoaDonNhap;
@@ -73,9 +75,20 @@ public class PhieuNhapPanel extends JPanel {
             }
         };
 
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Arial", Font.BOLD, 14));
+        header.setBackground(new Color(100, 149, 237)); // xanh
+        header.setForeground(Color.WHITE);
+        header.setReorderingAllowed(false);
+
         table.setFillsViewportHeight(true);
         table.setRowHeight(30);
-        table.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);

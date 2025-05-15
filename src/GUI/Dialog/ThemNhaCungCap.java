@@ -56,6 +56,11 @@ public class ThemNhaCungCap {
         }
 
         JButton btnSubmit = new JButton(buttonText);
+        btnSubmit.setBackground(new Color(100, 149, 237)); 
+        btnSubmit.setForeground(Color.WHITE);              
+        btnSubmit.setFocusPainted(false);                  
+        btnSubmit.setFont(new Font("Arial", Font.BOLD, 14)); 
+        btnSubmit.setPreferredSize(new Dimension(120, 35)); 
         gbc.gridx = 0;
         gbc.gridy = labels.length;
         gbc.gridwidth = 2;

@@ -55,6 +55,11 @@ public class ThemPhieuNhap extends JDialog {
         }
 
         JButton btnSave = new JButton(isEdit ? "Cập nhật" : "Thêm");
+        btnSave.setBackground(new Color(100, 149, 237)); // màu xanh dương
+        btnSave.setForeground(Color.WHITE);              // chữ trắng
+        btnSave.setFocusPainted(false);                  // bỏ viền nét đứt khi focus
+        btnSave.setFont(new Font("Arial", Font.BOLD, 14)); // font chữ to, đậm
+        btnSave.setPreferredSize(new Dimension(120, 35)); // tuỳ chọn: kích thước nút
         gbc.gridx = 0;
         gbc.gridy = y;
         gbc.gridwidth = 2;
