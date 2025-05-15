@@ -3,7 +3,7 @@ package DAO;
 import DTO.ChiTietDonNhap;
 import DTO.HoaDonNhap;
 import DTO.ProductDetail;
-import GUI.Panel.DashFinance;
+// import GUI.Panel.DashFinance;
 import config.DatabaseConnection;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -405,31 +405,31 @@ public double getGiabySN(String id) {
         return list;
     }
 
-    public Map<String, BigDecimal> getByPeriod(String period) {
-        Map<String, BigDecimal> result = new HashMap<>();
-        String sql;
-        if ("Month".equals(period)) {
-            sql = "SELECT TO_CHAR(ngayTao, 'YYYY-MM') AS month, SUM(tongTien) AS total " +
-                    "FROM HoaDonNhap " +
-                    "GROUP BY TO_CHAR(ngayTao, 'YYYY-MM') " +
-                    "ORDER BY month";
-        } else {
-            sql = "SELECT EXTRACT(YEAR FROM ngayTao) AS year, SUM(tongTien) AS total " +
-                    "FROM HoaDonNhap " +
-                    "GROUP BY EXTRACT(YEAR FROM ngayTao) " +
-                    "ORDER BY year";
-        }
+    // public Map<String, BigDecimal> getByPeriod(String period) {
+    //     Map<String, BigDecimal> result = new HashMap<>();
+    //     String sql;
+    //     if ("Month".equals(period)) {
+    //         sql = "SELECT TO_CHAR(ngayTao, 'YYYY-MM') AS month, SUM(tongTien) AS total " +
+    //                 "FROM HoaDonNhap " +
+    //                 "GROUP BY TO_CHAR(ngayTao, 'YYYY-MM') " +
+    //                 "ORDER BY month";
+    //     } else {
+    //         sql = "SELECT EXTRACT(YEAR FROM ngayTao) AS year, SUM(tongTien) AS total " +
+    //                 "FROM HoaDonNhap " +
+    //                 "GROUP BY EXTRACT(YEAR FROM ngayTao) " +
+    //                 "ORDER BY year";
+    //     }
 
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                String key = "Month".equals(period) ? rs.getString("month") : String.valueOf(rs.getInt("year"));
-                result.put(key, DashFinance.bdCon(rs.getDouble("total")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+    //     try (Statement stmt = conn.createStatement();
+    //          ResultSet rs = stmt.executeQuery(sql)) {
+    //         while (rs.next()) {
+    //             String key = "Month".equals(period) ? rs.getString("month") : String.valueOf(rs.getInt("year"));
+    //             result.put(key, DashFinance.bdCon(rs.getDouble("total")));
+    //         }
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //     }
+    //     return result;
+    // }
 
 }
