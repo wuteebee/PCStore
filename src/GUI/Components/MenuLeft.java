@@ -49,7 +49,7 @@ public class MenuLeft extends JPanel {
             {"Phiếu xuất", "export.svg"},
             {"Khách hàng", "customer.svg"},
             {"Nhà cung cấp", "supplier.svg"},
-            {"Nhân viên", "staff_1.svg", "Quản lí", "Bán hàng"},
+            {"Nhân viên", "staff_1.svg"},
             {"Tài khoản", "account.svg"},
             {"Thống kê", "statistical_1.svg"},
             {"Phân quyền", "protect.svg"},
