@@ -24,6 +24,9 @@ public class EmployeePanel extends JPanel {
     private EmployeeBUS employeeBUS;
     private String selectedEmployeeId = "-1"; 
     private Main mainFrame;
+    private JTextField searchField;
+    private JButton btnSearch;
+    private JButton btnReset;
 
 
     public EmployeePanel(Main mainFrame) {
@@ -98,10 +101,84 @@ public class EmployeePanel extends JPanel {
         
         MenuChucNang menu = new MenuChucNang();
         toolbar.add(menu.createActionPanel(this, mainFrame));  
-        toolbar.add(MenuChucNang.createSearchPanel()); 
+        JPanel search=MenuChucNang.createSearchPanel();
+        toolbar.add(search); 
         
+        Component[] components = search.getComponents();
+        for (Component comp : components) {
+            if (comp instanceof JButton) {
+                JButton button = (JButton) comp;
+                if (button.getText().equals("Tìm kiếm")) {
+                    btnSearch = button;
+                } else if (button.getText().equals("Làm mới")) {
+                    btnReset = button;
+                }
+            } else if (comp instanceof JTextField) {
+                searchField = (JTextField) comp;
+            }
+        }
+
+               btnSearch.addActionListener(e -> searchEmployee());
+        btnReset.addActionListener(e -> {
+            searchField.setText("");
+            loadData();
+        });
         return toolbar;
     }
+private void searchEmployee() {
+    String keyword = searchField.getText().trim().toLowerCase();
+
+    if (keyword.isEmpty()) {
+        loadData();
+        return;
+    }
+
+    List<Employee> filtered = employees.stream()
+        .filter(emp -> emp.getName().toLowerCase().contains(keyword)
+                || emp.getPhoneNumber().toLowerCase().contains(keyword)
+                || emp.getEmail().toLowerCase().contains(keyword)
+                || emp.getPosition().toLowerCase().contains(keyword)
+                // nếu muốn có thể thêm trường khác để lọc
+                )
+        .toList();
+
+    tableModel.setRowCount(0);
+
+    for (Employee emp : filtered) {
+        Object[] rowData = {
+            emp.getId(),
+            emp.getName(),
+            emp.getPosition(),
+            emp.getLuong(),
+            emp.getPhoneNumber(),
+            emp.getEmail(),
+            emp.getDateOfJoining(),
+            emp.getTrangThai()
+        };
+        tableModel.addRow(rowData);
+    }
+}
+
+private void loadData() {
+    employees = employeeBUS.getAllEmployees();  // Lấy tất cả nhân viên
+
+    tableModel.setRowCount(0);
+
+    for (Employee emp : employees) {
+        Object[] rowData = {
+            emp.getId(),
+            emp.getName(),
+            emp.getPosition(),
+            emp.getLuong(),             
+            emp.getPhoneNumber(),
+            emp.getEmail(),
+            emp.getDateOfJoining(),
+            emp.getTrangThai()           // Trạng Thái (bạn cần có getter này)
+        };
+        tableModel.addRow(rowData);
+    }
+}
+
 
     public void editEmployee() {
         System.out.println("Hihihihihi");

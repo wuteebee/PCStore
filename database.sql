@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS SanPham (
     idThuongHieu VARCHAR(20) NOT NULL,
 	Gia DECIMAL(12,2) NOT NULL,
     moTaSanPham VARCHAR(1000),
-    anhSanPham BLOB,
+    anhSanPham LONGTEXT,
     trangThai INT DEFAULT 1,
     FOREIGN KEY (idDanhMuc) REFERENCES DanhMuc(idDanhMuc),
     FOREIGN KEY (idThuongHieu) REFERENCES ThuongHieu(idThuongHieu)
@@ -575,27 +575,22 @@ INSERT INTO PhanLoaiSP (idSanPham, STTPL, Gia, SoLuongTonKho) VALUES
 ('SP037', 0, 2190000, 0),
 ('SP038', 0, 2990000, 0),
 ('SP039', 0, 5490000, 0),
-('SP040', 0, 1890000, 0),
-('SP041', 0, 4290000, 6),    -- Creative Sound Blaster AE-7
-('SP042', 0, 1990000, 0),
-('SP043', 0, 5290000, 0),
-('SP044', 0, 3490000, 0),
-('SP045', 0, 3890000, 0),
-('SP046', 0, 1290000, 25),   -- ASUS PCE-AX3000
-('SP047', 0, 1090000, 0),
-('SP048', 0, 990000, 0),
-('SP049', 0, 1190000, 0),
-('SP050', 0, 790000, 0),
-('SP106', 0, 8500000, 0),
-('SP107', 0, 7690000, 0),
-('SP108', 0, 5590000, 0),
-('SP109', 0, 4690000, 0),
-('SP110', 0, 3890000, 0),
-('SP111', 0, 3290000, 0),
-('SP112', 0, 2190000, 0),
-('SP113', 0, 2890000, 0),
-('SP114', 0, 1190000, 0),
-('SP115', 0, 1490000, 0);
+('SP040', 0, 1890000, 0);
+
+
+
+INSERT INTO phanloaisp (idSanPham, STTPL, Gia, SoLuongTonKho)
+VALUES
+  ('SP106', 0, 8500000, 0),
+  ('SP007', 0, 7690000, 0),
+  ('SP108', 0, 5590000, 0),
+  ('SP109', 0, 4690000, 0),
+  ('SP110', 0, 3890000, 0),
+  ('SP111', 0, 3290000, 0),
+  ('SP112', 0, 2190000, 0),
+  ('SP013', 0, 2890000, 0),
+  ('SP114', 0, 1190000, 0),
+  ('SP115', 0, 1490000, 0);
 
 INSERT INTO NhanVien (idNhanVien, TenNhanVien, SDT, Mail, NgayVaoLam, ViTri, Luong, trangThai)
 VALUES

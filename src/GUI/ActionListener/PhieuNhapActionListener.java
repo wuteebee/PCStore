@@ -11,6 +11,7 @@ import BUS.ProductBUS;
 import DTO.Product;
 import GUI.Main;
 import GUI.Components.Excel;
+import GUI.Dialog.CTNhap;
 import GUI.Dialog.ThemSanPham;
 import GUI.Panel.NhapHoaDonPanel;
 import GUI.Panel.PhieuNhapPanel;
@@ -82,10 +83,22 @@ public class PhieuNhapActionListener implements ActionListener{
                 break;
             case "Chi tiết":
                 System.out.println("Chi tiết nè");
-                  
+                  id = panel.getSelectedPhieuId();
+                CTNhap cTNhap=new CTNhap(panel,MainFrame,id);
                 break;
             case "Xuất Excel":
                System.out.println("Excel");
+                    Excel panelExcel = new Excel();
+                String filePath = panelExcel.ChooseFile();
+                if(filePath != null) {
+                    ExcelBUS excelBUS = new ExcelBUS();
+                    try {
+                        excelBUS.ExcelListEmployee(filePath);
+                    } catch (IOException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
                
                 break;
             case "Nhập Excel":  

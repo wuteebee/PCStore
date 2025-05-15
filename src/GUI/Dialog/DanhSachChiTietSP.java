@@ -175,7 +175,7 @@ public class DanhSachChiTietSP extends JDialog {
 
 
         public void loadTable() {
-        tableModel.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+        tableModel.setRowCount(0); 
         danhsach = bus.getAll_ChiTietDonNhap();
         // for (ChiTietDonNhaps : customers) {
         //     System.out.println(customer.getName());

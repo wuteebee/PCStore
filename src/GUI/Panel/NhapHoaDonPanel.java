@@ -69,9 +69,7 @@ public class NhapHoaDonPanel extends JPanel {
         this.isEditing=isEditing;
         actionTable();
 
-        if(isEditing){
-            // Load data
-        }
+ 
 
      
     }
@@ -154,6 +152,7 @@ private void initLeftPanel() {
 }
 
 private void updatePhieuNhap() {
+
     String maSP = tfMaSP.getText();
     String tenSP = tfTenSP.getText();
     String pb= cbCauHinh.getSelectedItem().toString();
@@ -863,6 +862,9 @@ private void updateTongTien() {
     String tongTienFormatted = String.format("%,d", tongTien).replace(",", ".");
     lbTongTien.setText("TỔNG TIỀN: " + tongTienFormatted + "đ");
 }
+
+
+
 
 
 }

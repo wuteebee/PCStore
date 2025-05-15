@@ -309,6 +309,73 @@ public boolean updateSTTK(String idPL, int soLuong) {
 
 
 
+public HoaDonNhap getPhieuNhapbyId(String id) {
+    HoaDonNhap hdn = null;
+    String sql = "SELECT * FROM hoadonnhap WHERE idHoaDonNhap=?";
+    EmployeeDAO employeeDAO=new EmployeeDAO();
+    SupplierDAO supplierDAO = new SupplierDAO();
+    try {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, id); // Gán giá trị tham số
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            hdn = new HoaDonNhap();
+            hdn.setIdHoaDonNhap(rs.getString("idHoaDonNhap"));
+            String maNhanVien=(rs.getString("idNhanVien"));
+            String idNCC=(rs.getString("idNhaCungCap"));
+            hdn.setNhanVien(employeeDAO.getEmployeeById(maNhanVien));
+            hdn.setNhaCungCap(supplierDAO.getSupplierById(idNCC));
+           
+       hdn.setNgayTao(rs.getDate("ngayTao"));
+                hdn.setTongTien(rs.getDouble("tongTien"));
+          
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return hdn;
+}
+
+
+public Map<String, Integer> getSoLuongTheoPhanLoai(String maPhieuNhap) {
+    Map<String, Integer> result = new HashMap<>();
+    String sql = "SELECT idPhanLoai, COUNT(*) AS soLuong " +
+                 "FROM chitietsp " +
+                 "WHERE maPhieuNhap = ? " +
+                 "GROUP BY idPhanLoai";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, maPhieuNhap);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            String idPhanLoai = rs.getString("idPhanLoai");
+            int soLuong = rs.getInt("soLuong");
+            result.put(idPhanLoai, soLuong);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return result;
+}
+
+public double getGiabySN(String id) {
+    double gia = 0.0;
+    String sql = "SELECT donGia FROM chitietdonnhap WHERE SN = ?";
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, id);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                gia = rs.getDouble("donGia");
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return gia;
+}
+
 
 
     public List<HoaDonNhap> getByDateRange(Date startDate, Date endDate) {

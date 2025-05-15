@@ -56,6 +56,7 @@ public class MenuChucNang {
             btnEdit.addActionListener(actionListener);
             btnDelete.addActionListener(actionListener);
             btnExport.addActionListener(actionListener);
+            btnSearch.addActionListener(actionListener);
             checkAndDisableButton(btnAdd, idNhomQuyen, "Khách hàng", "Tao");
             checkAndDisableButton(btnEdit, idNhomQuyen, "Khách hàng", "Sua");
             checkAndDisableButton(btnDelete, idNhomQuyen, "Khách hàng", "Xoa");
@@ -97,6 +98,7 @@ public class MenuChucNang {
             actionPanel.add(btnAdd);
             actionPanel.add(btnDelete);
             actionPanel.add(btnExport);
+            actionPanel.add(btnDetail);
         } else if (panel instanceof PromotionPanel) {
             PromotionPanel promotionPanel = (PromotionPanel) panel;
             PromotionActionListener actionListener = new PromotionActionListener(promotionPanel);
@@ -162,6 +164,14 @@ public class MenuChucNang {
             actionPanel.add(btnExport);
             actionPanel.add(btnDetail);
         } else if (panel instanceof SaleInvoicePanel) {
+            SaleInvoicePanel SalePanel=(SaleInvoicePanel)panel;
+                SaleInvoiceActionListener actionListener=new SaleInvoiceActionListener(SalePanel, MainFrame);
+            btnAdd.addActionListener(actionListener);
+            btnEdit.addActionListener(actionListener);
+            btnDelete.addActionListener(actionListener);
+            btnExport.addActionListener(actionListener);
+            btnDetail.addActionListener(actionListener);
+
             checkAndDisableButton(btnAdd, idNhomQuyen, "Phiếu xuất", "Tao");
             checkAndDisableButton(btnEdit, idNhomQuyen, "Phiếu xuất", "Sua");
             checkAndDisableButton(btnDelete, idNhomQuyen, "Phiếu xuất", "Xoa");
@@ -237,6 +247,7 @@ public class MenuChucNang {
         searchPanel.add(btnReset);
         searchPanel.add(searchField);
         searchPanel.add(btnSearch);
+        
         searchPanel.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(new Color(100, 149, 237), 1),
             "Tìm kiếm",

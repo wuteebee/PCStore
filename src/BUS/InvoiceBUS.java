@@ -24,28 +24,28 @@ public class InvoiceBUS {
         return invoiceDAO.getAllSalesInvoice();
     }
 
-    public boolean addSalesInvoice(SalesInvoice salesInvoice) {
-        System.out.println("Thêm hóa đơn xuất vào hệ thống");
+    // public boolean addSalesInvoice(SalesInvoice salesInvoice) {
+    //     System.out.println("Thêm hóa đơn xuất vào hệ thống");
 
-        // thêm truy vấn kiểm tra
+    //     // thêm truy vấn kiểm tra
 
-        SalesInvoice newSalesInvoice = new SalesInvoice(
-                generateSalesInvoiceUniqueID(invoiceDAO.getSalesInvoiceMap()) ,
-                salesInvoice.getEid(),
-                salesInvoice.getCid(),
-                salesInvoice.getDate(),
-                salesInvoice.getTotalPayment(),
-                salesInvoice.getDetailedSalesInvoices(),
-                salesInvoice.getDid()
-        );
+    //     SalesInvoice newSalesInvoice = new SalesInvoice(
+    //             generateSalesInvoiceUniqueID(invoiceDAO.getSalesInvoiceMap()) ,
+    //             salesInvoice.getEid(),
+    //             salesInvoice.getCid(),
+    //             salesInvoice.getDate(),
+    //             salesInvoice.getTotalPayment(),
+    //             salesInvoice.getDetailedSalesInvoices(),
+    //             salesInvoice.getDid()
+    //     );
 
-        System.out.println(newSalesInvoice);
-        return invoiceDAO.addSalesInvoice(newSalesInvoice);
-    }
+    //     System.out.println(newSalesInvoice);
+    //     return invoiceDAO.addSalesInvoice(newSalesInvoice);
+    // }
 
-    public boolean updateSalesInvoice(List<DetailedSalesInvoice> detailedSalesInvoices) {
-        return invoiceDAO.updateSalesInvoice(detailedSalesInvoices);
-    }
+    // public boolean updateSalesInvoice(List<DetailedSalesInvoice> detailedSalesInvoices) {
+    //     return invoiceDAO.updateSalesInvoice(detailedSalesInvoices);
+    // }
 
     public boolean deleteSalesInvoice(String id) {
         return invoiceDAO.deleteSalesInvoice(id);
@@ -63,6 +63,10 @@ public class InvoiceBUS {
 
     public double getFirstPromotionInSalesInvoice() {
         return invoiceDAO.getFirstPromotionInSalesInvoice();
+    }
+
+    public List<String> getSNbyidPL(String id){
+        return invoiceDAO.getSNbyIDPhanLoai(id);
     }
 
 }
