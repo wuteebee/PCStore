@@ -170,6 +170,30 @@ public class MenuChucNang {
             actionPanel.add(btnEdit);
             actionPanel.add(btnDelete);
             actionPanel.add(btnDS);
+        } else if (panel instanceof BrandPanel) {
+            BrandPanel brandPanel = (BrandPanel) panel;
+            BrandActionListener actionListener = new BrandActionListener(brandPanel, MainFrame);
+
+            btnAdd.addActionListener(actionListener);
+            btnEdit.addActionListener(actionListener);
+            btnDelete.addActionListener(actionListener);
+
+            actionPanel.add(btnAdd);
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnDelete);
+            actionPanel.add(btnExport);
+        } else if (panel instanceof SupplierPanel) {
+            SupplierPanel supplierPanel = (SupplierPanel) panel;
+            SupplierActionListener actionListener = new SupplierActionListener(supplierPanel);
+
+            btnAdd.addActionListener(actionListener);
+            btnEdit.addActionListener(actionListener);
+            btnDelete.addActionListener(actionListener);
+
+            actionPanel.add(btnAdd);
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnDelete);
+            actionPanel.add(btnExport);
         }
 
         actionPanel.setBorder(BorderFactory.createTitledBorder("Chức năng"));

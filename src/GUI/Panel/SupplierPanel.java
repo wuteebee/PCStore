@@ -1,12 +1,9 @@
 package GUI.Panel;
 
 import java.awt.*;
-import java.util.Date;
+import java.util.List;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
-
-import com.toedter.calendar.JDateChooser;
 
 import BUS.SupplierBUS;
 import DAO.SupplierDAO;
@@ -14,7 +11,6 @@ import DTO.Supplier;
 import GUI.Main;
 import GUI.Components.MenuChucNang;
 import GUI.Dialog.ThemNhaCungCap;
-import java.util.List;
 
 public class SupplierPanel extends JPanel {
     private List<Supplier> suppliers;
@@ -39,15 +35,7 @@ public class SupplierPanel extends JPanel {
         this.setBackground(Color.WHITE);
 
         add(createCustomToolbar(), BorderLayout.NORTH);
-
-        // Tạo panel trung tâm chứa bộ lọc và bảng
-        JPanel centerPanel = new JPanel(new BorderLayout(10, 0));
-        centerPanel.setBackground(Color.WHITE);
-
-        // centerPanel.add(createFilterPanel(), BorderLayout.WEST);
-        // centerPanel.add(createTablePanel(), BorderLayout.CENTER);
-
-        add(centerPanel, BorderLayout.CENTER);
+        add(createTablePanel(), BorderLayout.CENTER);
     }
 
     public String getSelectedSupplierId() {
@@ -92,68 +80,11 @@ public class SupplierPanel extends JPanel {
         return toolbar;
     }
 
-    private JPanel createFilterPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setPreferredSize(new Dimension(300, 500));
-        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        panel.setBackground(Color.WHITE);
-
-        // Nhà cung cấp
-        JLabel supplierLabel = new JLabel("Nhà cung cấp:");
-        JComboBox<String> supplierCombo = new JComboBox<>(new String[]{"-- Tất cả --", "Công ty A", "Công ty B", "Công ty C"});
-
-        // Nhân viên nhập
-        JLabel staffLabel = new JLabel("Nhân viên nhập:");
-        JComboBox<String> staffCombo = new JComboBox<>(new String[]{"-- Tất cả --", "Nguyễn Văn A", "Trần Thị B"});
-
-        // Từ ngày - Đến ngày
-        JLabel fromDateLabel = new JLabel("Từ ngày:");
-        JDateChooser fromDate = new JDateChooser();
-        fromDate.setDate(new Date());
-
-        JLabel toDateLabel = new JLabel("Đến ngày:");
-        JDateChooser toDate = new JDateChooser();
-        toDate.setDate(new Date());
-
-        // Từ số tiền - Đến số tiền
-        JLabel minAmountLabel = new JLabel("Từ số tiền:");
-        JTextField minAmountField = new JTextField();
-
-        JLabel maxAmountLabel = new JLabel("Đến số tiền:");
-        JTextField maxAmountField = new JTextField();
-
-        // Button Lọc
-        JButton filterButton = new JButton("Lọc");
-
-        panel.add(supplierLabel);
-        panel.add(supplierCombo);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(staffLabel);
-        panel.add(staffCombo);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(fromDateLabel);
-        panel.add(fromDate);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(toDateLabel);
-        panel.add(toDate);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(minAmountLabel);
-        panel.add(minAmountField);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(maxAmountLabel);
-        panel.add(maxAmountField);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(filterButton);
-
-        return panel;
-    }
-
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        String[] columnNames = {"Mã phiếu nhập", "Nhà cung cấp", "Nhân viên nhập", "Thời gian", "Tổng tiền"};
+        String[] columnNames = { "ID", "Tên nhà cung cấp", "Số điện thoại", "Email", "Địa chỉ" };
         tableModel = new DefaultTableModel(columnNames, 0);
         supplierTable = new JTable(tableModel) {
             @Override
@@ -201,16 +132,15 @@ public class SupplierPanel extends JPanel {
 
     public void loadSupplierTable() {
         tableModel.setRowCount(0);
-
-        // Dữ liệu giả lập phiếu nhập
-        Object[][] fakeData = {
-            {"PN001", "Công ty A", "Nguyễn Văn A", "2024-05-01", "5,000,000"},
-            {"PN002", "Công ty B", "Trần Thị B", "2024-05-03", "7,200,000"},
-            {"PN003", "Công ty C", "Nguyễn Văn A", "2024-05-05", "4,000,000"},
-            {"PN004", "Công ty A", "Trần Thị B", "2024-05-07", "9,500,000"}
-        };
-
-        for (Object[] row : fakeData) {
+        suppliers = supplierBUS.getAllSuppliers();
+        for (Supplier supplier : suppliers) {
+            Object[] row = {
+                supplier.getId(),
+                supplier.getName(),
+                supplier.getPhoneNumber(),
+                supplier.getEmail(),
+                supplier.getAddress()
+            };
             tableModel.addRow(row);
         }
     }

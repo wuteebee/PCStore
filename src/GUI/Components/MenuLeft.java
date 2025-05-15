@@ -43,8 +43,8 @@ public class MenuLeft extends JPanel {
 
     private final String[][] menuItems = {
             {"Trang chủ", "home.svg"},
-            {"Sản phẩm", "book.svg", "Laptop", "PC", "Linh kiện máy tính"},
-            {"Thuộc tính", "khu_vuc.svg", "Màu sắc", "Thương hiệu", "Xuất xứ"},
+            {"Sản phẩm", "book.svg"},
+            {"Thuộc tính", "khu_vuc.svg", "Thương hiệu"},
             {"Phiếu nhập", "import.svg"},
             {"Phiếu xuất", "export.svg"},
             {"Khách hàng", "customer.svg"},
@@ -245,6 +245,7 @@ public class MenuLeft extends JPanel {
             case "Sản phẩm" -> mainFrame.setMainPanel(new ProductPanel(mainFrame));
             case "Phiếu xuất" -> mainFrame.setMainPanel(new SaleInvoicePanel(mainFrame));
             case "Phiếu nhập" -> mainFrame.setMainPanel(new PhieuNhapPanel(mainFrame));
+            case "  └ Thương hiệu" -> mainFrame.setMainPanel(new GUI.Panel.BrandPanel(mainFrame));
             case "Nhân viên" -> mainFrame.setMainPanel(new EmployeePanel(mainFrame));
             case "Khách hàng" -> mainFrame.setMainPanel(new CustomerPanel(mainFrame));
             case "Nhà cung cấp" -> mainFrame.setMainPanel(new SupplierPanel(mainFrame));
