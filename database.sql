@@ -672,7 +672,7 @@ WHERE idTaiKhoan = 'admin';
 INSERT INTO ChucNang (idChucNang, tenChucNang)
 SELECT 'CN001', 'Sản phẩm' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN001');
 INSERT INTO ChucNang (idChucNang, tenChucNang)
-SELECT 'CN002', 'Thuộc tính' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN002');
+SELECT 'CN002', 'Thương hiệu' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN002');
 INSERT INTO ChucNang (idChucNang, tenChucNang)
 SELECT 'CN003', 'Phiếu nhập' WHERE NOT EXISTS (SELECT 1 FROM ChucNang WHERE idChucNang = 'CN003');
 INSERT INTO ChucNang (idChucNang, tenChucNang)
