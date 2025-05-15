@@ -1,11 +1,16 @@
 package BUS;
 
+import DAO.BrandDAO;
 import DAO.EmployeeDAO;
 import DAO.PhieuNhapDAO;
 import DAO.ProductDAO;
+import DAO.SupplierDAO;
+import DTO.Brand;
 import DTO.Employee;
 import DTO.HoaDonNhap;
 import DTO.Product;
+import DTO.Supplier;
+import DTO.Brand;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -145,4 +150,114 @@ public class ExcelBUS {
           Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Danh sách sản phẩm");
      }
+
+    public void ExcelListSuppliers(String filePath) throws IOException {
+        // 1. Lấy dữ liệu
+        SupplierDAO supplierDAO = new SupplierDAO();
+        List<Supplier> dsSuppliers = supplierDAO.getAllSuppliers();
+
+        // 2. Tạo workbook + sheet
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Danh sách nhà cung cấp");
+
+        // 3. Tạo style cho header
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        // 4. Tạo header row
+        String[] headers = {
+            "Mã nhà cung cấp",
+            "Tên nhà cung cấp",
+            "Địa chỉ",
+            "Số điện thoại",
+            "Email"
+        };
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // 5. Ghi dữ liệu vào các row tiếp theo
+        int rowIdx = 1;
+        for (Supplier ncc : dsSuppliers) {
+            Row row = sheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(ncc.getId());
+            row.createCell(1).setCellValue(ncc.getName());
+            row.createCell(2).setCellValue(ncc.getAddress());
+            row.createCell(3).setCellValue(ncc.getPhoneNumber());
+            row.createCell(4).setCellValue(ncc.getEmail());
+        }
+
+        // 6. Auto-size cột
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // 7. Ghi file
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+        }
+        workbook.close();
+    }
+
+    public void ExcelListBrand(String filePath) throws IOException {
+        // 1. Lấy dữ liệu
+        BrandDAO brandDAO = new BrandDAO();
+        List<Brand> dsBrands = brandDAO.getAllBrands();
+
+        // 2. Tạo workbook + sheet
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Danh sách thương hiệu");
+
+        // 3. Tạo style cho header
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        // 4. Header
+        String[] headers = {
+            "Mã thương hiệu",
+            "Tên thương hiệu",
+            "Mã danh mục",
+            "Trạng thái"
+        };
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // 5. Ghi dữ liệu
+        int rowIdx = 1;
+        for (Brand brand : dsBrands) {
+            Row row = sheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(brand.getMaThuongHieu());
+            row.createCell(1).setCellValue(brand.getTenThuongHieu());
+            row.createCell(2).setCellValue(brand.getmaDanhMuc());
+            row.createCell(3).setCellValue(brand.isTrangThai() ? "Hoạt động" : "Không hoạt động");
+        }
+
+        // 6. Auto-size
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // 7. Ghi ra file
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+        }
+        workbook.close();
+    }
 }

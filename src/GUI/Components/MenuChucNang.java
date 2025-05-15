@@ -187,6 +187,8 @@ public class MenuChucNang {
             btnAdd.addActionListener(actionListener);
             btnEdit.addActionListener(actionListener);
             btnDelete.addActionListener(actionListener);
+            btnExport.addActionListener(actionListener);
+
 
             actionPanel.add(btnAdd);
             actionPanel.add(btnEdit);
@@ -199,6 +201,7 @@ public class MenuChucNang {
             btnAdd.addActionListener(actionListener);
             btnEdit.addActionListener(actionListener);
             btnDelete.addActionListener(actionListener);
+            btnExport.addActionListener(actionListener);
 
             actionPanel.add(btnAdd);
             actionPanel.add(btnEdit);
