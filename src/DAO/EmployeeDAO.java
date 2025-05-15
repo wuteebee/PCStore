@@ -1,8 +1,7 @@
 package DAO;
 
-import config.DatabaseConnection;
-import config.H2DatabaseConnection;
 import DTO.Employee;
+import config.DatabaseConnection;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;

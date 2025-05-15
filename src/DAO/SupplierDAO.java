@@ -1,11 +1,10 @@
 package DAO;
 
+import DTO.Supplier;
+import config.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import DTO.Supplier;
-import config.DatabaseConnection;
-import config.H2DatabaseConnection;
 
 public class SupplierDAO {
     private Connection conn;

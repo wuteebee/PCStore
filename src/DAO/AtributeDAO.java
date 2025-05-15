@@ -1,17 +1,14 @@
 package DAO;
 
+import DTO.Brand;
+import DTO.Catalog;
+import DTO.ThongSoKyThuat;
 import config.DatabaseConnection;
-import config.H2DatabaseConnection;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import DTO.Brand;
-import DTO.Catalog;
-import DTO.ThongSoKyThuat;
 
 
 public class AtributeDAO {

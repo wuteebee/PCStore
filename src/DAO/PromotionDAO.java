@@ -1,12 +1,9 @@
 package DAO;
 
-import DTO.Promotion;
 import DTO.ComboProduct;
+import DTO.Promotion;
 import config.DatabaseConnection;
-import config.H2DatabaseConnection;
-
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -171,6 +168,9 @@ public class PromotionDAO {
     }
     return null;
 }
+
+
+
 
 
 }

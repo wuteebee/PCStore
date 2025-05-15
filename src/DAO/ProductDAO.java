@@ -1,10 +1,7 @@
 package DAO;
 
-import config.DatabaseConnection;
-import config.H2DatabaseConnection;
 import DTO.*;
-
-import java.math.BigDecimal;
+import config.DatabaseConnection;
 import java.sql.*;
 import java.util.*;
 
@@ -632,7 +629,7 @@ public int getIDPhanLoai(String idsp, int STTPL) {
          PreparedStatement stmt = conn.prepareStatement(sql)) {
 
         stmt.setInt(1, idPhanLoai);
-       
+
 
         ResultSet rs = stmt.executeQuery();
         if (rs.next()) {
@@ -644,7 +641,7 @@ public int getIDPhanLoai(String idsp, int STTPL) {
     }
     System.out.println("hihihihihihi");
 
-    return masp; 
+    return masp;
     }
 
 
@@ -656,18 +653,18 @@ public int getIDPhanLoai(String idsp, int STTPL) {
          PreparedStatement stmt = conn.prepareStatement(sql)) {
 
         stmt.setInt(1, idPhanLoai);
-       
+
 
         ResultSet rs = stmt.executeQuery();
         if (rs.next()) {
           phienBan=  rs.getInt("STTPL");
-            
+
         }
     } catch (SQLException e) {
         e.printStackTrace();
     }
 
-    return phienBan; 
+    return phienBan;
     }
 
     

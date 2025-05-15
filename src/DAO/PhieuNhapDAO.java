@@ -3,9 +3,9 @@ package DAO;
 import DTO.ChiTietDonNhap;
 import DTO.HoaDonNhap;
 import DTO.ProductDetail;
+import GUI.Panel.DashFinance;
 import config.DatabaseConnection;
-import config.H2DatabaseConnection;
-
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,7 +124,7 @@ public String insertHoaDonNhap(HoaDonNhap hdn) {
     String maHoaDon = null;
 
     String sql = "INSERT INTO hoadonnhap (idNhanVien, idNhaCungCap,ngayTao,tongTien) VALUES (?, ?, ?,?)";
-    
+
     try (Connection conn = DatabaseConnection.getConnection(); // <-- dùng kết nối tới DB
          PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
          System.out.println("Tổng tiền"+hdn.getTongTien());
@@ -164,7 +164,7 @@ public boolean insertChitietSP(ProductDetail productDetail) {
         int affectedRows = stmt.executeUpdate();
 
         if (affectedRows > 0) {
-            Save = true; 
+            Save = true;
         }
 
     } catch (SQLException e) {
@@ -190,7 +190,7 @@ public boolean insertChitietPhieuNhap(ProductDetail productDetail) {
         int affectedRows = stmt.executeUpdate();
 
         if (affectedRows > 0) {
-            Save = true; 
+            Save = true;
         }
 
     } catch (SQLException e) {
@@ -217,7 +217,7 @@ public boolean isImeiExistInDatabase(String imei) {
 
 public boolean ktraXuatHang(String maPhieuNhap) {
     String sql = "SELECT COUNT(*) FROM chitietsp WHERE maphieunhap = ? AND maphieuxuat != -1";
-    
+
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {
         ps.setString(1, maPhieuNhap);
@@ -235,13 +235,13 @@ public boolean ktraXuatHang(String maPhieuNhap) {
 
 public boolean xoaChiTietPhieuNhap(String idPhieuNhap) {
     String sql = "DELETE FROM chitietdonnhap WHERE idDonHang = ?";
-    
+
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {
-         
+
         ps.setString(1, idPhieuNhap);
         int affectedRows = ps.executeUpdate();
-        
+
         return affectedRows > 0; // Trả về true nếu có dòng bị xoá
     } catch (Exception e) {
         e.printStackTrace();
@@ -252,10 +252,10 @@ public boolean xoaChiTietPhieuNhap(String idPhieuNhap) {
 
 public boolean xoaChiTietSPTheoPhieuNhap(String maPhieuNhap) {
     String sql = "DELETE FROM chitietsp WHERE maphieunhap = ?";
-    
+
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {
-         
+
         ps.setString(1, maPhieuNhap);
         int rowsAffected = ps.executeUpdate();
         return rowsAffected > 0; // Trả về true nếu có dòng bị xóa
@@ -268,10 +268,10 @@ public boolean xoaChiTietSPTheoPhieuNhap(String maPhieuNhap) {
 
 public boolean xoaHoaDonNhap(String maPhieuNhap) {
     String sql = "DELETE FROM hoadonnhap WHERE idHoaDonNhap = ?";
-    
+
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {
-         
+
         ps.setString(1, maPhieuNhap);
         int rowsAffected = ps.executeUpdate();
         return rowsAffected > 0; // Trả về true nếu có dòng bị xóa
@@ -376,5 +376,60 @@ public double getGiabySN(String id) {
     return gia;
 }
 
+
+
+    public List<HoaDonNhap> getByDateRange(Date startDate, Date endDate) {
+        List<HoaDonNhap> list = new ArrayList<>();
+        String sql = "SELECT * FROM HoaDonNhap WHERE ngayTao BETWEEN ? AND ? ORDER BY ngayTao DESC";
+        EmployeeDAO employeeDAO = new EmployeeDAO();
+        SupplierDAO supplierDAO = new SupplierDAO();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDate(1, startDate);
+            ps.setDate(2, endDate);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    HoaDonNhap hdn = new HoaDonNhap();
+                    hdn.setIdHoaDonNhap(rs.getString("idHoaDonNhap"));
+                    String MaNhanvien = rs.getString("idNhanVien");
+                    hdn.setNhanVien(employeeDAO.getEmployeeById(MaNhanvien));
+                    String MaNhacungcap = rs.getString("idNhaCungCap");
+                    hdn.setNhaCungCap(supplierDAO.getSupplierById(MaNhacungcap));
+                    hdn.setNgayTao(rs.getDate("ngayTao"));
+                    hdn.setTongTien(rs.getDouble("tongTien"));
+                    list.add(hdn);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Map<String, BigDecimal> getByPeriod(String period) {
+        Map<String, BigDecimal> result = new HashMap<>();
+        String sql;
+        if ("Month".equals(period)) {
+            sql = "SELECT TO_CHAR(ngayTao, 'YYYY-MM') AS month, SUM(tongTien) AS total " +
+                    "FROM HoaDonNhap " +
+                    "GROUP BY TO_CHAR(ngayTao, 'YYYY-MM') " +
+                    "ORDER BY month";
+        } else {
+            sql = "SELECT EXTRACT(YEAR FROM ngayTao) AS year, SUM(tongTien) AS total " +
+                    "FROM HoaDonNhap " +
+                    "GROUP BY EXTRACT(YEAR FROM ngayTao) " +
+                    "ORDER BY year";
+        }
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                String key = "Month".equals(period) ? rs.getString("month") : String.valueOf(rs.getInt("year"));
+                result.put(key, DashFinance.bdCon(rs.getDouble("total")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
 }
