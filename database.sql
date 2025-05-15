@@ -1,3 +1,4 @@
+drop database pcstore;
 CREATE DATABASE PCStore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE PCStore;
 
@@ -11,6 +12,7 @@ CREATE TABLE IF NOT EXISTS NhomQuyen (
     tenNhomQuyen VARCHAR(50) NOT NULL,
     trangThai INT DEFAULT 1
 );
+
 CREATE TABLE IF NOT EXISTS ChiTietQuyen (
     idNhomQuyen VARCHAR(20) NOT NULL,
     idChucNang VARCHAR(20) NOT NULL,
@@ -19,6 +21,7 @@ CREATE TABLE IF NOT EXISTS ChiTietQuyen (
     FOREIGN KEY (idNhomQuyen) REFERENCES NhomQuyen(idNhomQuyen),
     FOREIGN KEY (idChucNang) REFERENCES ChucNang(idChucNang)
 );
+
 -- Create DanhMuc table
 CREATE TABLE IF NOT EXISTS DanhMuc (
     idDanhMuc VARCHAR(20) PRIMARY KEY,
@@ -521,73 +524,78 @@ INSERT INTO KhuyenMaiCombo (idKhuyenMai, idSanPham) VALUES
 
 
 
-INSERT INTO phanloaisp (idSanPham, STTPL, Gia, SoLuongTonKho)
-VALUES 
-('LAP001', 0, 56799000, 0),
+-- Chèn dữ liệu vào PhanLoaiSP với số lượng tồn kho được thiết lập ngay từ đầu
+INSERT INTO PhanLoaiSP (idSanPham, STTPL, Gia, SoLuongTonKho) VALUES
+('LAP001', 0, 56799000, 3),  -- Apple MacBook Pro 14-inch
 ('LAP002', 0, 35199000, 0),
 ('LAP003', 0, 37199000, 0),
 ('LAP004', 0, 42599000, 0),
 ('LAP005', 0, 25199000, 0),
-('PC001', 0, 25000000, 0),
+('PC001', 0, 25000000, 2),   -- PC Gaming High-End
 ('PC002', 0, 20000000, 0),
 ('PC003', 0, 12000000, 0),
 ('PC004', 0, 18000000, 0),
 ('PC005', 0, 30000000, 0),
-('SP001', 0, 7490000, 0),
+('SP001', 0, 7490000, 10),   -- Intel Core i9-13900K
 ('SP002', 0, 5890000, 0),
 ('SP003', 0, 4990000, 0),
 ('SP004', 0, 3990000, 0),
 ('SP005', 0, 3290000, 0),
-('SP006', 0, 6990000, 0),
+('SP006', 0, 6990000, 8),    -- NVIDIA GeForce RTX 3080
 ('SP007', 0, 7990000, 0),
 ('SP008', 0, 4990000, 0),
 ('SP009', 0, 5990000, 0),
 ('SP010', 0, 3990000, 0),
-('SP011', 0, 799000, 0),
+('SP011', 0, 799000, 20),    -- Corsair Vengeance LPX 16GB
 ('SP012', 0, 1499000, 0),
 ('SP013', 0, 699000, 0),
 ('SP014', 0, 1999000, 0),
 ('SP015', 0, 899000, 0),
-('SP016', 0, 3490000, 0),
+('SP016', 0, 3490000, 15),   -- Samsung 970 EVO Plus 1TB
 ('SP017', 0, 2490000, 0),
 ('SP018', 0, 2990000, 0),
 ('SP019', 0, 1990000, 0),
 ('SP020', 0, 3490000, 0),
-('SP021', 0, 7990000, 0),
+('SP021', 0, 7990000, 5),    -- LG 27GN950-B
 ('SP022', 0, 5490000, 0),
 ('SP023', 0, 6990000, 0),
 ('SP024', 0, 5990000, 0),
 ('SP025', 0, 9990000, 0),
-('SP026', 0, 1800000, 0),
+('SP026', 0, 1800000, 12),   -- NZXT H510
 ('SP027', 0, 2300000, 0),
 ('SP028', 0, 2500000, 0),
 ('SP029', 0, 1200000, 0),
 ('SP030', 0, 2000000, 0),
-('SP031', 0, 2590000, 0),
+('SP031', 0, 2590000, 10),   -- Noctua NH-D15
 ('SP032', 0, 3990000, 0),
 ('SP033', 0, 3490000, 0),
 ('SP034', 0, 1290000, 0),
 ('SP035', 0, 890000, 0),
-('SP036', 0, 4790000, 0),
+('SP036', 0, 4790000, 18),   -- Samsung 990 PRO 1TB
 ('SP037', 0, 2190000, 0),
 ('SP038', 0, 2990000, 0),
 ('SP039', 0, 5490000, 0),
-('SP040', 0, 1890000, 0);
-
-
-
-INSERT INTO phanloaisp (idSanPham, STTPL, Gia, SoLuongTonKho)
-VALUES
-  ('SP106', 0, 8500000, 0),
-  ('SP007', 0, 7690000, 0),
-  ('SP108', 0, 5590000, 0),
-  ('SP109', 0, 4690000, 0),
-  ('SP110', 0, 3890000, 0),
-  ('SP111', 0, 3290000, 0),
-  ('SP112', 0, 2190000, 0),
-  ('SP013', 0, 2890000, 0),
-  ('SP114', 0, 1190000, 0),
-  ('SP115', 0, 1490000, 0);
+('SP040', 0, 1890000, 0),
+('SP041', 0, 4290000, 6),    -- Creative Sound Blaster AE-7
+('SP042', 0, 1990000, 0),
+('SP043', 0, 5290000, 0),
+('SP044', 0, 3490000, 0),
+('SP045', 0, 3890000, 0),
+('SP046', 0, 1290000, 25),   -- ASUS PCE-AX3000
+('SP047', 0, 1090000, 0),
+('SP048', 0, 990000, 0),
+('SP049', 0, 1190000, 0),
+('SP050', 0, 790000, 0),
+('SP106', 0, 8500000, 0),
+('SP107', 0, 7690000, 0),
+('SP108', 0, 5590000, 0),
+('SP109', 0, 4690000, 0),
+('SP110', 0, 3890000, 0),
+('SP111', 0, 3290000, 0),
+('SP112', 0, 2190000, 0),
+('SP113', 0, 2890000, 0),
+('SP114', 0, 1190000, 0),
+('SP115', 0, 1490000, 0);
 
 INSERT INTO NhanVien (idNhanVien, TenNhanVien, SDT, Mail, NgayVaoLam, ViTri, Luong, trangThai)
 VALUES
@@ -703,3 +711,6 @@ WHERE NOT EXISTS (
     WHERE ctq.idNhomQuyen = 'NQ001' AND ctq.idChucNang = ChucNang.idChucNang AND ctq.hanhDong = HanhDong.hanhDong
 );
 SELECT idNhomQuyen, idChucNang, hanhDong FROM ChiTietQuyen WHERE idNhomQuyen = 'NQ001';
+
+
+

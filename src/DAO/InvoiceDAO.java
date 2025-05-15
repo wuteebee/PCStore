@@ -3,8 +3,6 @@ package DAO;
 import DTO.DetailedSalesInvoice;
 import DTO.SalesInvoice;
 import config.DatabaseConnection;
-import config.H2DatabaseConnection;
-
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -17,7 +15,7 @@ public class InvoiceDAO {
 
 
     public InvoiceDAO() {
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     public List<SalesInvoice> getAllSalesInvoice() {

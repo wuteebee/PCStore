@@ -79,7 +79,7 @@ public class itemTaskbar extends JPanel {
         lblIcon.setBorder(new EmptyBorder(0, 20, 0, 0));
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         try {
-lblIcon.setIcon(new FlatSVGIcon("./icon/" + linkIcon));
+            lblIcon.setIcon(new FlatSVGIcon("./icon/" + linkIcon));
         } catch (Exception e) {
             // Không hiển thị gì nếu icon không load được
         }
@@ -102,6 +102,37 @@ lblIcon.setIcon(new FlatSVGIcon("./icon/" + linkIcon));
         pnlContent1.putClientProperty("FlatLaf.style", "font: 150% $medium.font");
         pnlContent1.setForeground(FontColor);
         center.add(pnlContent1);
+    }
+
+    private String formatMoney(long value) {
+        if (value >= 1_000_000_000_000L) {
+            return String.format("%.1fT", value / 1_000_000_000_000.0); // nghìn tỷ
+        } else if (value >= 1_000_000_000) {
+            return String.format("%.1fB", value / 1_000_000_000.0); // tỷ
+        } else if (value >= 1_000_000) {
+            return String.format("%.1fM", value / 1_000_000.0); // triệu
+        } else if (value >= 1_000) {
+            return String.format("%.1fK", value / 1_000.0); // ngàn
+        } else {
+            return String.valueOf(value);
+        }
+    }
+
+    public void setValue(String value) {
+        try {
+            long number = Long.parseLong(value.replaceAll("[^\\d]", "")); // Sửa lỗi escape sequence
+            pnlContent.setText(formatMoney(number));
+        } catch (NumberFormatException e) {
+            pnlContent.setText(value);
+        }
+    }
+
+    public void setValue(long value) {
+        pnlContent.setText(formatMoney(value));
+    }
+
+    public String getValue() {
+        return pnlContent.getText();
     }
 
     public void setSelected(boolean selected) {

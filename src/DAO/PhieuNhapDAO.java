@@ -5,8 +5,6 @@ import DTO.HoaDonNhap;
 import DTO.ProductDetail;
 import GUI.Panel.DashFinance;
 import config.DatabaseConnection;
-import config.H2DatabaseConnection;
-
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,7 +16,7 @@ public class PhieuNhapDAO {
     private Connection conn;
 
     public PhieuNhapDAO() {
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     // Thêm hóa đơn nhập mới
@@ -101,7 +99,7 @@ public class PhieuNhapDAO {
     public List<ChiTietDonNhap> getAll_CTDonNhap(){
         List<ChiTietDonNhap> danhsach=new ArrayList<>();
         String sql="SELECT * FROM chitietdonnhap";
-       try (Connection conn = H2DatabaseConnection.getConnection();
+       try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)){
             while (rs.next()) {

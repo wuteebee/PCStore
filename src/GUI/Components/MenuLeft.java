@@ -7,6 +7,7 @@ import DTO.Employee;
 import GUI.Login;
 import GUI.Main;
 import GUI.Panel.*;
+import GUI.Panel.ThongKe.ThongKePanel;
 import BUS.PermissionBUS;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.*;
@@ -249,7 +250,7 @@ public class MenuLeft extends JPanel {
             case "Nhà cung cấp" -> mainFrame.setMainPanel(new SupplierPanel(mainFrame));
             case "Tài khoản" -> mainFrame.setMainPanel(new AccountPanel(mainFrame));
             case "Khuyến mãi và ưu đãi" -> mainFrame.setMainPanel(new PromotionPanel(mainFrame));
-            case "Thống kê" -> mainFrame.setMainPanel(new DashboardPanel(mainFrame));
+            case "Thống kê" -> mainFrame.setMainPanel(new ThongKePanel(mainFrame));
             case "Phân quyền" -> mainFrame.setMainPanel(new PermissionPanel(mainFrame));
             case "Đăng xuất" -> {
                 int input = JOptionPane.showConfirmDialog(null,

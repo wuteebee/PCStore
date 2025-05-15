@@ -2,8 +2,6 @@ package DAO;
 
 import DTO.Account;
 import config.DatabaseConnection;
-import config.H2DatabaseConnection;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +10,7 @@ public class AccountDAO {
     private Connection conn;
 
     public AccountDAO() {
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     public Account getAccountByUsername(String username) {
