@@ -17,9 +17,9 @@ import DTO.ThongSoKyThuat;
 public class AtributeDAO {
     private Connection conn;
 
-    //public AtributeDAO() {
-        //conn = H2DatabaseConnection.getConnection();
-    //}
+    public AtributeDAO() {
+        conn = DatabaseConnection.getConnection();
+    }
 
     public List<Catalog> getAllCatalogs() {
        

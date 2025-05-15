@@ -16,9 +16,9 @@ import config.DatabaseConnection;
 public class CustomerDAO {
     private Connection conn;
 
-    //public CustomerDAO() {
-        //conn = H2DatabaseConnection.getConnection();
-    //}
+    public CustomerDAO() {
+        conn = DatabaseConnection.getConnection();
+    }
 
     public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();

@@ -98,10 +98,10 @@ public class PhieuNhapDAO {
     // }
 
     
-    /*public List<ChiTietDonNhap> getAll_CTDonNhap(){
+    public List<ChiTietDonNhap> getAll_CTDonNhap(){
         List<ChiTietDonNhap> danhsach=new ArrayList<>();
         String sql="SELECT * FROM chitietdonnhap";
-       try (Connection conn = H2DatabaseConnection.getConnection();
+       try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)){
             while (rs.next()) {
@@ -121,7 +121,7 @@ public class PhieuNhapDAO {
 
 
         return danhsach;
-    } */
+    } 
 public String insertHoaDonNhap(HoaDonNhap hdn) {
     String maHoaDon = null;
 

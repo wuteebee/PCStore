@@ -11,9 +11,9 @@ import java.util.List;
 public class AccountDAO {
     private Connection conn;
 
-    //public AccountDAO() {
-        //conn = H2DatabaseConnection.getConnection();
-    //}
+    public AccountDAO() {
+        conn = DatabaseConnection.getConnection();
+    }
 
     public Account getAccountByUsername(String username) {
         String sql = "SELECT * FROM TaiKhoan WHERE tenDangNhap = ? AND trangThai = 1";

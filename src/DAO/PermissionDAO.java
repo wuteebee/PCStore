@@ -13,9 +13,9 @@ import java.util.Map;
 public class PermissionDAO {
     private Connection conn;
 
-    //public PermissionDAO() {
-        //conn = H2DatabaseConnection.getConnection();
-    //}
+    public PermissionDAO() {
+        conn = DatabaseConnection.getConnection();
+    }
 
     public List<PermissionGroup> getAllPermissionGroups() {
         List<PermissionGroup> groups = new ArrayList<>();

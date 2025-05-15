@@ -11,10 +11,10 @@ import java.util.List;
 public class EmployeeDAO {
     private Connection conn;
 
-    //public EmployeeDAO() {
-        // Sử dụng kết nối từ DatabaseConnection, nếu có lỗi thì sẽ ném ra RuntimeException
-        //conn = H2DatabaseConnection.getConnection();
-    //}
+    public EmployeeDAO() {
+        //Sử dụng kết nối từ DatabaseConnection, nếu có lỗi thì sẽ ném ra RuntimeException
+        conn = DatabaseConnection.getConnection();
+    }
 
     // Lấy danh sách tất cả nhân viên
     public List<Employee> getAllEmployees() {

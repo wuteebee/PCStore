@@ -16,9 +16,9 @@ public class InvoiceDAO {
     static private Map<String, DetailedSalesInvoice> detailedSalesInvoiceMap = new HashMap<>();
 
 
-    //public InvoiceDAO() {
-        //conn = H2DatabaseConnection.getConnection();
-    //}
+    public InvoiceDAO() {
+        conn = DatabaseConnection.getConnection();
+    }
 
     public List<SalesInvoice> getAllSalesInvoice() {
         List<SalesInvoice> salesInvoices = new ArrayList<>();

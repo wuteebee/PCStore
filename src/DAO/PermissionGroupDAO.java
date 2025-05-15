@@ -11,9 +11,9 @@ import java.util.List;
 public class PermissionGroupDAO {
     private Connection conn;
 
-    //public PermissionGroupDAO() {
-        //conn = H2DatabaseConnection.getConnection();
-    //}
+    public PermissionGroupDAO() {
+        conn = DatabaseConnection.getConnection();
+    }
 
     public List<PermissionGroup> getAllPermissionGroups() {
         List<PermissionGroup> groups = new ArrayList<>();
