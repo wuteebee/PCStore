@@ -733,9 +733,9 @@ INSERT INTO ChiTietSP (SerialNumber, idPhanLoai, trangThai) VALUES
 
 -- chi tiết hóa đơn nhập
 INSERT INTO HoaDonNhap (idNhanVien, idNhaCungCap, ngayTao, tongTien) VALUES
-('NV001', 'NCC001', '2025-05-01', 108099000.00), -- Nhập LAP001 (3 chiếc) và PC001 (2 chiếc)
-('NV002', 'NCC002', '2025-05-02', 14970000.00), -- Nhập SP001 (3 CPU)
-('NV003', 'NCC003', '2025-05-03', 14950000.00); -- Nhập SP006 (2 GPU) và SP011 (5 RAM)
+('NV001', 'NCC001', '2025-05-11', 108099000.00), -- Nhập LAP001 (3 chiếc) và PC001 (2 chiếc)
+('NV002', 'NCC002', '2025-05-12', 14970000.00), -- Nhập SP001 (3 CPU)
+('NV003', 'NCC003', '2025-05-13', 14950000.00); -- Nhập SP006 (2 GPU) và SP011 (5 RAM)
 
 INSERT INTO ChiTietDonNhap (idDonHang, SN, donGia) VALUES
 -- Hóa đơn nhập 1: LAP001 (3 chiếc, giá bán 56799000, giá nhập 45439200), PC001 (2 chiếc, giá bán 25000000, giá nhập 20000000)
