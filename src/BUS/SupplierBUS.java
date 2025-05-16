@@ -40,4 +40,9 @@ public class SupplierBUS {
     public boolean deleteSupplier(String id) {
         return new SupplierDAO().deleteSupplier(id);
     }
+
+    public List<Supplier> searchSuppliers(String keyword) {
+        return new SupplierDAO().searchSuppliers(keyword);
+    }
+
 }

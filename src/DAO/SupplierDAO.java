@@ -114,5 +114,27 @@ public class SupplierDAO {
         }
         return "NCC001"; // Trường hợp chưa có dữ liệu
     }
-    
+
+    public List<Supplier> searchSuppliers(String keyword) {
+        List<Supplier> list = new ArrayList<>();
+        String sql = "SELECT * FROM NhaCungCap WHERE idNhaCungCap LIKE ? OR tenNhaCungCap LIKE ? OR email LIKE ? OR diaChi LIKE ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            String kw = "%" + keyword + "%";
+            for (int i = 1; i <= 4; i++) ps.setString(i, kw);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Supplier s = new Supplier(
+                    rs.getString("idNhaCungCap"),
+                    rs.getString("tenNhaCungCap"),
+                    rs.getString("diaChi"),
+                    rs.getString("soDienThoai"),
+                    rs.getString("email")
+                );
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

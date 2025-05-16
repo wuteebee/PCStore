@@ -55,7 +55,18 @@ public class SupplierActionListener implements ActionListener {
                     }
                 }
                 break;
-
+            case "Tìm kiếm":
+                String keyword = supplierPanel.getSearchText();
+                if (!keyword.isEmpty()) {
+                    supplierPanel.loadSupplierTable(
+                        supplierPanel.getSupplierBUS().searchSuppliers(keyword)
+                    );
+                }
+                break;
+            case "Làm mới":
+                supplierPanel.clearSearchText();
+                supplierPanel.loadSupplierTable();
+                break;
             default:
                 JOptionPane.showMessageDialog(null, "Hành động không hợp lệ: " + command);
         }

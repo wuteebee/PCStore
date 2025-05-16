@@ -144,4 +144,25 @@ public class SupplierPanel extends JPanel {
             tableModel.addRow(row);
         }
     }
+
+    public String getSearchText() {
+        return txtTimKiem.getText().trim();
+    }
+
+    public void clearSearchText() {
+        txtTimKiem.setText("");
+    }
+
+    public SupplierBUS getSupplierBUS() {
+        return supplierBUS;
+    }
+
+    public JButton getBtnTimKiem() {
+        return btnTimKiem;
+    }
+
+    public JButton getBtnLamMoi() {
+        return btnLamMoi;
+    }
+
 }
