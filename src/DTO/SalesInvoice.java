@@ -24,6 +24,14 @@ public class SalesInvoice {
         this.totalPayment = totalPayment;
         this.khuyenmai=khuyenmai;   
     }
+      public SalesInvoice(Employee NhanVien,Customer khachhang,Date date,double totalPayment,Promotion khuyenmai) {
+     
+        this.NhanVien=NhanVien;
+        this.khachhang=khachhang;
+        this.date=date;
+        this.totalPayment = totalPayment;
+        this.khuyenmai=khuyenmai;   
+    }
     public void setDate(Date date) {
         this.date = date;
     }

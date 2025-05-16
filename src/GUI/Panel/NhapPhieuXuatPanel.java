@@ -2,7 +2,10 @@ package GUI.Panel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -13,6 +16,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -25,6 +29,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.Document;
 
+import BUS.CustomerBUS;
 import BUS.InvoiceBUS;
 import BUS.PhieuNhapBUS;
 import BUS.ProductBUS;
@@ -35,10 +40,12 @@ import DAO.PhieuNhapDAO;
 import DAO.ProductDAO;
 import DTO.CauHinhLaptop;
 import DTO.CauHinhPC;
+import DTO.Customer;
 import DTO.Employee;
 import DTO.Product;
 import DTO.ProductDetail;
 import DTO.Promotion;
+import DTO.SalesInvoice;
 import DTO.Supplier;
 import DTO.Variant;
 import GUI.Main;
@@ -48,16 +55,19 @@ import java.text.DecimalFormat;
 public class NhapPhieuXuatPanel extends JPanel{
        private JTable tableSp, tableChiTiet,tablechsp;
     private DefaultTableModel modelSp, modelChiTiet,modelchsp;
-    private JTextField tfMaSP, tfTenSP, tfGiaXuat, tfMaPhieu, tfNhanVien, tfMaImei,soluongsp;
+    private JTextField tfMaSP, tfTenSP, tfGiaXuat, tfMaPhieu, tfNhanVien, soluongsp;
     private JComboBox<String> cbCauHinh;
-    private JLabel lbTongTien,soluong,lbFrom,lbTo;
+    private JLabel lbTongTien,soluong;
     private JButton Suasp, Xoasp, Luu, Huy,btnThem,submitbutton;
-    private JRadioButton rbTuNhap, rbTheoKhoang;
     private List<JCheckBox> checkBoxes;
+      JComboBox<String> cbKhachHang;
     private Main mainFrame;
     private ProductDAO productDAO;
     private List<Product> products;
+     private double tt;
     private HashMap<String, List<ProductDetail>> chiTietHDX = new HashMap<>();
+    private Set<String> selectedIMEIs = new HashSet<>();
+    private Promotion promotion ;
       public NhapPhieuXuatPanel(Main mainFrame) {
         this.mainFrame = mainFrame;
         setBackground(java.awt.Color.white);
@@ -78,7 +88,7 @@ public class NhapPhieuXuatPanel extends JPanel{
 
         initRightPanel();
         initBottomPanel();
-        // actionTable();
+        actionTable();
 
     }
 
@@ -164,49 +174,54 @@ public class NhapPhieuXuatPanel extends JPanel{
 }
 
 
-  private void updatePhieuXuat(){
+  private void updatePhieuXuat() {
     String maSP = tfMaSP.getText();
     String tenSP = tfTenSP.getText();
-    String pb= cbCauHinh.getSelectedItem().toString();
-    int phienBanSo = Integer.parseInt(pb.replaceAll("\\D+", "")) ;
+    String pb = cbCauHinh.getSelectedItem().toString();
+    int phienBanSo = Integer.parseInt(pb.replaceAll("\\D+", ""));
     String giaXuat = tfGiaXuat.getText();
+    
+    // Xóa dữ liệu trường nhập
     tfMaSP.setText("");
     tfTenSP.setText("");
     cbCauHinh.setSelectedIndex(0);
     tfGiaXuat.setText("");
     soluongsp.setText("");
-    int sl=0;
-    ProductDAO productDAO=new ProductDAO();
-    int maphanloai=productDAO.getIDPhanLoai(maSP, phienBanSo-1);
-    List<ProductDetail> list =new ArrayList<>();
-        for (JCheckBox cb : checkBoxes) {
-            if (cb.isSelected()) {
-                System.out.println(cb.getText());
-                sl+=1;
-            }
-            ProductDetail productDetail=new ProductDetail(cb.getText(),maphanloai,Double.parseDouble(giaXuat),true);
+
+    int sl = 0;
+    ProductDAO productDAO = new ProductDAO();
+    int maphanloai = productDAO.getIDPhanLoai(maSP, phienBanSo - 1);
+    List<ProductDetail> list = new ArrayList<>();
+    
+    // Đếm số lượng IMEI được chọn và tạo ProductDetail
+    for (JCheckBox cb : checkBoxes) {
+        if (cb.isSelected() && cb.isEnabled()) {
+            System.out.println("IMEI: " + cb.getText());
+            sl += 1;
+            ProductDetail productDetail = new ProductDetail(cb.getText(), maphanloai, Double.parseDouble(giaXuat), true);
             list.add(productDetail);
-
         }
-          int stt = modelChiTiet.getRowCount() + 1;
-        chiTietHDX.put(String.valueOf(stt), list);
-    // tfImeiFrom.setText("");
-    // tfImeiTo.setText("");
-    
+    }
 
+    if (sl == 0) {
+        JOptionPane.showMessageDialog(null, "Vui lòng chọn ít nhất một IMEI!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
 
+    int stt = modelChiTiet.getRowCount() + 1;
+    chiTietHDX.put(String.valueOf(stt), list);
 
-   modelChiTiet.addRow(new Object[]{
-    modelChiTiet.getRowCount()+1,
-    maSP,
-    tenSP,
-    phienBanSo,
-    String.format("%,d", Integer.parseInt(giaXuat)).replace(",", "."),
-    sl
-    
-   });
-   
-  }
+    modelChiTiet.addRow(new Object[]{
+        stt,
+        maSP,
+        tenSP,
+        phienBanSo,
+        String.format("%,d", Integer.parseInt(giaXuat)).replace(",", "."),
+        sl
+    });
+
+    updateTongTien(null);
+}
   private void searchProducts(String query) {
     // Xóa hết các dòng cũ trong bảng
     modelSp.setRowCount(0);
@@ -386,20 +401,29 @@ private void themImei() {
     JPanel checkboxPanel = new JPanel();
     checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.Y_AXIS));
 
-    InvoiceBUS bus=new InvoiceBUS();
-    PhieuNhapBUS phieuNhapBUS=new PhieuNhapBUS();
-  
-    ProductDAO productDAO=new ProductDAO();
-                String maSP = tfMaSP.getText(); 
-     String selectedCauHinh = (String) cbCauHinh.getSelectedItem();
-         int phienBanSo = Integer.parseInt(selectedCauHinh.replaceAll("\\D+", "")) ;
-    List<String> imeiList=bus.getSNbyidPL((productDAO.getIDPhanLoai(tfMaSP.getText(), phienBanSo-1))+"");
+    InvoiceBUS bus = new InvoiceBUS();
+    ProductDAO productDAO = new ProductDAO();
+    String maSP = tfMaSP.getText();
+    String selectedCauHinh = (String) cbCauHinh.getSelectedItem();
+    int phienBanSo = Integer.parseInt(selectedCauHinh.replaceAll("\\D+", ""));
+    List<String> imeiList = bus.getSNbyidPL(productDAO.getIDPhanLoai(tfMaSP.getText(), phienBanSo - 1) + "");
+    
     checkBoxes = new ArrayList<>();
 
+    // Lọc và thêm checkbox cho các IMEI chưa được chọn
     for (String imei : imeiList) {
-        JCheckBox cb = new JCheckBox(imei);
-        checkBoxes.add(cb);
-        checkboxPanel.add(cb);
+        if (!selectedIMEIs.contains(imei)) { // Chỉ thêm IMEI chưa được chọn
+            JCheckBox cb = new JCheckBox(imei);
+            checkBoxes.add(cb);
+            checkboxPanel.add(cb);
+        } else {
+            // Tùy chọn: Thêm checkbox nhưng vô hiệu hóa
+            JCheckBox cb = new JCheckBox(imei);
+            cb.setEnabled(false); // Vô hiệu hóa checkbox
+            cb.setSelected(true); // Đánh dấu là đã chọn
+            checkBoxes.add(cb);
+            checkboxPanel.add(cb);
+        }
     }
 
     // Cuộn nếu nhiều checkbox
@@ -411,12 +435,11 @@ private void themImei() {
     confirmButton.addActionListener(e -> {
         System.out.println("IMEI đã chọn:");
         for (JCheckBox cb : checkBoxes) {
-            if (cb.isSelected()) {
+            if (cb.isSelected() && cb.isEnabled()) { // Chỉ thêm IMEI mới chọn
                 System.out.println(cb.getText());
-        
+                selectedIMEIs.add(cb.getText()); // Lưu IMEI vào danh sách đã chọn
             }
         }
-        
         dialog.dispose(); // Đóng dialog
     });
 
@@ -427,7 +450,7 @@ private void themImei() {
     dialog.setVisible(true); // Hiển thị dialog
 }
 
-   private void initRightPanel() {
+private void initRightPanel() {
     JPanel rightSection = new JPanel();
     rightSection.setLayout(new BoxLayout(rightSection, BoxLayout.Y_AXIS));
     rightSection.setBounds(730, 10, 390, 250); // tăng chiều cao tổng thể
@@ -455,11 +478,10 @@ private void themImei() {
     // ===== Add tất cả vào rightSection =====
     rightSection.add(pdDetail);
     rightSection.add(Box.createVerticalStrut(10)); // Khoảng cách
-    // rightSection.add(rightPanel);
+
     // ===== Thông tin nhập =====
     JPanel rightPanel = new JPanel(null);
-    rightPanel.setBounds(730, 260, 400, 150);
-    rightPanel.setBorder(BorderFactory.createTitledBorder("Thông tin nhập"));
+    rightPanel.setBounds(730, 260, 400, 200); // Tăng chiều cao để chứa thêm khách hàng
 
     tfMaPhieu = new JTextField("PN-1");
     tfMaPhieu.setBounds(120, 20, 250, 25);
@@ -472,13 +494,35 @@ private void themImei() {
     tfNhanVien.setBounds(120, 60, 250, 25);
     tfNhanVien.setEditable(false);
 
+    // Thêm trường khách hàng
+    JLabel lbKhachHang = new JLabel("Khách hàng:");
+    lbKhachHang.setBounds(10, 100, 100, 25);
+    cbKhachHang = new JComboBox<>();
+    cbKhachHang.setBounds(120, 100, 250, 25);
+
+    // Lấy danh sách khách hàng từ CustomerBUS
+    CustomerBUS customerBUS = new CustomerBUS();
+    List<Customer> customers = customerBUS.getAllCustomers();
+    for (Customer customer : customers) {
+        cbKhachHang.addItem(customer.getName());
+    }
 
     JLabel lbNCC = new JLabel("Nhà cung cấp:");
-    lbNCC.setBounds(10, 100, 100, 25); 
+    lbNCC.setBounds(10, 140, 100, 25); 
     SupplierBUS supplierBUS = new SupplierBUS();
-   
+    // Bạn có thể thêm JComboBox cho nhà cung cấp nếu cần
+    // Ví dụ: JComboBox<String> cbNCC = new JComboBox<>();
+    // cbNCC.setBounds(120, 140, 250, 25);
+    // List<Supplier> suppliers = supplierBUS.getAllSuppliers();
+    // for (Supplier supplier : suppliers) {
+    //     cbNCC.addItem(supplier.getTenNhaCungCap());
+    // }
 
-    rightPanel.add(lbNhanVien); rightPanel.add(tfNhanVien);
+    rightPanel.add(lbNhanVien); 
+    rightPanel.add(tfNhanVien);
+    rightPanel.add(lbKhachHang); 
+    rightPanel.add(cbKhachHang);
+    rightPanel.add(lbNCC);
 
     add(rightSection);
     add(rightPanel);
@@ -523,23 +567,33 @@ private void themImei() {
 
     JLabel lblMaKhuyenMai = new JLabel("Mã khuyến mãi:");
 
-   
    PromotionBUS promotionbus=new PromotionBUS();
  JComboBox<String> cbMaKhuyenMai = new JComboBox<>();
+    lblMaKhuyenMai.setBounds(10, 200, 120, 25);
+    cbMaKhuyenMai.setBounds(130, 200, 150, 25);
+Map<String, Promotion> mapTenToMa = new HashMap<>();
 
 List<Promotion> promotions = promotionbus.getAllPromotions();
 for (Promotion tmp : promotions) {
-    cbMaKhuyenMai.addItem(tmp.getTenKhuyenMai()); // hoặc tmp.getMaKhuyenMai() nếu bạn muốn mã
+    cbMaKhuyenMai.addItem(tmp.getTenKhuyenMai());  // thêm tên vào ComboBox
+    mapTenToMa.put(tmp.getTenKhuyenMai(),tmp); // lưu mapping tên -> mã
 }
+submitbutton.addActionListener(e -> {
+    String tenKM = (String) cbMaKhuyenMai.getSelectedItem();
+    String maKM = mapTenToMa.get(tenKM).getIdKhuyenMai();
 
-    lblMaKhuyenMai.setBounds(10, 200, 120, 25);
-    cbMaKhuyenMai.setBounds(130, 200, 150, 25);
+    try {
+        int maKMInt = Integer.parseInt(maKM); 
+        System.out.println("Xuất kho với mã khuyến mãi: " + maKMInt);
+        // xulyXuatHang();
+        // updateTongTien(maKMInt);  
+    } catch (NumberFormatException ex) {
+        System.err.println("Mã khuyến mãi không hợp lệ: " + maKM);
+        // xử lý lỗi ở đây nếu cần
+    }
+});
 
-    submitbutton.addActionListener(e -> {
-        String maKM = (String) cbMaKhuyenMai.getSelectedItem();
-        System.out.println("Xuất kho với mã khuyến mãi: " + maKM);
-    
-    });
+
 
     bottomPanel.add(scroll);
     bottomPanel.add(lbTongTien);
@@ -548,11 +602,145 @@ for (Promotion tmp : promotions) {
     bottomPanel.add(lblMaKhuyenMai);
     bottomPanel.add(cbMaKhuyenMai);
 
+
+    cbMaKhuyenMai.addActionListener(e -> {
+    String selectedKM = (String) cbMaKhuyenMai.getSelectedItem();
+    System.out.println("Mã khuyến mãi được chọn: " + selectedKM);
+double maKMDouble = Double.parseDouble(mapTenToMa.get(selectedKM).getGiaTri()+"");
+int maKMInt = (int) maKMDouble;  
+updateTongTien(maKMInt);
+    
+
+
+});
+
     add(bottomPanel);
 }
 
 
+private void actionTable(){
+    tableChiTiet.getSelectionModel().addListSelectionListener(e -> {
+         int idphanloai = 0;
+         
+          if (!e.getValueIsAdjusting()) {
+            
+            int selectedRow = tableChiTiet.getSelectedRow();
+            if (selectedRow != -1) {
+                Object value = tableChiTiet.getValueAt(selectedRow, 4);
+                tfGiaXuat.setText(value.toString());
+            }
+             for (ProductDetail tmp : chiTietHDX.get((selectedRow + 1) + "") ) {
+                System.out.println(tmp.getSerialNumber());
+                idphanloai = tmp.getIdPhanLoai();
+            }
+            ProductBUS productBUS = new ProductBUS();
+            String masp = productBUS.getmaSPbyIdPL(idphanloai);
+            int phienBan = productBUS.getphienbanbyIdPL(idphanloai);
 
-    
-    
+            System.out.println("Mã phân loại nè: " + idphanloai);
+            System.out.println("Mã sp nè: " + masp);
+
+
+            
+            updateCenterPanel(masp, phienBan);
+  
+            updateCauhinh(masp,cbCauHinh.getSelectedItem().toString());
+
+
+
+         }
+    });
+}
+
+private void updateTongTien(Integer KM) {
+    long tongTien = 0;
+
+    for (int i = 0; i < modelChiTiet.getRowCount(); i++) {
+        String giaStr = modelChiTiet.getValueAt(i, 4).toString().replace(".", "");
+        int gia = Integer.parseInt(giaStr);
+        int soLuong = Integer.parseInt(modelChiTiet.getValueAt(i, 5).toString());
+
+        tongTien += gia * soLuong;
+    }
+
+    tt = tongTien;
+    System.out.println("Khuyến mãi nè: " + KM);
+    System.out.println("Tiền trc: " + tt);
+
+    if (KM != null) {
+        tt = tt - (tt * KM / 100);
+    }
+
+    System.out.println("Tiền sau khuyến mãi: " + tt);
+
+String tongTienFormatted = String.format("%,d", (long) tt).replace(",", ".");
+
+    lbTongTien.setText("TỔNG TIỀN: " + tongTienFormatted + "đ");
+}
+
+// private void xulyXuatHang() {
+//     EmployeeDAO employeeDAO = new EmployeeDAO();
+//     Employee employee = employeeDAO.getEmployeeById(mainFrame.getUser().getIdNhanVien());
+
+//     CustomerBUS customerBUS = new CustomerBUS();
+
+//     int selectedCustomerIndex = cbKhachHang.getSelectedIndex();
+//     Customer customer = customerBUS.getAllCustomers().get(selectedCustomerIndex);
+
+//     java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+
+//     System.out.println("Khách hàng: " + customer.getName());
+//     System.out.println("Nhân viên: " + employee.getName());
+//     System.out.println("Tổng tiền: " + tt);
+
+//     SalesInvoice hdx = new SalesInvoice( employee, customer, sqlDate, tt, null);
+//     PhieuXuatBUS phieuXuatBUS = new PhieuXuatBUS();
+//     String idPhieuXuat = phieuXuatBUS.insertHoaDonXuat(hdx);
+//     System.out.println("Phiếu xuất: " + idPhieuXuat);
+//     hdx.setIdHoaDonXuat(idPhieuXuat);
+
+//     for (int i = 0; i < modelChiTiet.getRowCount(); i++) {
+//         String stt = modelChiTiet.getValueAt(i, 0).toString();
+//         String maSp = modelChiTiet.getValueAt(i, 1).toString();
+//         String tenSp = modelChiTiet.getValueAt(i, 2).toString();
+//         String phanLoai = modelChiTiet.getValueAt(i, 3).toString();
+//         String giaBan = modelChiTiet.getValueAt(i, 4).toString();
+//         String soLuong = modelChiTiet.getValueAt(i, 5).toString();
+
+//         System.out.println("STT: " + stt + ", Mã SP: " + maSp + ", Tên SP: " + tenSp + ", Phân loại: " + phanLoai + ", Giá bán: " + giaBan + ", Số lượng: " + soLuong);
+
+//         // Giảm tồn kho
+//         phieuXuatBUS.updateSLTK(chiTietHDX.get(stt).get(0).getIdPhanLoai() + "", -Integer.parseInt(soLuong));
+
+//         // Thêm chi tiết xuất hàng
+//         chiTietHDX.forEach((key, value) -> {
+//             if (key.equals(stt)) {
+//                 value.forEach(productDetail -> {
+//                     if (!selectedIMEIs.contains(productDetail.getSerialNumber())) {
+//                         System.err.println("IMEI không hợp lệ: " + productDetail.getSerialNumber());
+//                         return;
+//                     }
+//                     System.out.println("Bảng chitietsp: " + productDetail.getSerialNumber() + " " + productDetail.getIdPhanLoai());
+//                     System.out.println("Bảng chitietdonxuat: " + productDetail.getSerialNumber() + " " + productDetail.getGiaBan());
+//                     productDetail.setMaPhieuXuat(idPhieuXuat);
+
+//                     if (phieuXuatBUS.insertChitietSP(productDetail)) {
+//                         phieuXuatBUS.insertChitietPhieuXuat(productDetail);
+//                     }
+//                 });
+//             }
+//         });
+//     }
+
+//     JOptionPane.showMessageDialog(null, "Xuất hàng thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+//     resetSelectedIMEIs(); // Reset danh sách IMEI đã chọn sau khi xuất thành công
+//     mainFrame.setMainPanel(new PhieuXuatPanel(mainFrame));
+// }
+
+
+
+
+
+
+
 }
