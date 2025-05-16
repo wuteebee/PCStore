@@ -20,20 +20,30 @@ public class ThongKeDAO {
 
     public ArrayList<ThongKeDoanhThuDTO> getDoanhThuTheoTungNam(int namBD, int namKT) {
         ArrayList<ThongKeDoanhThuDTO> result = new ArrayList<>();
-        String sql = "SELECT YEAR(hdx.ngayTao) AS nam, " +
-                     "COALESCE(SUM(ctdn.donGia), 0) AS chiphi, " +
-                     "COALESCE(SUM(cthdx.donGia), 0) AS doanhthu, " +
-                     "COALESCE(SUM(cthdx.donGia - ctdn.donGia), 0) AS loinhuan " +
-                     "FROM HoaDonXuat hdx " +
-                     "LEFT JOIN ChiTietHoaDonXuat cthdx ON hdx.idHoaDonXuat = cthdx.idHoaDonXuat " +
-                     "LEFT JOIN ChiTietSP ctsp ON cthdx.SN = ctsp.SerialNumber " +
-                     "LEFT JOIN ChiTietDonNhap ctdn ON ctsp.SerialNumber = ctdn.SN " +
-                     "WHERE YEAR(hdx.ngayTao) BETWEEN ? AND ? " +
-                     "GROUP BY YEAR(hdx.ngayTao) " +
-                     "ORDER BY nam";
+        String sql = "SELECT nam, " +
+                    "COALESCE((SELECT SUM(hdn.tongTien) " +
+                    "          FROM HoaDonNhap hdn " +
+                    "          WHERE YEAR(hdn.ngayTao) = nam), 0) AS chiphi, " +
+                    "COALESCE(SUM(hdx.tongTien), 0) AS doanhthu, " +
+                    "COALESCE(SUM(hdx.tongTien) - (SELECT SUM(hdn.tongTien) " +
+                    "                             FROM HoaDonNhap hdn " +
+                    "                             WHERE YEAR(hdn.ngayTao) = nam), 0) AS loinhuan " +
+                    "FROM (SELECT DISTINCT YEAR(hdx.ngayTao) AS nam " +
+                    "      FROM HoaDonXuat hdx " +
+                    "      WHERE YEAR(hdx.ngayTao) BETWEEN ? AND ? " +
+                    "      UNION " +
+                    "      SELECT DISTINCT YEAR(hdn.ngayTao) AS nam " +
+                    "      FROM HoaDonNhap hdn " +
+                    "      WHERE YEAR(hdn.ngayTao) BETWEEN ? AND ?) AS years " +
+                    "LEFT JOIN HoaDonXuat hdx ON YEAR(hdx.ngayTao) = nam " +
+                    "GROUP BY nam " +
+                    "ORDER BY nam";
+        
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, namBD);
             ps.setInt(2, namKT);
+            ps.setInt(3, namBD);
+            ps.setInt(4, namKT);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ThongKeDoanhThuDTO dto = new ThongKeDoanhThuDTO(
@@ -53,19 +63,28 @@ public class ThongKeDAO {
 
     public ArrayList<ThongKeTheoThangDTO> getThongKeTheoThang(int nam) {
         ArrayList<ThongKeTheoThangDTO> result = new ArrayList<>();
-        String sql = "SELECT MONTH(hdx.ngayTao) AS thang, " +
-                     "COALESCE(SUM(ctdn.donGia), 0) AS chiphi, " +
-                     "COALESCE(SUM(cthdx.donGia), 0) AS doanhthu, " +
-                     "COALESCE(SUM(cthdx.donGia - ctdn.donGia), 0) AS loinhuan " +
-                     "FROM HoaDonXuat hdx " +
-                     "LEFT JOIN ChiTietHoaDonXuat cthdx ON hdx.idHoaDonXuat = cthdx.idHoaDonXuat " +
-                     "LEFT JOIN ChiTietSP ctsp ON cthdx.SN = ctsp.SerialNumber " +
-                     "LEFT JOIN ChiTietDonNhap ctdn ON ctsp.SerialNumber = ctdn.SN " +
-                     "WHERE YEAR(hdx.ngayTao) = ? " +
-                     "GROUP BY MONTH(hdx.ngayTao) " +
-                     "ORDER BY thang";
+        String sql = "SELECT thang, SUM(chiphi) AS chiphi, SUM(doanhthu) AS doanhthu, SUM(doanhthu - chiphi) AS loinhuan " +
+                    "FROM ( " +
+                    "    SELECT MONTH(hdn.ngayTao) AS thang, " +
+                    "           COALESCE(SUM(hdn.tongTien), 0) AS chiphi, " +
+                    "           0 AS doanhthu " +
+                    "    FROM HoaDonNhap hdn " +
+                    "    WHERE YEAR(hdn.ngayTao) = ? " +
+                    "    GROUP BY MONTH(hdn.ngayTao) " +
+                    "    UNION ALL " +
+                    "    SELECT MONTH(hdx.ngayTao) AS thang, " +
+                    "           0 AS chiphi, " +
+                    "           COALESCE(SUM(hdx.tongTien), 0) AS doanhthu " +
+                    "    FROM HoaDonXuat hdx " +
+                    "    WHERE YEAR(hdx.ngayTao) = ? " +
+                    "    GROUP BY MONTH(hdx.ngayTao) " +
+                    ") AS combined " +
+                    "GROUP BY thang " +
+                    "ORDER BY thang";
+        
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, nam);
+            ps.setInt(2, nam);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ThongKeTheoThangDTO dto = new ThongKeTheoThangDTO(
@@ -81,28 +100,35 @@ public class ThongKeDAO {
             e.printStackTrace();
         }
         return result;
-    }
+}
 
-    public ArrayList<ThongKeTungNgayDTO> getThongKeTungNgayTrongThang(int thang, int nam) {
-        ArrayList<ThongKeTungNgayDTO> result = new ArrayList<>();
-        String sql = "SELECT DATE(hdx.ngayTao) AS ngay, " +
-                     "COALESCE(SUM(ctdn.donGia), 0) AS chiphi, " +
-                     "COALESCE(SUM(cthdx.donGia), 0) AS doanhthu, " +
-                     "COALESCE(SUM(cthdx.donGia - ctdn.donGia), 0) AS loinhuan " +
-                     "FROM HoaDonXuat hdx " +
-                     "LEFT JOIN ChiTietHoaDonXuat cthdx ON hdx.idHoaDonXuat = cthdx.idHoaDonXuat " +
-                     "LEFT JOIN ChiTietSP ctsp ON cthdx.SN = ctsp.SerialNumber " +
-                     "LEFT JOIN ChiTietDonNhap ctdn ON ctsp.SerialNumber = ctdn.SN " +
-                     "WHERE MONTH(hdx.ngayTao) = ? AND YEAR(hdx.ngayTao) = ? " +
-                     "GROUP BY DATE(hdx.ngayTao) " +
-                     "ORDER BY ngay";
+    public ArrayList<ThongKeTheoThangDTO> getThongKeTungNgayTrongThang(int nam) {
+        ArrayList<ThongKeTheoThangDTO> result = new ArrayList<>();
+        String sql = "SELECT thang, SUM(chiphi) AS chiphi, SUM(doanhthu) AS doanhthu, SUM(doanhthu - chiphi) AS loinhuan " +
+                    "FROM ( " +
+                    "    SELECT MONTH(hdn.ngayTao) AS thang, " +
+                    "           COALESCE(SUM(hdn.tongTien), 0) AS chiphi, " +
+                    "           0 AS doanhthu " +
+                    "    FROM HoaDonNhap hdn " +
+                    "    WHERE YEAR(hdn.ngayTao) = ? " +
+                    "    GROUP BY MONTH(hdn.ngayTao) " +
+                    "    UNION ALL " +
+                    "    SELECT MONTH(hdx.ngayTao) AS thang, " +
+                    "           0 AS chiphi, " +
+                    "           COALESCE(SUM(hdx.tongTien), 0) AS doanhthu " +
+                    "    FROM HoaDonXuat hdx " +
+                    "    WHERE YEAR(hdx.ngayTao) = ? " +
+                    "    GROUP BY MONTH(hdx.ngayTao) " +
+                    ") AS combined " +
+                    "GROUP BY thang " +
+                    "ORDER BY thang";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, thang);
+            ps.setInt(1, nam);
             ps.setInt(2, nam);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    ThongKeTungNgayDTO dto = new ThongKeTungNgayDTO(
-                        rs.getString("ngay"),
+                    ThongKeTheoThangDTO dto = new ThongKeTheoThangDTO(
+                        rs.getInt("thang"),
                         rs.getLong("chiphi"),
                         rs.getLong("doanhthu"),
                         rs.getLong("loinhuan")
@@ -114,24 +140,36 @@ public class ThongKeDAO {
             e.printStackTrace();
         }
         return result;
-    }
+}
 
     public ArrayList<ThongKeTungNgayDTO> getThongKeTuNgayDenNgay(String start, String end) {
         ArrayList<ThongKeTungNgayDTO> result = new ArrayList<>();
-        String sql = "SELECT DATE(hdx.ngayTao) AS ngay, " +
-                     "COALESCE(SUM(ctdn.donGia), 0) AS chiphi, " +
-                     "COALESCE(SUM(cthdx.donGia), 0) AS doanhthu, " +
-                     "COALESCE(SUM(cthdx.donGia - ctdn.donGia), 0) AS loinhuan " +
-                     "FROM HoaDonXuat hdx " +
-                     "LEFT JOIN ChiTietHoaDonXuat cthdx ON hdx.idHoaDonXuat = cthdx.idHoaDonXuat " +
-                     "LEFT JOIN ChiTietSP ctsp ON cthdx.SN = ctsp.SerialNumber " +
-                     "LEFT JOIN ChiTietDonNhap ctdn ON ctsp.SerialNumber = ctdn.SN " +
-                     "WHERE hdx.ngayTao BETWEEN ? AND ? " +
-                     "GROUP BY DATE(hdx.ngayTao) " +
-                     "ORDER BY ngay";
+        
+        // Lấy tất cả các ngày có hóa đơn (nhập hoặc xuất) bằng cách sử dụng UNION
+        String sql = "SELECT ngay, SUM(chiphi) AS chiphi, SUM(doanhthu) AS doanhthu, SUM(doanhthu - chiphi) AS loinhuan " +
+                    "FROM ( " +
+                    "    SELECT DATE(hdn.ngayTao) AS ngay, " +
+                    "           COALESCE(SUM(hdn.tongTien), 0) AS chiphi, " +
+                    "           0 AS doanhthu " +
+                    "    FROM HoaDonNhap hdn " +
+                    "    WHERE hdn.ngayTao BETWEEN ? AND ? " +
+                    "    GROUP BY DATE(hdn.ngayTao) " +
+                    "    UNION ALL " +
+                    "    SELECT DATE(hdx.ngayTao) AS ngay, " +
+                    "           0 AS chiphi, " +
+                    "           COALESCE(SUM(hdx.tongTien), 0) AS doanhthu " +
+                    "    FROM HoaDonXuat hdx " +
+                    "    WHERE hdx.ngayTao BETWEEN ? AND ? " +
+                    "    GROUP BY DATE(hdx.ngayTao) " +
+                    ") AS combined " +
+                    "GROUP BY ngay " +
+                    "ORDER BY ngay";
+        
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, start);
             ps.setString(2, end);
+            ps.setString(3, start);
+            ps.setString(4, end);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ThongKeTungNgayDTO dto = new ThongKeTungNgayDTO(
