@@ -82,6 +82,16 @@ public class ThemNhaCungCap {
             }
         });
 
+        
+        // Focus chuột vào ô đầu tiên khi mở form
+        SwingUtilities.invokeLater(() -> txtName.requestFocusInWindow());
+
+        // Tự động chuyển focus khi nhấn Enter
+        txtName.addActionListener(e -> txtPhone.requestFocusInWindow());
+        txtPhone.addActionListener(e -> txtEmail.requestFocusInWindow());
+        txtEmail.addActionListener(e -> txtAddress.requestFocusInWindow());
+
         dialog.setVisible(true);
     }
+
 }
