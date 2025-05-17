@@ -55,7 +55,7 @@ public class ThemThuongHieu extends JDialog {
         chkTrangThai.setBackground(Color.WHITE);
         chkTrangThai.setSelected(true);
 
-        // ✅ Thay txtDanhMuc bằng comboDanhMuc
+        // Thay txtDanhMuc bằng comboDanhMuc
         JComponent[] components = {txtId, txtTen, comboDanhMuc, chkTrangThai};
 
         for (int i = 0; i < labels.length; i++) {
@@ -90,12 +90,14 @@ public class ThemThuongHieu extends JDialog {
         add(btnSave, gbc);
 
         btnSave.addActionListener(e -> saveBrand());
+        SwingUtilities.invokeLater(() -> txtTen.requestFocusInWindow());
+        txtTen.addActionListener(e -> comboDanhMuc.requestFocusInWindow());
     }
 
     private void saveBrand() {
         String id = txtId.getText().trim();
         String ten = txtTen.getText().trim();
-        String dm = (String) comboDanhMuc.getSelectedItem();  // ✅ Lấy từ combo box
+        String dm = (String) comboDanhMuc.getSelectedItem();  // Lấy từ combo box
         boolean tt = chkTrangThai.isSelected();
 
         if (ten.isEmpty() || dm == null || dm.isEmpty()) {

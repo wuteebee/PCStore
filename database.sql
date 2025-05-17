@@ -897,5 +897,3 @@ SET soLuongTonKho = soLuongTonKho - CASE idPhanLoai
     ELSE 0
 END
 WHERE idPhanLoai IN (1, 6, 11, 16, 21, 41);
-
-
