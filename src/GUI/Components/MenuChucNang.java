@@ -202,12 +202,6 @@ public class MenuChucNang {
             btnEdit.addActionListener(actionListener);
             btnDelete.addActionListener(actionListener);
             btnExport.addActionListener(actionListener);
-
-            supplierPanel.getBtnTimKiem().setActionCommand("Tìm kiếm");
-            supplierPanel.getBtnLamMoi().setActionCommand("Làm mới");
-            supplierPanel.getBtnTimKiem().addActionListener(actionListener);
-            supplierPanel.getBtnLamMoi().addActionListener(actionListener);
-
             actionPanel.add(btnAdd);
             actionPanel.add(btnEdit);
             actionPanel.add(btnDelete);

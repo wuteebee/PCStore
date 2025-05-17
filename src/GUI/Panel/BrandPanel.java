@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.util.List;
+import java.util.ArrayList;
 
 import BUS.BrandBUS;
 import DAO.BrandDAO;
@@ -17,6 +18,8 @@ public class BrandPanel extends JPanel {
     private BrandDAO brandDAO;
     private DefaultTableModel tableModel;
     private JTable brandTable;
+    private JTextField txtTimKiem;
+    private JButton btnTimKiem, btnLamMoi;
     private String selectedBrandId = "-1";
     private Main mainFrame;
 
@@ -44,8 +47,26 @@ public class BrandPanel extends JPanel {
 
         MenuChucNang menu = new MenuChucNang();
         toolbar.add(menu.createActionPanel(this, mainFrame));
-        toolbar.add(MenuChucNang.createSearchPanel());
 
+        JPanel searchPanel = MenuChucNang.createSearchPanel();
+
+        for (Component comp : searchPanel.getComponents()) {
+            if (comp instanceof JButton) {
+                JButton btn = (JButton) comp;
+                if ("Tìm kiếm".equals(btn.getText())) {
+                    btnTimKiem = btn;
+                } else if ("Làm mới".equals(btn.getText())) {
+                    btnLamMoi = btn;
+                }
+            } else if (comp instanceof JTextField) {
+                txtTimKiem = (JTextField) comp;
+            }
+        }
+
+        if (btnTimKiem != null) btnTimKiem.addActionListener(e -> performSearch());
+        if (btnLamMoi != null) btnLamMoi.addActionListener(e -> refreshTable());
+
+        toolbar.add(searchPanel);
         return toolbar;
     }
 
@@ -137,4 +158,39 @@ public class BrandPanel extends JPanel {
             }
         }
     }
+
+    
+    private void performSearch() {
+        String keyword = txtTimKiem.getText();
+        if (keyword != null) {
+            keyword = keyword.trim().toLowerCase();
+        } else {
+            keyword = "";
+        }
+        List<Brand> result = brandBUS.searchBrands(keyword);
+        loadTableData(result);
+    }
+
+
+    private void refreshTable() {
+        txtTimKiem.setText("");
+        loadTableData(brandBUS.getAllBrands());
+    }
+
+    
+private void loadTableData(List<Brand> brands) {
+    tableModel.setRowCount(0);
+    for (Brand b : brands) {
+        String maDanhMuc = b.getmaDanhMuc();
+        String danhMucDisplay = (maDanhMuc == null || maDanhMuc.trim().isEmpty()) ? "Tất cả" : maDanhMuc;
+
+        tableModel.addRow(new Object[]{
+            b.getMaThuongHieu(),
+            b.getTenThuongHieu(),
+            danhMucDisplay,
+            b.isTrangThai() ? "Hoạt động" : "Ngưng hoạt động"
+        });
+    }
+}
+
 }

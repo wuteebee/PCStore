@@ -5,10 +5,13 @@ import GUI.Panel.SupplierPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
 import BUS.ExcelBUS;
+import BUS.SupplierBUS;
+import DTO.Supplier;
 
 public class SupplierActionListener implements ActionListener {
     private final SupplierPanel supplierPanel;
@@ -54,18 +57,6 @@ public class SupplierActionListener implements ActionListener {
                         e1.printStackTrace();
                     }
                 }
-                break;
-            case "Tìm kiếm":
-                String keyword = supplierPanel.getSearchText();
-                if (!keyword.isEmpty()) {
-                    supplierPanel.loadSupplierTable(
-                        supplierPanel.getSupplierBUS().searchSuppliers(keyword)
-                    );
-                }
-                break;
-            case "Làm mới":
-                supplierPanel.clearSearchText();
-                supplierPanel.loadSupplierTable();
                 break;
             default:
                 JOptionPane.showMessageDialog(null, "Hành động không hợp lệ: " + command);
