@@ -97,6 +97,7 @@ public class InvoiceDAO {
     }
 
     public boolean addDetailedSalesInvoice(SalesInvoice salesInvoice) {
+        int flag = 0;
         String sql = "INSERT INTO chitiethoadonxuat (idChiTietHoaDonXuat, idHoaDonXuat, SN, donGia) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             List<DetailedSalesInvoice> detailedSalesInvoices = salesInvoice.getDetailedSalesInvoices();
@@ -105,11 +106,10 @@ public class InvoiceDAO {
                 ps.setString(2, detailedSalesInvoice.getFid());
                 ps.setString(3, detailedSalesInvoice.getSeri());
                 ps.setString(4, String.valueOf(detailedSalesInvoice.getDonGia()));
-
+                flag = ps.executeUpdate();
+                if (flag > 0) salesInvoiceMap.put(salesInvoice.getId(), salesInvoice);
             }
             // Thực thi câu lệnh và kiểm tra kết quả
-            int flag = ps.executeUpdate();
-            if (flag > 0) salesInvoiceMap.put(salesInvoice.getId(), salesInvoice);
             return flag > 0;
         } catch (SQLException e) {
             System.err.println("Lỗi khi thêm chi tiết hóa đơn xuất: " + e.getMessage());
@@ -223,8 +223,22 @@ public List<String> getSNbyIDPhanLoai(String id) {
     } catch (Exception e) {
         e.printStackTrace(); // Hoặc log lỗi
     }
-
     return result;
 }
 
+public int getDetailCount()
+{
+    String sql = "SELECT COUNT(idChiTietHoaDonXuat) as count from chitiethoadonxuat;";
+    int count = 0;
+    try {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next())
+        count = rs.getInt("count");
+        return count;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return 0;
+    }
+}
 }

@@ -1,9 +1,13 @@
 package GUI.Panel;
 
+import BUS.CustomerBUS;
 import BUS.EmployeeBUS;
 import BUS.InvoiceBUS;
+import BUS.PromotionBUS;
 import DAO.EmployeeDAO;
+import DTO.Customer;
 import DTO.Employee;
+import DTO.Promotion;
 import DTO.SalesInvoice;
 import GUI.Main;
 import GUI.Components.MenuChucNang;
@@ -15,6 +19,8 @@ import javax.swing.table.JTableHeader;
 import com.toedter.calendar.JDateChooser;
 
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +34,16 @@ public class SaleInvoicePanel extends JPanel {
     private JComboBox<String> customerComboBox;
     private JDateChooser fromDateChooser;
     private JDateChooser toDateChooser;
+
+    EmployeeDAO employeeDAO = new EmployeeDAO();
+    EmployeeBUS employeeBUS = new EmployeeBUS(employeeDAO);
+    List<Employee> dsnv;
+
+    CustomerBUS customerBUS = new CustomerBUS();
+    List<Customer> dskh;
+
+    PromotionBUS promotionBUS = new PromotionBUS();
+    List<Promotion> dskm;
 
     public SaleInvoicePanel(Main mainFrame) {
         this.mainFrame = mainFrame;
@@ -81,9 +97,9 @@ public class SaleInvoicePanel extends JPanel {
           fillPanel.add(new JLabel("Nhân viên:"), gbc);
         gbc.gridy++;
         employeeComboBox = new JComboBox<>();
-        EmployeeDAO employeeDAO = new EmployeeDAO();
-        EmployeeBUS employeeBUS = new EmployeeBUS(employeeDAO);
-        List<Employee> dsnv = employeeBUS.getAllEmployees();
+        dskm = promotionBUS.getAllPromotions();
+        dskh = customerBUS.getAllCustomers();
+        dsnv = employeeBUS.getAllEmployees();
         employeeComboBox.addItem("Tất cả");
         for (Employee employee : dsnv) {
             employeeComboBox.addItem(employee.getName());
@@ -174,41 +190,77 @@ public void refreshTable() {
     Date fromDate = fromDateChooser.getDate();
     Date toDate = toDateChooser.getDate();
 
+    LocalDate from;
+    LocalDate to;
+    if (fromDate == null || toDate == null) {
+        from = LocalDate.of(1, 1, 1);
+        to = LocalDate.of(1,1,1);
+    }
+    else {
+        from = fromDateChooser.getDate().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        to = toDateChooser.getDate().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
     List<SalesInvoice> danhSach = bus.fetchSalesInvoice();
     // EmployeeDAO employeeDAO=new EmployeeDAO();
     // EmployeeBUS employeeBUS=new EmployeeBUS(employeeDAO);
 
     for (SalesInvoice p : danhSach) {
         boolean matches = true;
-
-        if (!"Tất cả".equals(selectedEmployee) && !p.getNhanVien().getName().equals(selectedEmployee)) {
+        if (!"Tất cả".equals(selectedEmployee) && !getNhanVien(p).equals(selectedEmployee)) {
             matches = false;
         }
-        // if (!"Tất cả".equals(selectedCustomer) && !p.getKhachhang().getName().equals(selectedCustomer)) {
-        //     matches = false;
-        // }
-        if (fromDate != null && p.getDate().before(fromDate)) {
+        if (fromDate != null && p.getDate().isBefore(from)) {
             matches = false;
         }
-        if (toDate != null && p.getDate().after(toDate)) {
+        if (toDate != null && p.getDate().isAfter(to)) {
             matches = false;
         }
 
         if (matches) {
             Object[] row = {
                 p.getId(),
-                p.getNhanVien().getName(),
-                p.getKhachhang().getName(),
+                getNhanVien(p),
+                getKhachHang(p),
                 p.getDate(),
                 String.format("%,.0f VND", p.getTotalPayment()),
-                (p.getKhuyenmai() != null) ? p.getKhuyenmai().getTenKhuyenMai() : "Không có KM",
-                
-
+                (getKhuyenMai(p).equals("")) ? "Không áp dụng" :  getKhuyenMai(p),
             };
             tableModel.addRow(row);
         }
     }
 }
+
+private String getNhanVien(SalesInvoice p) {
+    for (Employee e : dsnv) {
+        if (e.getId().equals(p.getEid())) {
+            return e.getName();
+        }
+    }
+    return "";
+}
+
+    private String getKhachHang(SalesInvoice p) {
+        for (Customer e : dskh) {
+            if (e.getId().equals(p.getCid())) {
+                return e.getName();
+            }
+        }
+        return "";
+    }
+
+    private String getKhuyenMai(SalesInvoice p)
+    {
+        for (Promotion e : dskm) {
+            if (e.getIdKhuyenMai().equals(p.getDid())) {
+                return e.getTenKhuyenMai();
+            }
+        }
+        return "";
+    }
 
     public void addTableSelectionListener() {
         table.getSelectionModel().addListSelectionListener(e -> {

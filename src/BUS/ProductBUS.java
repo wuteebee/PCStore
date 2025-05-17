@@ -195,4 +195,20 @@ public Product getProductByIdHthi(String id) {
     ProductDAO productDAO=new ProductDAO();
     return productDAO.getphienbanbyIdPL(id);
    }
+
+   public String getNamebyIdPL(int id){
+        ProductDAO productDAO=new ProductDAO();
+        return productDAO.getProductNamebyMaPhanLoai(id);
+    }
+
+    public double getPriceByIdPL(int id){
+        ProductDAO productDAO=new ProductDAO();
+        return productDAO.getProductPricebyMaPhanLoai(id);
+    }
+
+   public List<ProductDetail> getProductDetailForInvoice()
+   {
+       ProductDAO productDAO=new ProductDAO();
+       return productDAO.getAvailProductForInvoice();
+   }
 }

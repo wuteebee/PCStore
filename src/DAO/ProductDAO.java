@@ -666,4 +666,76 @@ public int getIDPhanLoai(String idsp, int STTPL) {
 
     return phienBan;
     }
+
+    //Lay danh sach chi tiet san pham con trong kho va chua duoc xuat
+    public List<ProductDetail> getAvailProductForInvoice()
+    {
+        List<ProductDetail> list = new ArrayList<>();
+        String sql = "SELECT * FROM chitietsp WHERE maphieuxuat = -1";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                String serialNumber = rs.getString("SerialNumber");
+                int idPhanLoai = rs.getInt("idPhanLoai");
+                String maphieuxuat = rs.getString("maphieuxuat");
+                String maphieunhap = rs.getString("maphieunhap");
+                boolean trangThai = rs.getBoolean("trangThai");
+                ProductDetail productDetail = new ProductDetail(serialNumber, idPhanLoai, 0,  trangThai, maphieunhap, maphieuxuat);
+                list.add(productDetail);
+            }
+
+            conn.close();
+            stmt.close();
+            rs.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    //Lay ten san pham theo ID phan loai
+    public String getProductNamebyMaPhanLoai(int idPhanLoai){
+        String sql = "SELECT tenSanPham FROM sanpham, phanloaisp where idphanloai = ? and phanloaisp.idsanpham = sanpham.idsanpham;";
+        String tenSP="Không tìm thấy";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idPhanLoai);
+
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                tenSP =  rs.getString("tenSanPham");
+                return tenSP;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tenSP;
+    }
+
+    public double getProductPricebyMaPhanLoai(int idPhanLoai){
+        String sql = "SELECT Gia FROM phanloaisp where idphanloai = ?;";
+        double gia = 0;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idPhanLoai);
+
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                gia =  rs.getDouble("Gia");
+                return gia;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return gia;
+    }
 }

@@ -26,21 +26,7 @@ public class InvoiceBUS {
 
     public boolean addSalesInvoice(SalesInvoice salesInvoice) {
         System.out.println("Thêm hóa đơn xuất vào hệ thống");
-
-        // thêm truy vấn kiểm tra
-
-        SalesInvoice newSalesInvoice = new SalesInvoice(
-                salesInvoice.getId() ,
-                salesInvoice.getEid(),
-                salesInvoice.getCid(),
-                salesInvoice.getDate(),
-                salesInvoice.getTotalPayment(),
-                salesInvoice.getDetailedSalesInvoices(),
-                salesInvoice.getDid()
-        );
-
-        System.out.println(newSalesInvoice);
-        return invoiceDAO.addSalesInvoice(newSalesInvoice);
+        return invoiceDAO.addSalesInvoice(salesInvoice);
     }
 
     public boolean updateSalesInvoice(List<DetailedSalesInvoice> detailedSalesInvoices) {
@@ -69,4 +55,8 @@ public class InvoiceBUS {
         return invoiceDAO.getSNbyIDPhanLoai(id);
     }
 
+    public int getDetailCount()
+    {
+        return invoiceDAO.getDetailCount();
+    }
 }

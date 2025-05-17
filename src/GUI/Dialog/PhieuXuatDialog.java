@@ -3,10 +3,10 @@ package GUI.Dialog;
 import BUS.*;
 import DAO.EmployeeDAO;
 import DAO.ProductDAO;
-import DAO.PromotionDAO;
 import DTO.*;
 import GUI.Main;
 import GUI.Panel.SaleInvoicePanel;
+import org.apache.xmlbeans.impl.soap.Detail;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import javax.swing.*;
@@ -15,8 +15,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
@@ -31,16 +29,17 @@ import java.util.List;
 public class PhieuXuatDialog extends JDialog {
     private boolean flag = false;
     private int mode;
-    private String selectedID;
 
+    private String selectedID;
     private SaleInvoicePanel panel;
     private JComboBox idNhanVien;
     private JComboBox idKhachHang;
     private JLabel tongTien;
     private JFormattedTextField ngayTao;
     private JComboBox idKhuyenMai;
-    private JLabel tenSanPham = new JLabel();
-    private JComboBox serialNumber = new JComboBox();
+    private JComboBox tenSanPham = new JComboBox();
+    private PhieuXuatDialog1 serialNumber;
+    private JButton chonSoSeri = new JButton("Chọn số seri");
     private JButton xacNhanThem = new JButton("Thêm");
     private JButton xacNhanXoa = new JButton("Xóa");
     private JTable sanPhamDaThem;
@@ -114,7 +113,6 @@ public class PhieuXuatDialog extends JDialog {
         }
 
         existingList = invoiceBUS.fetchSalesInvoice();
-        productList = productDAO.getAllProductsOptimized();
         //Init field nhân viên
         employeeList = employeeBus.getAllEmployees();
         String[] employeeName = {"Nhập tên nhân viên"};
@@ -167,23 +165,21 @@ public class PhieuXuatDialog extends JDialog {
         idKhuyenMai.setEditable(true);
         AutoCompleteDecorator.decorate(idKhuyenMai);
 
-        // Init combobox serialNumber
-        productDetailList = productBUS.getProductDetailList(-1);
-        String[] snID = {"Serial Number"};
-        int n3 = 1;
+        //Init combobox sanPham
+        productDetailList = productBUS.getProductDetailForInvoice();
+        List<String> tenSP = new ArrayList<String>();
+        tenSP.add("Nhập tên sản phẩm");
+        int n4 = 1;
         for (ProductDetail e : productDetailList) {
-            snID = Arrays.copyOf(snID, n3 + 1);
-            snID[n3] = e.getSerialNumber();
-            n3++;
+            String name = productBUS.getNamebyIdPL(e.getIdPhanLoai());
+            if (!tenSP.contains(name)) {
+                tenSP.add(name);
+                n4++;
+            }
         }
-
-        //Testing, remove later
-        snID = Arrays.copyOf(snID, n3 + 1);
-        snID[n3] = "Testing";
-        serialNumber = new JComboBox(snID);
-        serialNumber.setEditable(true);
-        AutoCompleteDecorator.decorate(serialNumber);
-        //
+        tenSanPham = new JComboBox(tenSP.toArray());
+        tenSanPham.setEditable(true);
+        AutoCompleteDecorator.decorate(tenSanPham);
 
         //Init Border
         idNhanVien.setBorder(new RoundedBorder());
@@ -193,7 +189,7 @@ public class PhieuXuatDialog extends JDialog {
         tenSanPham.setBorder(new RoundedBorder());
         xacNhanThem.setBorder(new RoundedBorder());
         xacNhanXoa.setBorder(new RoundedBorder());
-        serialNumber.setBorder(new RoundedBorder());
+        chonSoSeri.setBorder(new RoundedBorder());
         xacNhanTao.setBorder(new RoundedBorder());
         huy.setBorder(new RoundedBorder());
 
@@ -205,8 +201,8 @@ public class PhieuXuatDialog extends JDialog {
         tenSanPham.setFont(text);
         xacNhanThem.setFont(text);
         xacNhanXoa.setFont(text);
-        serialNumber.setFont(text);
         xacNhanTao.setFont(text);
+        chonSoSeri.setFont(text);
         huy.setFont(text);
 
         titleNhanVien.setFont(title);
@@ -254,7 +250,7 @@ public class PhieuXuatDialog extends JDialog {
         add(tenSanPham, grid);
         grid.gridwidth = 1;
         grid.weightx = 0.1;
-        add(serialNumber, grid);
+        add(chonSoSeri, grid);
         add(xacNhanThem, grid);
         add(xacNhanXoa, grid);
 
@@ -299,63 +295,63 @@ public class PhieuXuatDialog extends JDialog {
         grid.gridx = 4;
         add(huy, grid);
 
-        if (mode == 1) {
-            for (SalesInvoice s : existingList) {
-                if (s.getId().equals(selectedID)) {
-                    System.out.println("Test");
-                    for (Employee e : employeeList)
-                    {
-                        if (e.getId().equals(s.getEid()))
-                        {
-                            idNhanVien.setSelectedIndex(employeeList.indexOf(e) + 1);
-                        }
-                    }
-
-                    for (Customer e : customerList)
-                    {
-                        if (e.getId().equals(s.getCid()))
-                        {
-                            idKhachHang.setSelectedIndex(customerList.indexOf(e) + 1);
-                        }
-                    }
-
-                    ngayTao.setText(dateFormatter.format(s.getDate()));
-                    addedList = s.getDetailedSalesInvoices();
-
-                    for (DetailedSalesInvoice d : addedList)
-                    {
-                        int count = 1;
-                    String prodName = "Không tìm thấy tên sản phẩm";
-                    int prodPrice = 0;
-                    for (ProductDetail x : productDetailList) {
-                        if (d.getSeri().equals(x.getSerialNumber())) {
-                            String idProd = productDAO.getProductIDbyMaPhanLoai(x.getIdPhanLoai());
-                            for (Product y : productList) {
-                                if (y.getMaSp().equals(idProd)) {
-                                    prodName = y.getTenSp();
-                                    total += y.getGiasp();
-                                    break;
-                                }
-                            }
-                            break;
-                        }
-                    }
-                    Object[] row = {
-                           count,
-                            d.getSeri(),
-                            prodName,
-                            String.format("%d đồng", prodPrice),
-                    };
-                    tableModel.addRow(row);
-                }
-                }
-            }
-        }
+//        if (mode == 1) {
+//            for (SalesInvoice s : existingList) {
+//                if (s.getId().equals(selectedID)) {
+//                    System.out.println("Test");
+//                    for (Employee e : employeeList)
+//                    {
+//                        if (e.getId().equals(s.getEid()))
+//                        {
+//                            idNhanVien.setSelectedIndex(employeeList.indexOf(e) + 1);
+//                        }
+//                    }
+//
+//                    for (Customer e : customerList)
+//                    {
+//                        if (e.getId().equals(s.getCid()))
+//                        {
+//                            idKhachHang.setSelectedIndex(customerList.indexOf(e) + 1);
+//                        }
+//                    }
+//
+//                    ngayTao.setText(dateFormatter.format(s.getDate()));
+//                    addedList = s.getDetailedSalesInvoices();
+//
+//                    for (DetailedSalesInvoice d : addedList)
+//                    {
+//                        int count = 1;
+//                    String prodName = "Không tìm thấy tên sản phẩm";
+//                    int prodPrice = 0;
+//                    for (ProductDetail x : productDetailList) {
+//                        if (d.getSeri().equals(x.getSerialNumber())) {
+//                            String idProd = productDAO.getProductIDbyMaPhanLoai(x.getIdPhanLoai());
+//                            for (Product y : productList) {
+//                                if (y.getMaSp().equals(idProd)) {
+//                                    prodName = y.getTenSp();
+//                                    total += y.getGiasp();
+//                                    break;
+//                                }
+//                            }
+//                            break;
+//                        }
+//                    }
+//                    Object[] row = {
+//                           count,
+//                            d.getSeri(),
+//                            prodName,
+//                            String.format("%d đồng", prodPrice),
+//                    };
+//                    tableModel.addRow(row);
+//                }
+//                }
+//            }
+//        }
     }
 
     private void actionProcessing()
     {
-        serialNumber.addActionListener(e -> {
+        /*serialNumber.addActionListener(e -> {
             String prodName = "Thông tin sản phẩm tương ứng với số seri";
             for (ProductDetail x : productDetailList) {
                 if (serialNumber.getSelectedItem().toString().equals(x.getSerialNumber())) {
@@ -370,69 +366,12 @@ public class PhieuXuatDialog extends JDialog {
                     break;
                 }
             }
-        });
+        });*/
         huy.addActionListener(e -> dispose());
 
-        xacNhanThem.addActionListener(e -> {
-            if (serialNumber.getSelectedIndex() != 0) {
-                DetailedSalesInvoice newDetail = new DetailedSalesInvoice();
-                newDetail.setId("CTHDX" + String.format("%03d", addedList.size()));
-                newDetail.setFid(String.valueOf(existingList.size() + 1));
-                newDetail.setSeri(serialNumber.getSelectedItem().toString());
-
-                String prodName = "Không tìm thấy tên sản phẩm";
-                int prodPrice = 0;
-                for (ProductDetail x : productDetailList) {
-                    if (serialNumber.getSelectedItem().toString().equals(x.getSerialNumber())) {
-                        String idProd = productDAO.getProductIDbyMaPhanLoai(x.getIdPhanLoai());
-                        for (Product y : productList) {
-                            if (y.getMaSp().equals(idProd)) {
-                                newDetail.setDonGia(y.getGiasp());
-                                prodName = y.getTenSp();
-                                total += y.getGiasp();
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-                addedList.add(newDetail);
-                Object[] row = {
-                        addedList.size(),
-                        newDetail.getSeri(),
-                        prodName,
-                        String.format("%d đồng", prodPrice),
-                };
-                tableModel.addRow(row);
-            }
-            else System.out.println("Missing serial number");
-        });
-
-        sanPhamDaThem.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                System.out.println(sanPhamDaThem.getSelectionModel().getSelectedItemsCount());
-                for (int i : sanPhamDaThem.getSelectionModel().getSelectedIndices())
-                {
-                    System.out.print(i);
-                }
-            }
-        });
-        sanPhamDaThem.getSelectionModel().getSelectedIndices();
-
-        xacNhanXoa.addActionListener(e -> {
-            int rowCount = 1;
-            if (selectedRow != -1) {
-                System.out.println(selectedRow);
-                addedList.remove(selectedRow);
-                tableModel.removeRow(selectedRow);
-                for (DetailedSalesInvoice x : addedList) {
-                    if (addedList.indexOf(x) > selectedRow) {
-                        x.setId("CTHDX" + String.format("%03d", addedList.indexOf(x) - 1));
-                    }
-                    sanPhamDaThem.setValueAt(rowCount, rowCount - 1, 0);
-                    rowCount++;
-                }
+        sanPhamDaThem.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                selectedRow = sanPhamDaThem.getSelectedRow();
             }
         });
 
@@ -440,11 +379,85 @@ public class PhieuXuatDialog extends JDialog {
             if (validHoaDonInput()) {
                 System.out.println("Add");
                 SalesInvoice add = fetchInput();
+                for (DetailedSalesInvoice x : add.getDetailedSalesInvoices())
+                {
+                    System.out.println(x.getSeri());
+                }
                 existingList.add(add);
-                panel.addRowToTable(existingList);
                 invoiceBUS.addSalesInvoice(add);
+                panel.refreshTable();
                 dispose();
             }
+        });
+
+        chonSoSeri.addActionListener(e -> {
+            if (tenSanPham.getSelectedIndex() != 0) {
+                List<String> serialList = new ArrayList<>();
+                for (ProductDetail x : productDetailList) {
+                    if (productBUS.getNamebyIdPL(x.getIdPhanLoai()).equals(tenSanPham.getSelectedItem().toString())) {
+                        if (addedList.size() == 0) {
+                            System.out.println(" empty");
+                            serialList.add(x.getSerialNumber());
+                        } else {
+                            boolean exist = false;
+                            for (DetailedSalesInvoice y : addedList) {
+                                System.out.println(x.getSerialNumber());
+                                System.out.println(y.getSeri());
+                                if (x.getSerialNumber().equals(y.getSeri())) {
+                                    exist = true;
+                                }
+                            }
+                            if (exist == false)
+                            serialList.add(x.getSerialNumber());
+                        }
+                    }
+                }
+                serialNumber = new PhieuXuatDialog1(this, serialList);
+            }
+        });
+
+        xacNhanThem.addActionListener(e -> {
+            if (tenSanPham.getSelectedIndex() == 0 || serialNumber == null)
+                return;
+            List<String> selectedList = serialNumber.getSelectedList();
+            if (selectedList.size() != 0) {
+                int count = invoiceBUS.getDetailCount();
+                for (ProductDetail x : productDetailList) {
+                    for (String sn : selectedList) {
+                        if (x.getSerialNumber().equals(sn)) {
+                            DetailedSalesInvoice newDetail = new DetailedSalesInvoice();
+                            newDetail.setId(String.valueOf(count));
+                            newDetail.setFid(String.valueOf(existingList.size() + 1));
+                            newDetail.setSeri(x.getSerialNumber());
+                            newDetail.setDonGia(productBUS.getPriceByIdPL(x.getIdPhanLoai()));
+                            addedList.add(newDetail);
+                            count++;
+                            Object[] row = {
+                                    addedList.size(),
+                                    newDetail.getSeri(),
+                                    tenSanPham.getSelectedItem(),
+                                    String.format("%f đồng", newDetail.getDonGia()),
+                            };
+                    tableModel.addRow(row);
+                        }
+                    }
+                }
+                selectedList.removeAll(selectedList);
+            }
+        });
+
+            xacNhanXoa.addActionListener(e -> {
+               if (selectedRow != -1) {
+                   addedList.remove(selectedRow);
+                   tableModel.removeRow(selectedRow);
+                   for (DetailedSalesInvoice x : addedList) {
+                       if (addedList.indexOf(x) >= selectedRow)
+                       {
+                           x.setId(String.valueOf(addedList.indexOf(x) + 1));
+                           tableModel.setValueAt(addedList.indexOf(x) + 1,addedList.indexOf(x), 0);
+                       }
+                   }
+               }
         });
 
         ngayTao.addPropertyChangeListener(e -> {
@@ -466,7 +479,6 @@ public class PhieuXuatDialog extends JDialog {
     private SalesInvoice fetchInput() {
         SalesInvoice adding = new SalesInvoice();
         adding.setId(String.valueOf(existingList.size() + 1));
-        System.out.println(existingList.size() + 1);
         for (Employee e : employeeList) {
             if (idNhanVien.getSelectedItem().toString().equals(e.getName())) {
                 adding.setEid(e.getId());
@@ -497,7 +509,7 @@ public class PhieuXuatDialog extends JDialog {
 
     private boolean validHoaDonInput()
     {
-        if (idKhachHang.getSelectedIndex() == 0 || idNhanVien.getSelectedIndex() == 0 || serialNumber.getSelectedIndex() == 0 || flag == false)
+        if (idKhachHang.getSelectedIndex() == 0 || idNhanVien.getSelectedIndex() == 0 /*|| serialNumber.getSelectedIndex() == 0*/ || flag == false)
         {
             System.out.println("invalid");
             return false;
@@ -535,5 +547,13 @@ public class PhieuXuatDialog extends JDialog {
             insets.left = insets.right = insets.top = insets.bottom = 5;
             return insets;
         }
+    }
+
+    public Point getButtonLocation() {
+        return chonSoSeri.getLocation();
+    }
+
+    public Dimension getButtonSize() {
+        return chonSoSeri.getSize();
     }
 }
