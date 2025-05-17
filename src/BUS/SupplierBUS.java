@@ -40,4 +40,35 @@ public class SupplierBUS {
     public boolean deleteSupplier(String id) {
         return new SupplierDAO().deleteSupplier(id);
     }
+
+    public ArrayList<Supplier> searchSuppliers(String keyword) {
+        keyword = keyword.toLowerCase();
+        ArrayList<Supplier> result = new ArrayList<>();
+        for (Supplier s : getAllSuppliers()) {
+            if (s.getId().toLowerCase().contains(keyword) ||
+                s.getName().toLowerCase().contains(keyword) ||
+                s.getPhoneNumber().toLowerCase().contains(keyword) ||
+                s.getEmail().toLowerCase().contains(keyword) ||
+                s.getAddress().toLowerCase().contains(keyword) ) {
+                result.add(s);
+            }
+        }
+        return result;
+    }
+
+    public void search(String keyword) {
+        dsSupplier = searchSuppliers(keyword);
+    }
+
+    public ArrayList<Supplier> getDsSupplier() {
+        return dsSupplier;
+    }
+
+    public void docDanhSach() {
+        dsSupplier = new ArrayList<>(getAllSuppliers());
+    }
+
+    // Biến danh sách lưu kết quả hiện tại
+    private ArrayList<Supplier> dsSupplier = new ArrayList<>();
+
 }

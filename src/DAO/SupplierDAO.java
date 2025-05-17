@@ -114,5 +114,4 @@ public class SupplierDAO {
         }
         return "NCC001"; // Trường hợp chưa có dữ liệu
     }
-    
 }

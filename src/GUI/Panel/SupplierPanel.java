@@ -1,7 +1,9 @@
+
 package GUI.Panel;
 
 import java.awt.*;
 import java.util.List;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -13,6 +15,9 @@ import GUI.Components.MenuChucNang;
 import GUI.Dialog.ThemNhaCungCap;
 
 public class SupplierPanel extends JPanel {
+    private JTextField txtTimKiem;
+    private JButton btnTimKiem;
+    private JButton btnLamMoi;
     private List<Supplier> suppliers;
     private SupplierBUS supplierBUS;
     private SupplierDAO supplierDAO;
@@ -75,8 +80,27 @@ public class SupplierPanel extends JPanel {
 
         MenuChucNang menu = new MenuChucNang();
         toolbar.add(menu.createActionPanel(this, mainFrame));
-        toolbar.add(MenuChucNang.createSearchPanel());
 
+        JPanel searchPanel = MenuChucNang.createSearchPanel();
+
+        // Lấy các thành phần từ searchPanel
+        for (Component comp : searchPanel.getComponents()) {
+            if (comp instanceof JButton) {
+                JButton btn = (JButton) comp;
+                if ("Tìm kiếm".equals(btn.getText())) {
+                    btnTimKiem = btn;
+                } else if ("Làm mới".equals(btn.getText())) {
+                    btnLamMoi = btn;
+                }
+            } else if (comp instanceof JTextField) {
+                txtTimKiem = (JTextField) comp;
+            }
+        }
+
+        if (btnTimKiem != null) btnTimKiem.addActionListener(e -> performSearch());
+        if (btnLamMoi != null) btnLamMoi.addActionListener(e -> refreshTable());
+
+        toolbar.add(searchPanel);
         return toolbar;
     }
 
@@ -142,6 +166,43 @@ public class SupplierPanel extends JPanel {
                 supplier.getAddress()
             };
             tableModel.addRow(row);
+        }
+    }
+
+    private void performSearch() {
+        String keyword = txtTimKiem.getText().trim().toLowerCase();
+        List<Supplier> allSuppliers = supplierBUS.getAllSuppliers();
+        List<Supplier> result = new ArrayList<>();
+
+        for (Supplier s : allSuppliers) {
+            if (s.getId().toLowerCase().contains(keyword) ||
+                s.getName().toLowerCase().contains(keyword) ||
+                s.getAddress().toLowerCase().contains(keyword) ||
+                s.getPhoneNumber().toLowerCase().contains(keyword) ||
+                s.getEmail().toLowerCase().contains(keyword)) {
+                result.add(s);
+            }
+        }
+
+        loadTableData(result);
+    }
+
+    private void refreshTable() {
+        txtTimKiem.setText("");
+        loadTableData(supplierBUS.getAllSuppliers());
+    }
+
+    private void loadTableData(List<Supplier> suppliers) {
+        tableModel.setRowCount(0);
+        for (Supplier s : suppliers) {
+            tableModel.addRow(new Object[]{
+                s.getId(),
+                s.getName(),
+                s.getPhoneNumber(),
+                s.getEmail(),
+                s.getAddress(),
+                s.getTrangThai() ? "Đang hoạt động" : "Ngưng hoạt động"
+            });
         }
     }
 }

@@ -708,74 +708,192 @@ WHERE NOT EXISTS (
 SELECT idNhomQuyen, idChucNang, hanhDong FROM ChiTietQuyen WHERE idNhomQuyen = 'NQ001';
 
 
--- chi tiêt sản phẩm
-INSERT INTO ChiTietSP (SerialNumber, idPhanLoai, trangThai) VALUES
-('1', 1, 1), -- LAP001 (idPhanLoai = 1, soLuongTonKho = 3)
-('2', 1, 1), -- LAP001
-('3', 1, 1), -- LAP001
-('4', 6, 1), -- PC001 (idPhanLoai = 6, soLuongTonKho = 2)
-('5', 6, 1), -- PC001
-('6', 11, 1), -- SP001 (Intel Core i9-13900K, idPhanLoai = 11, soLuongTonKho = 10)
-('7', 11, 1), -- SP001
-('8', 11, 1), -- SP001
-('9', 16, 1), -- SP006 (NVIDIA GeForce RTX 3080, idPhanLoai = 16, soLuongTonKho = 8)
-('10', 16, 1), -- SP006
-('11', 21, 1), -- SP011 (Corsair Vengeance LPX 16GB, idPhanLoai = 21, soLuongTonKho = 20)
-('12', 21, 1), -- SP011
-('13', 26, 1), -- SP016 (Samsung 970 EVO Plus 1TB, idPhanLoai = 26, soLuongTonKho = 15)
-('14', 26, 1), -- SP016
-('15', 31, 1), -- SP021 (LG 27GN950-B, idPhanLoai = 31, soLuongTonKho = 5)
-('16', 36, 1), -- SP026 (NZXT H510, idPhanLoai = 36, soLuongTonKho = 12)
-('17', 41, 1), -- SP031 (Noctua NH-D15, idPhanLoai = 41, soLuongTonKho = 10)
-('18', 46, 1), -- SP036 (Samsung 990 PRO 1TB, idPhanLoai = 46, soLuongTonKho = 18)
-('19', 51, 1), -- SP041 (Creative Sound Blaster AE-7, idPhanLoai = 51, soLuongTonKho = 6)
-('20', 56, 1); -- SP046 (ASUS PCE-AX3000, idPhanLoai = 56, soLuongTonKho = 25)
+-- Xóa dữ liệu cũ
+DELETE FROM ChiTietHoaDonXuat;
+DELETE FROM HoaDonXuat;
+DELETE FROM ChiTietDonNhap;
+DELETE FROM HoaDonNhap;
+DELETE FROM ChiTietSP;
 
+-- Thêm dữ liệu vào ChiTietSP với maphieunhap và maphieuxuat được điền ngay từ đầu
+INSERT INTO ChiTietSP (SerialNumber, idPhanLoai, maphieunhap, maphieuxuat, trangThai) VALUES
+-- SP035 (Cooler Master Hyper 212, idPhanLoai = 41) từ câu hỏi trước
+('1', 41, 1, 1, 1),   -- Nhập HĐN 1, xuất HĐX 1
+('2', 41, 1, 2, 1),   -- Nhập HĐN 1, xuất HĐX 2
+('3', 41, 1, 3, 1),   -- Nhập HĐN 1, xuất HĐX 3
+('4', 41, 2, 3, 1),   -- Nhập HĐN 2, xuất HĐX 3
+('5', 41, 2, 4, 1),   -- Nhập HĐN 2, xuất HĐX 4
+('6', 41, 2, 5, 1),   -- Nhập HĐN 2, xuất HĐX 5
+('7', 41, 3, 6, 1),   -- Nhập HĐN 3, xuất HĐX 6
+('8', 41, 3, 6, 1),   -- Nhập HĐN 3, xuất HĐX 6
+('9', 41, 3, 7, 1),   -- Nhập HĐN 3, xuất HĐX 7
+('10', 41, 4, -1, 1), -- Nhập HĐN 4
+('11', 41, 4, -1, 1),
+('12', 41, 4, -1, 1),
+('13', 41, 5, -1, 1), -- Nhập HĐN 5
+('14', 41, 5, -1, 1),
+('15', 41, 5, -1, 1),
+('16', 41, 6, -1, 1), -- Nhập HĐN 6
+('17', 41, 6, -1, 1),
+('18', 41, 6, -1, 1),
+('19', 41, 7, -1, 1), -- Nhập HĐN 7
+('20', 41, 7, -1, 1),
+('21', 41, 7, -1, 1),
+('22', 41, 8, -1, 1), -- Nhập HĐN 8
+('23', 41, 8, -1, 1),
+('24', 41, 8, -1, 1),
+('25', 41, 9, -1, 1), -- Nhập HĐN 9
+('26', 41, 9, -1, 1),
+('27', 41, 9, -1, 1),
+('28', 41, 10, -1, 1), -- Nhập HĐN 10
+('29', 41, 10, -1, 1),
+('30', 41, 10, -1, 1),
+-- Các sản phẩm khác từ câu hỏi trước
+('31', 1, 11, 8, 1),   -- LAP001, nhập HĐN 11, xuất HĐX 8
+('32', 1, 11, -1, 1),  -- LAP001, nhập HĐN 11
+('33', 6, 11, 9, 1),   -- PC001, nhập HĐN 11, xuất HĐX 9
+('34', 6, 11, -1, 1),  -- PC001, nhập HĐN 11
+('35', 11, 12, 9, 1),  -- SP001, nhập HĐN 12, xuất HĐX 9
+('36', 11, 12, -1, 1), -- SP001, nhập HĐN 12
+('37', 16, 13, 10, 1), -- SP006, nhập HĐN 13, xuất HĐX 10
+('38', 16, 13, -1, 1), -- SP006, nhập HĐN 13
+('39', 21, 13, 10, 1), -- SP011, nhập HĐN 13, xuất HĐX 10
+('40', 21, 13, 10, 1), -- SP011, nhập HĐN 13, xuất HĐX 10
+('41', 21, 13, -1, 1), -- SP011, nhập HĐN 13
+-- Dữ liệu từ đoạn mã bạn cung cấp, đổi SN từ 1-20 thành 42-61
+('42', 1, 14, 11, 1),  -- LAP001, nhập HĐN 14, xuất HĐX 11
+('43', 1, 14, -1, 1),  -- LAP001, nhập HĐN 14
+('44', 1, 14, -1, 1),  -- LAP001, nhập HĐN 14
+('45', 6, 14, 12, 1),  -- PC001, nhập HĐN 14, xuất HĐX 12
+('46', 6, 14, -1, 1),  -- PC001, nhập HĐN 14
+('47', 11, 15, 12, 1), -- SP001, nhập HĐN 15, xuất HĐX 12
+('48', 11, 15, -1, 1), -- SP001, nhập HĐN 15
+('49', 11, 15, -1, 1), -- SP001, nhập HĐN 15
+('50', 16, 16, 13, 1), -- SP006, nhập HĐN 16, xuất HĐX 13
+('51', 16, 16, -1, 1), -- SP006, nhập HĐN 16
+('52', 21, 16, 13, 1), -- SP011, nhập HĐN 16, xuất HĐX 13
+('53', 21, 16, 13, 1), -- SP011, nhập HĐN 16, xuất HĐX 13
+('54', 26, -1, -1, 1), -- SP016
+('55', 26, -1, -1, 1), -- SP016
+('56', 31, -1, -1, 1), -- SP021
+('57', 36, -1, -1, 1), -- SP026
+('58', 41, -1, -1, 1), -- SP031 (Noctua NH-D15, trùng idPhanLoai với SP035 nhưng không ảnh hưởng vì SN khác)
+('59', 46, -1, -1, 1), -- SP036
+('60', 51, -1, -1, 1), -- SP041
+('61', 56, -1, -1, 1); -- SP046
 
--- chi tiết hóa đơn nhập
-INSERT INTO HoaDonNhap (idNhanVien, idNhaCungCap, ngayTao, tongTien) VALUES
-('NV001', 'NCC001', '2025-05-11', 108099000.00), -- Nhập LAP001 (3 chiếc) và PC001 (2 chiếc)
-('NV002', 'NCC002', '2025-05-12', 14970000.00), -- Nhập SP001 (3 CPU)
-('NV003', 'NCC003', '2025-05-13', 14950000.00); -- Nhập SP006 (2 GPU) và SP011 (5 RAM)
+-- Cập nhật soLuongTonKho trong PhanLoaiSP
+UPDATE PhanLoaiSP SET soLuongTonKho = 0;
+UPDATE PhanLoaiSP
+SET soLuongTonKho = (
+    SELECT COUNT(*) 
+    FROM ChiTietSP 
+    WHERE ChiTietSP.idPhanLoai = PhanLoaiSP.idPhanLoai
+    AND ChiTietSP.trangThai = 1
+)
+WHERE idPhanLoai IN (1, 6, 11, 16, 21, 26, 31, 36, 41, 46, 51, 56);
 
+-- Thêm hóa đơn nhập (10 hóa đơn từ câu hỏi trước + 3 hóa đơn từ đoạn mã bạn cung cấp)
+INSERT INTO HoaDonNhap (idHoaDonNhap, idNhanVien, idNhaCungCap, ngayTao, tongTien) VALUES
+-- Từ câu hỏi trước
+(1, 'NV006', 'NCC001', '2025-05-01', 1200000.00),
+(2, 'NV006', 'NCC001', '2025-05-02', 1200000.00),
+(3, 'NV006', 'NCC001', '2025-05-03', 1200000.00),
+(4, 'NV006', 'NCC001', '2025-05-04', 1200000.00),
+(5, 'NV006', 'NCC001', '2025-05-05', 1200000.00),
+(6, 'NV006', 'NCC001', '2025-05-06', 1200000.00),
+(7, 'NV006', 'NCC001', '2025-05-07', 1200000.00),
+(8, 'NV006', 'NCC001', '2025-05-08', 1200000.00),
+(9, 'NV006', 'NCC001', '2025-05-09', 1200000.00),
+(10, 'NV006', 'NCC001', '2025-05-10', 1200000.00),
+-- Từ câu hỏi trước (dành cho SN 31-41)
+(11, 'NV006', 'NCC001', '2025-05-11', 90478400.00),
+(12, 'NV006', 'NCC002', '2025-05-12', 11984000.00),
+(13, 'NV006', 'NCC003', '2025-05-13', 12788000.00),
+-- Từ đoạn mã bạn cung cấp (đổi id từ 1-3 thành 14-16)
+(14, 'NV001', 'NCC001', '2025-05-01', 108099000.00),
+(15, 'NV002', 'NCC002', '2025-05-02', 14970000.00),
+(16, 'NV003', 'NCC003', '2025-05-03', 14950000.00);
+
+-- Thêm chi tiết hóa đơn nhập
 INSERT INTO ChiTietDonNhap (idDonHang, SN, donGia) VALUES
--- Hóa đơn nhập 1: LAP001 (3 chiếc, giá bán 56799000, giá nhập 45439200), PC001 (2 chiếc, giá bán 25000000, giá nhập 20000000)
-(1, '1', 45439200.00), -- LAP001
-(1, '2', 45439200.00), -- LAP001
-(1, '3', 45439200.00), -- LAP001
-(1, '4', 20000000.00), -- PC001
-(1, '5', 20000000.00), -- PC001
--- Hóa đơn nhập 2: SP001 (3 CPU, giá bán 7490000, giá nhập 5992000)
-(2, '6', 5992000.00), -- SP001
-(2, '7', 5992000.00), -- SP001
-(2, '8', 5992000.00), -- SP001
--- Hóa đơn nhập 3: SP006 (2 GPU, giá bán 6990000, giá nhập 5592000), SP011 (5 RAM, giá bán 799000, giá nhập 639200)
-(3, '9', 5592000.00), -- SP006
-(3, '10', 5592000.00), -- SP006
-(3, '11', 639200.00),  -- SP011
-(3, '12', 639200.00);  -- SP011
+-- Hóa đơn nhập 1-10 (SP035, từ câu hỏi trước)
+(1, '1', 400000.00), (1, '2', 400000.00), (1, '3', 400000.00),
+(2, '4', 400000.00), (2, '5', 400000.00), (2, '6', 400000.00),
+(3, '7', 400000.00), (3, '8', 400000.00), (3, '9', 400000.00),
+(4, '10', 400000.00), (4, '11', 400000.00), (4, '12', 400000.00),
+(5, '13', 400000.00), (5, '14', 400000.00), (5, '15', 400000.00),
+(6, '16', 400000.00), (6, '17', 400000.00), (6, '18', 400000.00),
+(7, '19', 400000.00), (7, '20', 400000.00), (7, '21', 400000.00),
+(8, '22', 400000.00), (8, '23', 400000.00), (8, '24', 400000.00),
+(9, '25', 400000.00), (9, '26', 400000.00), (9, '27', 400000.00),
+(10, '28', 400000.00), (10, '29', 400000.00), (10, '30', 400000.00),
+-- Hóa đơn nhập 11-13 (SN 31-41, từ câu hỏi trước)
+(11, '31', 45439200.00), (11, '32', 45439200.00),
+(11, '33', 20000000.00), (11, '34', 20000000.00),
+(12, '35', 5992000.00), (12, '36', 5992000.00),
+(13, '37', 5592000.00), (13, '38', 5592000.00),
+(13, '39', 639200.00), (13, '40', 639200.00), (13, '41', 639200.00),
+-- Hóa đơn nhập 14-16 (từ đoạn mã bạn cung cấp, đổi SN)
+(14, '42', 45439200.00), (14, '43', 45439200.00), (14, '44', 45439200.00),
+(14, '45', 20000000.00), (14, '46', 20000000.00),
+(15, '47', 5992000.00), (15, '48', 5992000.00), (15, '49', 5992000.00),
+(16, '50', 5592000.00), (16, '51', 5592000.00),
+(16, '52', 639200.00), (16, '53', 639200.00);
 
-
-
-
--- hóa đơn xuất
+-- Thêm hóa đơn xuất (10 hóa đơn từ câu hỏi trước + 3 hóa đơn từ đoạn mã bạn cung cấp)
 INSERT INTO HoaDonXuat (idNhanVien, idKhachHang, ngayTao, tongTien, idKhuyenMai) VALUES
-('NV003', 1, '2025-05-10', 51119100.00, 'KM001'), -- Xuất LAP001 (1 chiếc, giá bán 56799000, giảm 10% = 51119100)
-('NV004', 2, '2025-05-11', 32490000.00, NULL),    -- Xuất PC001 (1 chiếc, giá bán 25000000) và SP001 (1 CPU, giá bán 7490000)
-('NV005', 3, '2025-05-12', 14780000.00, NULL);    -- Xuất SP006 (1 GPU, giá bán 6990000) và SP011 (2 RAM, giá bán 799000)
+-- Từ câu hỏi trước
+('NV003', 1, '2025-05-03', 890000.00, NULL),
+('NV005', 2, '2025-05-04', 890000.00, NULL),
+('NV003', 3, '2025-05-05', 1780000.00, NULL),
+('NV005', 1, '2025-05-06', 890000.00, NULL),
+('NV003', 2, '2025-05-07', 890000.00, NULL),
+('NV005', 3, '2025-05-08', 1780000.00, NULL),
+('NV003', 1, '2025-05-09', 890000.00, NULL),
+('NV005', 2, '2025-05-10', 51119100.00, 'KM001'),
+('NV003', 3, '2025-05-11', 32490000.00, NULL),
+('NV005', 1, '2025-05-12', 14780000.00, NULL),
+-- Từ đoạn mã bạn cung cấp (đổi id từ 1-3 thành 11-13)
+('NV003', 1, '2025-05-10', 51119100.00, 'KM001'),
+('NV004', 2, '2025-05-11', 32490000.00, NULL),
+('NV005', 3, '2025-05-12', 14780000.00, NULL);
 
-
--- thông tin chi tiết hóa đơn xuất
+-- Thêm chi tiết hóa đơn xuất
 INSERT INTO ChiTietHoaDonXuat (idChiTietHoaDonXuat, idHoaDonXuat, SN, donGia) VALUES
--- Hóa đơn xuất 1: LAP001 (1 chiếc, giá bán 56799000, giảm 10% = 51119100)
-('CTHDX001', 1, '1', 51119100.00),
--- Hóa đơn xuất 2: PC001 (1 chiếc, giá bán 25000000), SP001 (1 CPU, giá bán 7490000)
-('CTHDX002', 2, '4', 25000000.00),
-('CTHDX003', 2, '6', 7490000.00),
--- Hóa đơn xuất 3: SP006 (1 GPU, giá bán 6990000), SP011 (2 RAM, giá bán 799000)
-('CTHDX004', 3, '9', 6990000.00),
-('CTHDX005', 3, '11', 799000.00),
-('CTHDX006', 3, '12', 799000.00);
+-- Hóa đơn xuất 1-10 (từ câu hỏi trước)
+('CTHDX001', 1, '1', 890000.00),
+('CTHDX002', 2, '2', 890000.00),
+('CTHDX003', 3, '3', 890000.00),
+('CTHDX004', 3, '4', 890000.00),
+('CTHDX005', 4, '5', 890000.00),
+('CTHDX006', 5, '6', 890000.00),
+('CTHDX007', 6, '7', 890000.00),
+('CTHDX008', 6, '8', 890000.00),
+('CTHDX009', 7, '9', 890000.00),
+('CTHDX010', 8, '31', 51119100.00),
+('CTHDX011', 9, '33', 25000000.00),
+('CTHDX012', 9, '35', 7490000.00),
+('CTHDX013', 10, '37', 6990000.00),
+('CTHDX014', 10, '39', 799000.00),
+('CTHDX015', 10, '40', 799000.00),
+-- Hóa đơn xuất 11-13 (từ đoạn mã bạn cung cấp, đổi SN và id)
+('CTHDX016', 11, '42', 51119100.00),
+('CTHDX017', 12, '45', 25000000.00),
+('CTHDX018', 12, '47', 7490000.00),
+('CTHDX019', 13, '50', 6990000.00),
+('CTHDX020', 13, '52', 799000.00),
+('CTHDX021', 13, '53', 799000.00);
 
-
-
+-- Cập nhật soLuongTonKho sau khi xuất
+UPDATE PhanLoaiSP
+SET soLuongTonKho = soLuongTonKho - CASE idPhanLoai
+    WHEN 1 THEN 2   -- Xuất 2 LAP001 (SN 31, 42)
+    WHEN 6 THEN 2   -- Xuất 2 PC001 (SN 33, 45)
+    WHEN 11 THEN 2  -- Xuất 2 SP001 (SN 35, 47)
+    WHEN 16 THEN 2  -- Xuất 2 SP006 (SN 37, 50)
+    WHEN 21 THEN 4  -- Xuất 4 SP011 (SN 39, 40, 52, 53)
+    WHEN 41 THEN 9  -- Xuất 9 SP035 (SN 1-9)
+    ELSE 0
+END
+WHERE idPhanLoai IN (1, 6, 11, 16, 21, 41);
