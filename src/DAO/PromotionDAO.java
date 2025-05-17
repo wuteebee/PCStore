@@ -144,7 +144,7 @@ public class PromotionDAO {
         return products;
     }
 
-    
+
 
  public Promotion getPromotionById(String id) {
     String sql = "SELECT * FROM KhuyenMai WHERE idKhuyenMai = ? AND trangThai = 1";
@@ -168,10 +168,5 @@ public class PromotionDAO {
     }
     return null;
 }
-
-
-
-
-
 }
 

@@ -666,6 +666,4 @@ public int getIDPhanLoai(String idsp, int STTPL) {
 
     return phienBan;
     }
-
-    
 }
