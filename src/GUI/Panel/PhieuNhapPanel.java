@@ -268,7 +268,7 @@ public class PhieuNhapPanel extends JPanel {
         return deleted;
     }
 
-    public boolean fixHoadon(){
+    public boolean  fixHoadon(){
         boolean fix=true;
         int selectedRow = table.getSelectedRow(); 
         String idPhieuNhap="";

@@ -1,7 +1,6 @@
 package DAO;
 
 import config.DatabaseConnection;
-import config.H2DatabaseConnection;
 import DTO.Employee;
 import java.sql.*;
 import java.time.LocalDate;
@@ -13,7 +12,7 @@ public class EmployeeDAO {
 
     public EmployeeDAO() {
         // Sử dụng kết nối từ DatabaseConnection, nếu có lỗi thì sẽ ném ra RuntimeException
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     // Lấy danh sách tất cả nhân viên

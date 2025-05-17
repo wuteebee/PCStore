@@ -3,9 +3,7 @@ package DAO;
 import DTO.ChiTietDonNhap;
 import DTO.HoaDonNhap;
 import DTO.ProductDetail;
-import GUI.Panel.DashFinance;
 import config.DatabaseConnection;
-import config.H2DatabaseConnection;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -18,7 +16,7 @@ public class PhieuNhapDAO {
     private Connection conn;
 
     public PhieuNhapDAO() {
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     // Thêm hóa đơn nhập mới
@@ -101,7 +99,7 @@ public class PhieuNhapDAO {
     public List<ChiTietDonNhap> getAll_CTDonNhap(){
         List<ChiTietDonNhap> danhsach=new ArrayList<>();
         String sql="SELECT * FROM chitietdonnhap";
-       try (Connection conn = H2DatabaseConnection.getConnection();
+       try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)){
             while (rs.next()) {
@@ -339,32 +337,4 @@ public boolean updateSTTK(String idPL, int soLuong) {
         }
         return list;
     }
-
-    public Map<String, BigDecimal> getByPeriod(String period) {
-        Map<String, BigDecimal> result = new HashMap<>();
-        String sql;
-        if ("Month".equals(period)) {
-            sql = "SELECT TO_CHAR(ngayTao, 'YYYY-MM') AS month, SUM(tongTien) AS total " +
-                    "FROM HoaDonNhap " +
-                    "GROUP BY TO_CHAR(ngayTao, 'YYYY-MM') " +
-                    "ORDER BY month";
-        } else {
-            sql = "SELECT EXTRACT(YEAR FROM ngayTao) AS year, SUM(tongTien) AS total " +
-                    "FROM HoaDonNhap " +
-                    "GROUP BY EXTRACT(YEAR FROM ngayTao) " +
-                    "ORDER BY year";
-        }
-
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                String key = "Month".equals(period) ? rs.getString("month") : String.valueOf(rs.getInt("year"));
-                result.put(key, DashFinance.bdCon(rs.getDouble("total")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
 }

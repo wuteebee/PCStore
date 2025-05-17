@@ -3,7 +3,6 @@ package DAO;
 import DTO.Promotion;
 import DTO.ComboProduct;
 import config.DatabaseConnection;
-import config.H2DatabaseConnection;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -14,7 +13,7 @@ public class PromotionDAO {
     private Connection conn;
 
     public PromotionDAO() {
-        conn = H2DatabaseConnection.getConnection();
+        conn = DatabaseConnection.getConnection();
     }
 
     public List<Promotion> getAllPromotions() {

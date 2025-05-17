@@ -17,6 +17,8 @@ import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -84,7 +86,7 @@ public class PhieuXuatDialog extends JDialog {
         this.selectedID = selectedID;
         setSize(1600, 900);
         setLocationRelativeTo(null);
-        setResizable(false);
+        setResizable(true);
         getContentPane().setBackground(Color.white);
         initDialog();
         actionProcessing();
@@ -406,11 +408,17 @@ public class PhieuXuatDialog extends JDialog {
             else System.out.println("Missing serial number");
         });
 
-        sanPhamDaThem.getSelectionModel().addListSelectionListener(a -> {
-            if (!a.getValueIsAdjusting()) {
-                 selectedRow = sanPhamDaThem.getSelectedRow();
+        sanPhamDaThem.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                System.out.println(sanPhamDaThem.getSelectionModel().getSelectedItemsCount());
+                for (int i : sanPhamDaThem.getSelectionModel().getSelectedIndices())
+                {
+                    System.out.print(i);
+                }
             }
         });
+        sanPhamDaThem.getSelectionModel().getSelectedIndices();
 
         xacNhanXoa.addActionListener(e -> {
             int rowCount = 1;
@@ -438,11 +446,26 @@ public class PhieuXuatDialog extends JDialog {
                 dispose();
             }
         });
+
+        ngayTao.addPropertyChangeListener(e -> {
+            //Kiem tra loi dinh dang ngay
+            if (ngayTao.getText().length() == 10)
+            {
+                try
+                {
+                    LocalDate.parse(ngayTao.getText(), dateFormatter);
+                    flag = true;
+                }
+                catch (DateTimeParseException d) {
+                    flag = false;
+                }
+            }
+        });
     }
 
     private SalesInvoice fetchInput() {
         SalesInvoice adding = new SalesInvoice();
-        adding.setId(String.valueOf(existingList.size() + 2));
+        adding.setId(String.valueOf(existingList.size() + 1));
         System.out.println(existingList.size() + 1);
         for (Employee e : employeeList) {
             if (idNhanVien.getSelectedItem().toString().equals(e.getName())) {
@@ -474,22 +497,11 @@ public class PhieuXuatDialog extends JDialog {
 
     private boolean validHoaDonInput()
     {
-        //Kiem tra loi dinh dang ngay
-        ngayTao.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                try {
-                    LocalDate.parse(ngayTao.getText(), dateFormatter);
-                    flag = true;
-                } catch (DateTimeParseException a) {
-                    flag = false;
-                }
-                System.out.println(ngayTao.getText());
-            }
-        });
-
         if (idKhachHang.getSelectedIndex() == 0 || idNhanVien.getSelectedIndex() == 0 || serialNumber.getSelectedIndex() == 0 || flag == false)
+        {
+            System.out.println("invalid");
             return false;
+        }
         return true;
     }
 
