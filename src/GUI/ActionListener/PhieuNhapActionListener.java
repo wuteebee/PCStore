@@ -72,19 +72,18 @@ public class PhieuNhapActionListener implements ActionListener{
                      }
              
                 break;
-            case "search":
-                System.out.println("Tìm kiếm nè");
-                break;
-            case "Làm mới":
-                System.out.println("Làm mới nè");
-                // panel.getTextField().setText("");
-                // panel.getTable().setRowCount(0);
-                // panel.loadDataToTable();
-                break;
             case "Chi tiết":
                 System.out.println("Chi tiết nè");
                   id = panel.getSelectedPhieuId();
-                CTNhap cTNhap=new CTNhap(panel,MainFrame,id);
+
+                               if(id.equals("-1")){
+                          JOptionPane.showMessageDialog(panel, "Vui lòng chọn hoá đơn nhập cần xem chi tiết!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                     }
+                     else{
+                                 CTNhap cTNhap=new CTNhap(panel,MainFrame,id);
+
+                     }
+      
                 break;
             case "Xuất Excel":
                System.out.println("Excel");

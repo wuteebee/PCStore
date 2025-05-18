@@ -101,9 +101,11 @@ private void initLeftPanel() {
     scroll.setBounds(10, 50, 280, 250);
 
    btnThem = new JButton("Thêm");
+   btnThem.setBackground(new Color(33, 150, 243));
     btnThem.setBounds(10, 310, 130, 30);
     JButton btnNhapExcel = new JButton("Nhập Excel");
     btnNhapExcel.setBounds(150, 310, 130, 30);
+
 
   
     for (Product product : products) {
@@ -179,39 +181,65 @@ private void updatePhieuNhap() {
  System.out.println("Mã sp: "+maSP);
  System.out.println("Dòng 171: phiên bản số: "+phienBanSo);
  System.out.println("Dòng 171: ma phan loại : "+maphanloai);
-    if(rbTuNhap.isSelected()){
- 
-        List<ProductDetail> list = new ArrayList<>();
-        System.out.println("imei nè" +imei);
-        if(phieuNhapDAO.isImeiExistInDatabase(imei)||isImeiExistInChiTietHDN(imei)){
-             JOptionPane.showMessageDialog(null, "IMEI " + imei + " đã tồn tại! Không thể thêm trùng.");
+if (rbTuNhap.isSelected()) {
+    if (imei.trim().isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Vui lòng nhập IMEI.");
+        return;
+    }
+    if (!imei.matches("\\d+")) {
+        JOptionPane.showMessageDialog(null, "IMEI phải là số.");
+        return;
+    }
+    if (!giaNhap.matches("\\d+(\\.\\d+)?")) {
+        JOptionPane.showMessageDialog(null, "Giá nhập không hợp lệ. Vui lòng nhập số.");
+        return;
+    }
+
+    List<ProductDetail> list = new ArrayList<>();
+    if (phieuNhapDAO.isImeiExistInDatabase(imei) || isImeiExistInChiTietHDN(imei)) {
+        JOptionPane.showMessageDialog(null, "IMEI " + imei + " đã tồn tại! Không thể thêm trùng.");
+        return;
+    }
+
+    ProductDetail productDetail = new ProductDetail(imei, maphanloai, Double.parseDouble(giaNhap), true);
+    list.add(productDetail);
+    chiTietHDN.put((modelChiTiet.getRowCount() + 1) + "", list);
+    soLuong = "1";
+} else if (rbTheoKhoang.isSelected()) {
+
+    if (imeiFrom.isEmpty() || imeiTo.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ IMEI từ và đến.");
+        return;
+    }
+    if (!imeiFrom.matches("\\d+") || !imeiTo.matches("\\d+")) {
+        JOptionPane.showMessageDialog(null, "IMEI từ và đến phải là số.");
+        return;
+    }
+    if (Long.parseLong(imeiFrom) > Long.parseLong(imeiTo)) {
+        JOptionPane.showMessageDialog(null, "IMEI bắt đầu phải nhỏ hơn hoặc bằng IMEI kết thúc.");
+        return;
+    }
+    if (!giaNhap.matches("\\d+(\\.\\d+)?")) {
+        JOptionPane.showMessageDialog(null, "Giá nhập không hợp lệ. Vui lòng nhập số.");
+        return;
+    }
+
+    imei = imeiFrom + " - " + imeiTo;
+    List<ProductDetail> list = new ArrayList<>();
+
+    for (String imeiNumber : generateImeiList(imeiFrom, imeiTo)) {
+        if (phieuNhapDAO.isImeiExistInDatabase(imeiNumber) || isImeiExistInChiTietHDN(imeiNumber)) {
+            JOptionPane.showMessageDialog(null, "IMEI " + imeiNumber + " đã tồn tại! Không thể thêm trùng.");
             return;
         }
-        ProductDAO productDAO=new ProductDAO();
-       
-        ProductDetail productDetail = new ProductDetail(imei, maphanloai, Double.parseDouble(giaNhap) , true);
+        ProductDetail productDetail = new ProductDetail(imeiNumber, maphanloai, Double.parseDouble(giaNhap), true);
         list.add(productDetail);
-         chiTietHDN.put((modelChiTiet.getRowCount() + 1)+"", list);
-         soLuong="1";
     }
-    else if(rbTheoKhoang.isSelected()){
 
-        imei = tfImeiFrom.getText() + " - " + tfImeiTo.getText();
-        // System.out.println("imei: " + imei);
-        List<ProductDetail> list = new ArrayList<>();
-        for (String imeiNumber : generateImeiList(imeiFrom, imeiTo)) {
-              if(phieuNhapDAO.isImeiExistInDatabase(imeiNumber)||isImeiExistInChiTietHDN(imeiNumber)){
-             JOptionPane.showMessageDialog(null, "IMEI " + imeiNumber + " đã tồn tại! Không thể thêm trùng.");
-            return;
-        }
-            ProductDetail productDetail = new ProductDetail(imeiNumber, maphanloai, Double.parseDouble(giaNhap) , true);
-            list.add(productDetail);
-        }
-      int stt = modelChiTiet.getRowCount() + 1;
-chiTietHDN.put(String.valueOf(stt), list);
-System.out.println("Đây là danh sách IMEI: " + stt);
+    int stt = modelChiTiet.getRowCount() + 1;
+    chiTietHDN.put(String.valueOf(stt), list);
+}
 
-    }
 
     modelChiTiet.addRow(new Object[]{
         modelChiTiet.getRowCount() + 1,
@@ -804,38 +832,64 @@ private void xulySua(){
       
         List<ProductDetail> tmp = chiTietHDN.get(selectedRow+"");
         chiTietHDN.remove(selectedRow+"");
-     if(rbTuNhap.isSelected()){
- 
-        List<ProductDetail> list = new ArrayList<>();
-        System.out.println("imei nè" +imei);
-        if(phieuNhapDAO.isImeiExistInDatabase(imei)||isImeiExistInChiTietHDN(imei)){
-             JOptionPane.showMessageDialog(null, "IMEI " + imei + " đã tồn tại! Không thể thêm trùng.");
-             chiTietHDN.put(selectedRow+"", tmp);
-            return;
-        }
-        productDAO=new ProductDAO();
-       
-        ProductDetail productDetail = new ProductDetail(imei, maphanloai, Double.parseDouble(giaNhap) , true);
-        list.add(productDetail);
-         chiTietHDN.put((selectedRow)+"", list);
-         soLuong="1";
+     if (rbTuNhap.isSelected()) {
+    if (imei.trim().isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Vui lòng nhập IMEI.");
+        return;
     }
-    else if(rbTheoKhoang.isSelected()){
+    if (!imei.matches("\\d+")) {
+        JOptionPane.showMessageDialog(null, "IMEI phải là số.");
+        return;
+    }
+    if (!giaNhap.matches("\\d+(\\.\\d+)?")) {
+        JOptionPane.showMessageDialog(null, "Giá nhập không hợp lệ. Vui lòng nhập số.");
+        return;
+    }
 
-        imei = tfImeiFrom.getText() + " - " + tfImeiTo.getText();
-        // System.out.println("imei: " + imei);
-        List<ProductDetail> list = new ArrayList<>();
-        for (String imeiNumber : generateImeiList(imeiFrom, imeiTo)) {
-              if(phieuNhapDAO.isImeiExistInDatabase(imeiNumber)||isImeiExistInChiTietHDN(imeiNumber)){
-             JOptionPane.showMessageDialog(null, "IMEI " + imeiNumber + " đã tồn tại! Không thể thêm trùng.");
-             chiTietHDN.put(selectedRow+"", tmp);
+    List<ProductDetail> list = new ArrayList<>();
+    if (phieuNhapDAO.isImeiExistInDatabase(imei) || isImeiExistInChiTietHDN(imei)) {
+        JOptionPane.showMessageDialog(null, "IMEI " + imei + " đã tồn tại! Không thể thêm trùng.");
+        return;
+    }
+
+    ProductDetail productDetail = new ProductDetail(imei, maphanloai, Double.parseDouble(giaNhap), true);
+    list.add(productDetail);
+    chiTietHDN.put((modelChiTiet.getRowCount() + 1) + "", list);
+    soLuong = "1";
+} else if (rbTheoKhoang.isSelected()) {
+   
+    if (imeiFrom.isEmpty() || imeiTo.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ IMEI từ và đến.");
+        return;
+    }
+    if (!imeiFrom.matches("\\d+") || !imeiTo.matches("\\d+")) {
+        JOptionPane.showMessageDialog(null, "IMEI từ và đến phải là số.");
+        return;
+    }
+    if (Long.parseLong(imeiFrom) > Long.parseLong(imeiTo)) {
+        JOptionPane.showMessageDialog(null, "IMEI bắt đầu phải nhỏ hơn hoặc bằng IMEI kết thúc.");
+        return;
+    }
+    if (!giaNhap.matches("\\d+(\\.\\d+)?")) {
+        JOptionPane.showMessageDialog(null, "Giá nhập không hợp lệ. Vui lòng nhập số.");
+        return;
+    }
+
+    imei = imeiFrom + " - " + imeiTo;
+    List<ProductDetail> list = new ArrayList<>();
+
+    for (String imeiNumber : generateImeiList(imeiFrom, imeiTo)) {
+        if (phieuNhapDAO.isImeiExistInDatabase(imeiNumber) || isImeiExistInChiTietHDN(imeiNumber)) {
+            JOptionPane.showMessageDialog(null, "IMEI " + imeiNumber + " đã tồn tại! Không thể thêm trùng.");
             return;
         }
-            ProductDetail productDetail = new ProductDetail(imeiNumber, maphanloai, Double.parseDouble(giaNhap) , true);
-            list.add(productDetail);
-        }
- chiTietHDN.put((selectedRow)+"", list);
+        ProductDetail productDetail = new ProductDetail(imeiNumber, maphanloai, Double.parseDouble(giaNhap), true);
+        list.add(productDetail);
     }
+
+    int stt = modelChiTiet.getRowCount() + 1;
+    chiTietHDN.put(String.valueOf(stt), list);
+}
 
     if (selectedRow != -1) {
     modelChiTiet.setValueAt(maSP, selectedRow, 1);         

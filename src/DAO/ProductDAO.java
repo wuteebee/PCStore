@@ -1,3 +1,4 @@
+
 package DAO;
 
 import DTO.*;
@@ -12,21 +13,18 @@ public class ProductDAO {
         Map<String, Product> productMap = new HashMap<>();
 
         AtributeDAO atributeDAO = new AtributeDAO();
-        List<Brand> brands = atributeDAO.getAllBrand();
-        List<Catalog> catalogs = atributeDAO.getAllCatalogs();
-
         Map<String, Brand> brandMap = new HashMap<>();
-        for (Brand b : brands) brandMap.put(b.getMaThuongHieu(), b);
+        for (Brand b : atributeDAO.getAllBrand()) brandMap.put(b.getMaThuongHieu(), b);
 
         Map<String, Catalog> catalogMap = new HashMap<>();
-        for (Catalog c : catalogs) catalogMap.put(c.getMaDanhMuc(), c);
+        for (Catalog c : atributeDAO.getAllCatalogs()) catalogMap.put(c.getMaDanhMuc(), c);
 
-        String sql = "SELECT sp.*, pl.idPhanLoai, pl.STTPL, pl.Gia AS giaPhienBan, pl.soLuongTonKho " +
+        String sql = "SELECT sp.*, pl.idPhanLoai, pl.STTPL, pl.Gia AS giaPhienBan, pl.soLuongTonKho, pl.trangThai AS variantTrangThai " +
                      "FROM sanpham sp LEFT JOIN phanloaisp pl ON sp.idSanPham = pl.idSanPham";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 String idSP = rs.getString("idSanPham");
@@ -41,7 +39,7 @@ public class ProductDAO {
                     String idTH = rs.getString("idThuongHieu");
                     double gia = rs.getDouble("Gia");
 
-                    product = new Product(idSP, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh,gia, trangThai);
+                    product = new Product(idSP, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh, gia, trangThai);
                     product.setDanhSachPhienBan(new ArrayList<>());
                     productMap.put(idSP, product);
                 }
@@ -49,14 +47,14 @@ public class ProductDAO {
                 int idVariant = rs.getInt("idPhanLoai");
                 if (!rs.wasNull()) {
                     int phienBan = rs.getInt("STTPL");
-                    double gia = rs.getDouble("Gia");
+                    double giaPhienBan = rs.getDouble("giaPhienBan");
                     int soLuong = rs.getInt("soLuongTonKho");
-                    boolean tthai = rs.getBoolean("trangThai");
-                     System.out.println("Trạng thái hiện tại" + tthai);
-                    Variant variant = new Variant(idVariant, phienBan, gia, soLuong,tthai);
+                    boolean tthai = rs.getBoolean("variantTrangThai");
+                    System.out.println("Trạng thái hiện tại: " + tthai);
+                    Variant variant = new Variant(idVariant, phienBan, giaPhienBan, soLuong, tthai);
 
                     String maDanhMuc = product.getDanhMuc().getMaDanhMuc();
-                    List<ChiTietCauHinh> chiTiet = getCauhinhTrucTiep(idSP, phienBan, maDanhMuc);
+                    List<ChiTietCauHinh> chiTiet = getCauhinhTrucTiep(conn, idSP, phienBan, maDanhMuc);
                     variant.setChitiet(chiTiet);
 
                     product.getDanhSachPhienBan().add(variant);
@@ -86,38 +84,40 @@ public class ProductDAO {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                String name = rs.getString("tenSanPham");
-                String mota = rs.getString("moTaSanPham");
-                String anh = rs.getString("anhSanPham");
-                boolean trangThai = rs.getBoolean("trangThai");
-                String idDM = rs.getString("idDanhMuc");
-                String idTH = rs.getString("idThuongHieu");
-                double gia = rs.getDouble("Gia");
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String name = rs.getString("tenSanPham");
+                    String mota = rs.getString("moTaSanPham");
+                    String anh = rs.getString("anhSanPham");
+                    boolean trangThai = rs.getBoolean("trangThai");
+                    String idDM = rs.getString("idDanhMuc");
+                    String idTH = rs.getString("idThuongHieu");
+                    double gia = rs.getDouble("Gia");
 
-                product = new Product(id, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh,gia, trangThai);
+                    product = new Product(id, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh, gia, trangThai);
 
-                List<Variant> variants = new ArrayList<>();
-                String sqlVariants = "SELECT * FROM phanloaisp WHERE idSanPham = ?";
-                try (PreparedStatement stmtVariants = conn.prepareStatement(sqlVariants)) {
-                    stmtVariants.setString(1, id);
-                    ResultSet rsVar = stmtVariants.executeQuery();
-                    while (rsVar.next()) {
-                        int idPL = rsVar.getInt("idPhanLoai");
-                        int phienBan = rsVar.getInt("STTPL");
-                         gia = rsVar.getDouble("Gia");
-                        int soLuong = rsVar.getInt("soLuongTonKho");
-                        boolean tt = rsVar.getBoolean("trangThai");
-                        System.out.println("trạng thái hiện tại" + tt);
-                        Variant variant = new Variant(idPL, phienBan, gia, soLuong,tt);
-                        List<ChiTietCauHinh> ct = getCauhinhTrucTiep(id, phienBan, product.getDanhMuc().getMaDanhMuc());
-                        variant.setChitiet(ct);
-                        variants.add(variant);
+                    List<Variant> variants = new ArrayList<>();
+                    String sqlVariants = "SELECT * FROM phanloaisp WHERE idSanPham = ?";
+                    try (PreparedStatement stmtVariants = conn.prepareStatement(sqlVariants)) {
+                        stmtVariants.setString(1, id);
+                        try (ResultSet rsVar = stmtVariants.executeQuery()) {
+                            while (rsVar.next()) {
+                                int idPL = rsVar.getInt("idPhanLoai");
+                                int phienBan = rsVar.getInt("STTPL");
+                                double giaPhienBan = rsVar.getDouble("Gia");
+                                int soLuong = rsVar.getInt("soLuongTonKho");
+                                boolean tt = rsVar.getBoolean("trangThai");
+                                System.out.println("Trạng thái hiện tại: " + tt);
+                                Variant variant = new Variant(idPL, phienBan, giaPhienBan, soLuong, tt);
+                                List<ChiTietCauHinh> ct = getCauhinhTrucTiep(conn, id, phienBan, product.getDanhMuc().getMaDanhMuc());
+                                variant.setChitiet(ct);
+                                variants.add(variant);
+                            }
+                        }
                     }
-                }
 
-                product.setDanhSachPhienBan(variants);
+                    product.setDanhSachPhienBan(variants);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,25 +126,21 @@ public class ProductDAO {
         return product;
     }
 
-     
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
 
         AtributeDAO atributeDAO = new AtributeDAO();
-        List<Brand> brands = atributeDAO.getAllBrand();
-        List<Catalog> categories = atributeDAO.getAllCatalogs();
-
         Map<String, Brand> brandMap = new HashMap<>();
-        for (Brand b : brands) brandMap.put(b.getMaThuongHieu(), b);
+        for (Brand b : atributeDAO.getAllBrand()) brandMap.put(b.getMaThuongHieu(), b);
 
         Map<String, Catalog> catalogMap = new HashMap<>();
-        for (Catalog c : categories) catalogMap.put(c.getMaDanhMuc(), c);
+        for (Catalog c : atributeDAO.getAllCatalogs()) catalogMap.put(c.getMaDanhMuc(), c);
 
         String sql = "SELECT * FROM sanpham";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 String id = rs.getString("idSanPham");
@@ -156,8 +152,7 @@ public class ProductDAO {
                 String idTH = rs.getString("idThuongHieu");
                 double giasp = rs.getDouble("Gia");
 
-                Product product = new Product(id, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh,giasp, trangThai);
-
+                Product product = new Product(id, name, catalogMap.get(idDM), brandMap.get(idTH), mota, anh, giasp, trangThai);
                 products.add(product);
             }
         } catch (SQLException e) {
@@ -167,70 +162,99 @@ public class ProductDAO {
         return products;
     }
 
-    public List<ChiTietCauHinh> getCauhinhTrucTiep(String idSP, int phienBan, String maDanhMuc) {
+    public List<ChiTietCauHinh> getCauhinhTrucTiep(Connection conn, String idSP, int phienBan, String maDanhMuc) {
         List<ChiTietCauHinh> ctch = new ArrayList<>();
+        boolean createdLocalConnection = false;
 
-        String sql;
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            if (maDanhMuc.equals("Laptop")) {
+        try {
+            if (conn == null) {
+                conn = DatabaseConnection.getConnection();
+                createdLocalConnection = true;
+            }
+
+            String sql;
+            if ("Laptop".equals(maDanhMuc)) {
                 sql = "SELECT * FROM cauhinhlaptop WHERE idSanPham = ? AND STTPL = ?";
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                     pstmt.setString(1, idSP);
                     pstmt.setInt(2, phienBan);
-                    ResultSet rs = pstmt.executeQuery();
-                    while (rs.next()) {
-                        String idThongTin = rs.getString("idThongTin");
-                        String thongTin = rs.getString("ThongTin");
-                    //    System.out.println("ID: " + idThongTin + ", Thong Tin: " + thongTin + "Phiên bản: "+ phienBan); ;
-                        ctch.add(new CauHinhLaptop(idSP, idThongTin, phienBan, thongTin));
-                        // System.out.println("ID: " + idThongTin + ", Thong Tin: " + thongTin);
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        while (rs.next()) {
+                            String idThongTin = rs.getString("idThongTin");
+                            String thongTin = rs.getString("ThongTin");
+                            ctch.add(new CauHinhLaptop(idSP, idThongTin, phienBan, thongTin));
+                        }
                     }
                 }
-            } else if (maDanhMuc.equals("DM002")) {
+            } else if ("DM002".equals(maDanhMuc)) {
                 sql = "SELECT * FROM cauhinhpc WHERE idSanPham = ? AND STTPL = ?";
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                     pstmt.setString(1, idSP);
                     pstmt.setInt(2, phienBan);
-                    ResultSet rs = pstmt.executeQuery();
-                    while (rs.next()) {
-                        String idThongTin = rs.getString("idThongTin");
-                        String idLinhKien = rs.getString("idLinhKien");
-
-                        Product linhKien = getSanPhamLite(idLinhKien);
-                        ctch.add(new CauHinhPC(idSP, idThongTin, phienBan, linhKien));
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        List<String> linhKienIds = new ArrayList<>();
+                        while (rs.next()) {
+                            String idThongTin = rs.getString("idThongTin");
+                            String idLinhKien = rs.getString("idLinhKien");
+                            linhKienIds.add(idLinhKien);
+                            ctch.add(new CauHinhPC(idSP, idThongTin, phienBan, null)); // Temporarily null
+                        }
+                        if (!linhKienIds.isEmpty()) {
+                            List<Product> linhKiens = getSanPhamLiteBatch(conn, linhKienIds);
+                            for (int i = 0; i < ctch.size(); i++) {
+                                ((CauHinhPC) ctch.get(i)).setLinhKien(linhKiens.get(i));
+                            }
+                        }
                     }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (createdLocalConnection && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         return ctch;
     }
 
-    public Product getSanPhamLite(String id) {
-        Product product = null;
-        String sql = "SELECT * FROM sanpham WHERE idSanPham = ?";
+    private List<Product> getSanPhamLiteBatch(Connection conn, List<String> ids) {
+        List<Product> products = new ArrayList<>();
+        if (ids.isEmpty()) return products;
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        String placeholders = String.join(",", Collections.nCopies(ids.size(), "?"));
+        String sql = "SELECT * FROM sanpham WHERE idSanPham IN (" + placeholders + ")";
 
-            pstmt.setString(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                String name = rs.getString("tenSanPham");
-                String mota = rs.getString("moTaSanPham");
-                String anh = rs.getString("anhSanPham");
-                boolean trangThai = rs.getBoolean("trangThai");
-                double gia = rs.getDouble("Gia");
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (int i = 0; i < ids.size(); i++) {
+                pstmt.setString(i + 1, ids.get(i));
+            }
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String id = rs.getString("idSanPham");
+                    String name = rs.getString("tenSanPham");
+                    String mota = rs.getString("moTaSanPham");
+                    String anh = rs.getString("anhSanPham");
+                    boolean trangThai = rs.getBoolean("trangThai");
+                    double gia = rs.getDouble("Gia");
 
-                product = new Product(id, name, null, null, mota, anh, gia,trangThai);
+                    products.add(new Product(id, name, null, null, mota, anh, gia, trangThai));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return product;
+        return products;
+    }
+
+    public Product getSanPhamLite(String id) {
+        return getSanPhamLiteBatch(DatabaseConnection.getConnection(), Collections.singletonList(id)).stream().findFirst().orElse(null);
     }
 
     public Product getProductById(String id) {
@@ -240,171 +264,182 @@ public class ProductDAO {
         return null;
     }
 
-
     public List<ProductDetail> getAllProductDetails(Integer id) {
         List<ProductDetail> productDetails = new ArrayList<>();
-    
-        String sql = (id == null)
-            ? "SELECT * FROM chitietsp"
-            : "SELECT * FROM chitietsp WHERE idPhanLoai = ?";
-    
+
+        String sql = id == null ? "SELECT * FROM chitietsp" : "SELECT * FROM chitietsp WHERE idPhanLoai = ?";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-    
+
             if (id != null) {
                 ps.setInt(1, id);
             }
-    
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String serialNumber = rs.getString("SerialNumber");
                     int idSP = rs.getInt("idPhanLoai");
                     boolean trangThai = rs.getBoolean("trangThai");
                     
-                    ProductDetail tmp = new ProductDetail(serialNumber, idSP,0, trangThai);
+                    String maphieunhap = rs.getString("maphieunhap");
+                    String maphieuxuat = rs.getString("maphieuxuat");
+
+                    ProductDetail tmp = new ProductDetail(serialNumber, idSP, idSP, trangThai, maphieunhap, maphieuxuat);
                     productDetails.add(tmp);
                 }
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
 
-        if(id==null){
+        if (id == null) {
             return productDetails;
         }
 
-        List<ProductDetail> danhsach= new ArrayList<>();
-   
+        List<ProductDetail> danhsach = new ArrayList<>();
         for (ProductDetail p : productDetails) {
-             if(p.getIdPhanLoai()==id){
+            if (p.getIdPhanLoai() == id) {
                 danhsach.add(p);
-             }
+            }
         }
 
         return danhsach;
-        
     }
-    
+
+    public double getGiaNhap(String id) {
+    double giaNhap = 0;
+    Connection conn = null;
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+
+    try {
+        conn = DatabaseConnection.getConnection(); // Kết nối DB, bạn thay bằng hàm của bạn nếu khác
+        String sql = "SELECT donGia FROM ChiTietDonNhap WHERE SN = ?";
+        stmt = conn.prepareStatement(sql);
+        stmt.setString(1, id);
+        rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            giaNhap = rs.getDouble("donGia");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    return giaNhap;
+}
+
     public boolean isProductExist(String idSanPham) {
-        boolean exists = false;
         String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, idSanPham);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                exists = rs.getInt(1) > 0; // Nếu đếm được > 0, tức là mã sản phẩm đã tồn tại
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Xử lý lỗi nếu có
-        }
-
-        return exists;
-    }
-    // Hàm lấy danh mục cha
-    public String getDanhMucCha(String idDanhMuc) {
-        String sql = "SELECT idDanhMucCha, tenDanhMuc FROM DanhMuc WHERE idDanhMuc = ?";
-        String danhMucCha = null;
-    
-        try (Connection conn = DatabaseConnection.getConnection() ;
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setString(1, idDanhMuc); 
-            
-            ResultSet rs = stmt.executeQuery();
-            
-            if (rs.next()) {
-                String idDanhMucCha = rs.getString("idDanhMucCha");
-                
-                if (idDanhMucCha != null) {
-                    danhMucCha=idDanhMucCha;
-                } else {
-                    danhMucCha = idDanhMuc;
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
-        return danhMucCha;
+
+        return false;
     }
-    public boolean checkMaSPDaTonTai(String idsp) {
-        String sql = "SELECT idSanPham FROM SanPham WHERE idSanPham = ?";
+
+    public String getDanhMucCha(String idDanhMuc) {
+        String sql = "SELECT idDanhMucCha FROM DanhMuc WHERE idDanhMuc = ?";
+        String danhMucCha = null;
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
+            stmt.setString(1, idDanhMuc);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String idDanhMucCha = rs.getString("idDanhMucCha");
+                    danhMucCha = idDanhMucCha != null ? idDanhMucCha : idDanhMuc;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return danhMucCha;
+    }
+
+    public boolean checkMaSPDaTonTai(String idsp) {
+        String sql = "SELECT idSanPham FROM SanPham WHERE idSanPham = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, idsp);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next(); // true nếu tồn tại
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
-    
 
     public List<Product> getAllProductsbyCT(String idDM) {
         List<Product> ds = new ArrayList<>();
-    
-        try {
-            Connection conn = DatabaseConnection.getConnection();
-            String sql = "SELECT * FROM sanpham WHERE idDanhMuc = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, idDM);
-            ResultSet rs = stmt.executeQuery();
-    
-            while (rs.next()) {
-                Product p = new Product();
-                p.setMaSp(rs.getString("idSanPham"));
-                p.setTenSp(rs.getString("tenSanPham"));
 
-                ds.add(p);
+        String sql = "SELECT * FROM sanpham WHERE idDanhMuc = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idDM);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Product p = new Product();
+                    p.setMaSp(rs.getString("idSanPham"));
+                    p.setTenSp(rs.getString("tenSanPham"));
+                    ds.add(p);
+                }
             }
-    
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch (Exception e) {
-            e.printStackTrace(); // Hoặc log lỗi
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    
+
         return ds;
     }
-    
+
     public String RandomIdSP(String id) {
-        String prefix;
-    
-        if ("Laptop".equals(id)) {
-            prefix = "Laptop";
-        } else if ("DM002".equals(id)) {
-            prefix = "PC";
-        } else {
-            prefix = "SP";
-        }
-    
+        String prefix = "Laptop".equals(id) ? "Laptop" : "DM002".equals(id) ? "PC" : "SP";
         String idsp;
         Random rand = new Random();
         int attempt = 0;
         do {
-            int randomNum = 100 + rand.nextInt(900); 
+            int randomNum = 100 + rand.nextInt(900);
             idsp = prefix + randomNum;
             attempt++;
-        } while (checkMaSPDaTonTai(idsp) && attempt < 10); 
-    
+        } while (checkMaSPDaTonTai(idsp) && attempt < 10);
+
         return idsp;
     }
-    
+
     public boolean insertSP(Product sp) {
         String idsp = RandomIdSP(getDanhMucCha(sp.getDanhMuc().getMaDanhMuc()));
         String sql = "INSERT INTO SanPham (idSanPham, tenSanPham, idDanhMuc, idThuongHieu, moTaSanPham, anhSanPham, Gia, trangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
+
             stmt.setString(1, idsp);
             stmt.setString(2, sp.getTenSp());
             stmt.setString(3, sp.getDanhMuc().getMaDanhMuc());
@@ -413,127 +448,145 @@ public class ProductDAO {
             stmt.setString(6, sp.getAnhSanPham());
             stmt.setDouble(7, sp.getGiasp());
             stmt.setBoolean(8, sp.isTrangThai());
-    
+
             int rowsInserted = stmt.executeUpdate();
-            if(rowsInserted>0){
-                System.out.println("intert nè");
-                insertplsp(idsp, 0, sp.getGiasp(), 0);
+            if (rowsInserted > 0) {
+                System.out.println("Inserted product: " + idsp);
+                insertplsp(conn, idsp, 0, sp.getGiasp(), 0);
             }
             return rowsInserted > 0;
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
-    public boolean insertplsp(String idsp, int STTPL, double gia, int soLuongTonKho) {
+
+    public boolean insertplsp(Connection conn, String idsp, int STTPL, double gia, int soLuongTonKho) {
         String sql = "INSERT INTO phanloaisp (idSanPham, STTPL, Gia, soLuongTonKho) VALUES (?, ?, ?, ?)";
+        boolean createdLocalConnection = false;
+
+        try {
+            if (conn == null) {
+                conn = DatabaseConnection.getConnection();
+                createdLocalConnection = true;
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, idsp);
+                stmt.setInt(2, STTPL);
+                stmt.setDouble(3, gia);
+                stmt.setInt(4, soLuongTonKho);
+
+                int rowsInserted = stmt.executeUpdate();
+                return rowsInserted > 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+
+        } finally {
+            if (createdLocalConnection && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public int getIDPhanLoai(String idsp, int STTPL) {
+        String sql = "SELECT idPhanLoai FROM phanloaisp WHERE idSanPham = ? AND STTPL = ?";
+        int idPhanLoai = 1;
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
+
             stmt.setString(1, idsp);
             stmt.setInt(2, STTPL);
-            stmt.setDouble(3, gia);
-            stmt.setInt(4, soLuongTonKho);
-    
-            int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
-    
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    idPhanLoai = rs.getInt("idPhanLoai");
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
-    }
-    
 
-public int getIDPhanLoai(String idsp, int STTPL) {
-    String sql = "SELECT idPhanLoai FROM phanloaisp WHERE idSanPham = ? AND STTPL = ?";
-    int idPhanLoai = 1;
-
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-        stmt.setString(1, idsp);
-        stmt.setInt(2, STTPL);
-
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            idPhanLoai = rs.getInt("idPhanLoai");
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return idPhanLoai;
     }
 
-    return idPhanLoai; 
-}
+    public boolean updateplsp(String idPhanLoai, String idsp, int STTPL, double gia, int soLuongTonKho, boolean trangThai) {
+        String sql = "UPDATE phanloaisp SET Gia = ?, soLuongTonKho = ?, idSanPham = ?, STTPL = ?, trangThai = ? WHERE idPhanLoai = ?";
 
-
-    
-    public boolean updateplsp(String idPhanLoai,String idsp, int STTPL, double gia, int soLuongTonKho,boolean trangThai) {
-        String sql = "UPDATE phanloaisp SET Gia = ?, soLuongTonKho = ? ,idSanPham = ?,STTPL = ? WHERE  idPhanLoai = ?";
-    
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
+
             stmt.setDouble(1, gia);
             stmt.setInt(2, soLuongTonKho);
             stmt.setString(3, idsp);
             stmt.setInt(4, STTPL);
-            stmt.setString(5, idPhanLoai);
+            stmt.setBoolean(5, trangThai);
+            stmt.setString(6, idPhanLoai);
+
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
+
     public boolean insertCauHinhPC(String idSP, String idThongTin, String idLinhKien, int STTPL) {
         String sql = "INSERT INTO cauhinhpc (idSanPham, idThongTin, idLinhKien, STTPL) VALUES (?, ?, ?, ?)";
-    
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
+
             stmt.setString(1, idSP);
             stmt.setString(2, idThongTin);
             stmt.setString(3, idLinhKien);
             stmt.setInt(4, STTPL);
-    
+
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
+
     public boolean insertCauHinh(String idSP, String idThongTin, String ThongTin, int STTPL) {
         String sql = "INSERT INTO cauhinhlaptop (idSanPham, idThongTin, ThongTin, STTPL) VALUES (?, ?, ?, ?)";
-    
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
+
             stmt.setString(1, idSP);
             stmt.setString(2, idThongTin);
             stmt.setString(3, ThongTin);
             stmt.setInt(4, STTPL);
-    
+
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     public boolean updateProduct(Product sp) {
         String sql = "UPDATE sanpham SET tenSanPham = ?, idDanhMuc = ?, idThuongHieu = ?, moTaSanPham = ?, anhSanPham = ?, Gia = ? WHERE idSanPham = ?";
-    
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
+
             stmt.setString(1, sp.getTenSp());
             stmt.setString(2, sp.getDanhMuc().getMaDanhMuc());
             stmt.setString(3, sp.getThuongHieu().getMaThuongHieu());
@@ -541,10 +594,10 @@ public int getIDPhanLoai(String idsp, int STTPL) {
             stmt.setString(5, sp.getAnhSanPham());
             stmt.setDouble(6, sp.getGiasp());
             stmt.setString(7, sp.getMaSp());
-    
+
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -553,118 +606,130 @@ public int getIDPhanLoai(String idsp, int STTPL) {
 
     public boolean deleteProduct(String id) {
         String sql = "UPDATE sanpham SET trangThai = ? WHERE idSanPham = ?";
-    
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
+
             stmt.setBoolean(1, false);
             stmt.setString(2, id);
-    
+
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    public boolean deleteCauhinhLaptop(String idSp,int STTPL) {
+
+    public boolean deleteCauhinhLaptop(String idSp, int STTPL) {
         String sql = "DELETE FROM cauhinhlaptop WHERE idSanPham = ? AND STTPL = ?";
-    
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
+
             stmt.setString(1, idSp);
             stmt.setInt(2, STTPL);
-    
+
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    public boolean deleteCauhinhPC(String idSp,int STTPL) {
+
+    public boolean deleteCauhinhPC(String idSp, int STTPL) {
         String sql = "DELETE FROM cauhinhpc WHERE idSanPham = ? AND STTPL = ?";
-    
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
+
             stmt.setString(1, idSp);
             stmt.setInt(2, STTPL);
-    
+
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
+
     public boolean updateTrangThaiplsp(int idPhanLoai, boolean trangThai) {
         String sql = "UPDATE phanloaisp SET trangThai = ? WHERE idPhanLoai = ?";
-    
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
+
             stmt.setBoolean(1, trangThai);
             stmt.setInt(2, idPhanLoai);
-    
+
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
 
+    public String getProductIDbyMaPhanLoai(int idPhanLoai) {
+        String sql = "SELECT idSanPham FROM phanloaisp WHERE idPhanLoai = ?";
+        String masp = "";
 
-    public String getProductIDbyMaPhanLoai(int idPhanLoai){
-            String sql = "SELECT idSanPham FROM phanloaisp WHERE idPhanLoai=?";
-           String masp="";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-        stmt.setInt(1, idPhanLoai);
-
-
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-          masp=  rs.getString("idSanPham");
-            return masp;
+            stmt.setInt(1, idPhanLoai);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    masp = rs.getString("idSanPham");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    System.out.println("hihihihihihi");
 
-    return masp;
+        return masp;
     }
 
+    public int getphienbanbyIdPL(int idPhanLoai) {
+        String sql = "SELECT STTPL FROM phanloaisp WHERE idPhanLoai = ?";
+        int phienBan = 0;
 
-    public int getphienbanbyIdPL(int idPhanLoai){
-                    String sql = "SELECT * FROM phanloaisp WHERE idPhanLoai=?";
-           int phienBan=0;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-        stmt.setInt(1, idPhanLoai);
-
-
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-          phienBan=  rs.getInt("STTPL");
-
+            stmt.setInt(1, idPhanLoai);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    phienBan = rs.getInt("STTPL");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+
+        return phienBan;
     }
 
-    return phienBan;
+    public void updateTatCaSoLuongTonKho() {
+        String sql = "UPDATE phanloaisp pl SET soluongtonkho = (" +
+                     "SELECT COUNT(*) FROM chitietsp ct WHERE ct.idphanloai = pl.idphanloai " +
+                     "AND ct.maphieunhap IS NOT NULL AND (ct.maphieuxuat IS NULL OR ct.maphieuxuat = '-1'))";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            int rowsUpdated = stmt.executeUpdate();
+            System.out.println("Updated " + rowsUpdated + " rows in phanloaisp for inventory.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     //Lay danh sach chi tiet san pham con trong kho va chua duoc xuat

@@ -1,10 +1,18 @@
 package BUS;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
 import DAO.ProductDAO;
+import DTO.CauHinhLaptop;
+import DTO.CauHinhPC;
 import DTO.ChiTietCauHinh;
 import DTO.Product;
 import DTO.ProductDetail;
@@ -20,6 +28,10 @@ public class ProductBUS {
         product = productDAO.getProductByIdFull(id);
         
         return product;
+    }
+    public List<Product> getAllProducts(){
+        ProductDAO productDAO=new ProductDAO();
+        return productDAO.getAllProducts();
     }
 
     public List<ChiTietCauHinh> getProductInfoconfig(String id, String version) {
@@ -81,7 +93,10 @@ return danhsach;
         return productDetails;
     }
 
-
+    public double getGiaNhap(String id){
+        ProductDAO productDAO =new ProductDAO();
+        return productDAO.getGiaNhap(id);
+    }
 
     // public String insertSP(Product sp) {
     //     if (sp.getTenSp() == null || sp.getTenSp().trim().isEmpty()) {
@@ -141,9 +156,9 @@ return danhsach;
     if (sp.getThuongHieu() == null) {
         return "Chưa chọn thương hiệu!";
     }
-    if (sp.getAnhSanPham() == null) {
-        return "Chưa chọn ảnh sản phẩm!";
-    }
+    // if (sp.getAnhSanPham() == null) {
+    //     return "Chưa chọn ảnh sản phẩm!";
+    // }
     if (sp.getMoTaSanPham() == null || sp.getMoTaSanPham().trim().isEmpty()) {
         return "Vui lòng nhập mô tả sản phẩm!";
     }
@@ -171,17 +186,22 @@ public Product getProductByIdHthi(String id) {
     ProductDAO productDAO = new ProductDAO();
     Product product = productDAO.getProductByIdFull(id);
 
+    // Lọc các phiên bản không còn hoạt động
     Iterator<Variant> iterator = product.getDanhSachPhienBan().iterator();
     while (iterator.hasNext()) {
         Variant item = iterator.next();
         if (!item.isTrangThai()) {
-            iterator.remove(); // Xóa an toàn khi đang lặp
+            iterator.remove();
         }
     }
+
+    // Sắp xếp theo số phiên bản tăng dần (giả sử getPhienBan() trả về int)
+    Collections.sort(product.getDanhSachPhienBan(), Comparator.comparingInt(Variant::getPhienBan));
 
     System.out.println("Số item: " + product.getDanhSachPhienBan().size());
     return product;
 }
+
 
    public String getmaSPbyIdPL(int id){
     ProductDAO productDAO=new ProductDAO();

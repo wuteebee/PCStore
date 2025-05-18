@@ -1,6 +1,8 @@
 package GUI.Dialog;
 
 import java.awt.*;
+import java.text.DecimalFormat;
+
 import javax.swing.*;
 import java.util.*;
 import java.util.List;
@@ -158,7 +160,10 @@ public class ThemCauHinh extends JDialog {
     priceField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
     priceField.setPreferredSize(new Dimension(250, 30));
         if (variant != null) {
-        priceField.setText(String.valueOf(variant.getGia()));
+   DecimalFormat plainFormat = new DecimalFormat("0");
+plainFormat.setGroupingUsed(false);
+priceField.setText(plainFormat.format(variant.getGia()));
+
     }
     add(priceField, gbc);
 
@@ -175,147 +180,152 @@ public class ThemCauHinh extends JDialog {
         add(btnSave, gbc);
     
 
-        btnSave.addActionListener(e -> {
-            boolean Save=false;
-            if(!dmc.equals("DM002")){
-                for (int i = 0; i < textFields.length; i++) {
-                    String value = textFields[i].getText().trim();
-                    System.out.println(thongsoList.get(i).getTenThongSo() + ": " + value);
+       btnSave.addActionListener(e -> {
+    boolean Save = false;
+
+    // Hiển thị thông tin từ các trường nhập liệu
+    if (!dmc.equals("DM002")) {
+        for (int i = 0; i < textFields.length; i++) {
+            String value = textFields[i].getText().trim();
+            System.out.println(thongsoList.get(i).getTenThongSo() + ": " + value);
+        }
+    } else {
+        for (int i = 0; i < comboBox.length; i++) {
+            if (comboBox[i] != null) {
+                String selected = (String) comboBox[i].getSelectedItem();
+                System.out.println(thongsoList.get(i).getTenThongSo() + ": " + selected);
+            }
+        }
+    }
+
+    System.out.println("Click lưu cấu hình nè " + panel.getProduct().getMaSp());
+    System.out.println("Bắt đầu thêm data nè:   ------------------------------");
+
+    ProductDAO productDAO = new ProductDAO();
+
+    if (dmc.equals("DM002")) {
+        // Xử lý cho PC
+        productDAO.deleteCauhinhPC(panel.getProduct().getMaSp(), panel.getPhienban() - 1);
+
+        for (int i = 0; i < comboBox.length; i++) {
+            String maLinhKien = "null";
+            if (comboBox[i] != null && comboBox[i].getSelectedItem() != null) {
+                if (!comboBox[i].getSelectedItem().toString().isEmpty()) {
+                    Map<String, Product> mapLinhKien = listProductMaps.get(i);
+                    Product linhKien = mapLinhKien.get(comboBox[i].getSelectedItem());
+                    maLinhKien = linhKien.getMaSp();
                 }
             }
-            else{
-                for (int i = 0; i < comboBox.length; i++) {
-                    if (comboBox[i] != null) {
-                        String selected = (String) comboBox[i].getSelectedItem();
-                        System.out.println(thongsoList.get(i).getTenThongSo() + ": " + selected);
-                    }
-                }
+
+            if (maLinhKien.equals("null")) continue;
+
+            boolean inserted;
+            if (variant != null) {
+                inserted = productBUS.insertCauHinh(
+                        panel.getPhienban() - 1,
+                        panel.getProduct().getMaSp(),
+                        thongsoList.get(i).getIdThongSo(),
+                        maLinhKien,
+                        true
+                );
+            } else {
+                inserted = productBUS.insertCauHinh(
+                        panel.getProduct().getDanhSachPhienBan().size(),
+                        panel.getProduct().getMaSp(),
+                        thongsoList.get(i).getIdThongSo(),
+                        maLinhKien,
+                        true
+                );
             }
-            System.out.println("Click lưu cấu hình nè"+panel.getProduct().getMaSp());
-            System.out.println("Bắt đầu thêm data nè:   ------------------------------");
-            ProductDAO productDAO=new ProductDAO();
 
-            // Cauhinhpc: idSanPham idThongTin idLinhKien STTPL
-            // cauhinhlaptop: idSanPham idThongTin ThongTin STTPL
-            if(dmc.equals("DM002")){
-                productDAO.deleteCauhinhPC(panel.getProduct().getMaSp(),panel.getPhienban()-1);
-                for (int i=0;i<comboBox.length;i++){
-                    String maLinhKien="null";
-                    if (comboBox[i] != null&& comboBox[i].getSelectedItem() !=null) {
-                     
-                        
-                        if(comboBox[i].getSelectedItem()!=null&&comboBox[i].getSelectedItem()!=""){
-                            Map<String, Product> mapLinhKien = listProductMaps.get(i);
-                            Product linhKien = mapLinhKien.get(comboBox[i].getSelectedItem());
-                            maLinhKien=linhKien.getMaSp();
-                        }
-                    
-                    }
-                    if(maLinhKien.equals("null")){
-                        continue;
-                    }
-      
-                         boolean inserted = false;
-                        if(variant!=null){
-                              inserted = productBUS.insertCauHinh(panel.getPhienban()-1,
-                            panel.getProduct().getMaSp(),
-                            thongsoList.get(i).getIdThongSo(),
-                            maLinhKien,true
-                        );
-
-                        }
-                        else{
-                                        inserted  = productBUS.insertCauHinh(panel.getProduct().getDanhSachPhienBan().size(),
-                            panel.getProduct().getMaSp(),
-                            thongsoList.get(i).getIdThongSo(),
-                            maLinhKien,true
-                        );
-
-                        }
-                    
-                        System.out.println("Insert PC cấu hình " + i + ": " + (inserted ? "✅ Thành công" : "❌ Thất bại"));
-                       Save=inserted? true: false;
-                } 
-            }
-            else{
-                  productDAO.deleteCauhinhLaptop(panel.getProduct().getMaSp(),panel.getPhienban()-1);
-                for(int i=0;i<textFields.length;i++){
-                    String value = textFields[i].getText().trim();
-                    System.out.println(thongsoList.get(i).getTenThongSo() + ": " + value);
-                    System.out.println(panel.getProduct().getMaSp()+" "+thongsoList.get(i).getIdThongSo()+textFields[i].getText().trim()+" " + panel.getProduct().getDanhSachPhienBan().size());
-                    boolean inserted = false;
-                    if(value.equals("")){
-                        continue;
-                    }
-                    if(variant!=null){
-                        System.out.println("ID cấu hình nè"+variant.getIdVariant());
-                         inserted = productBUS.insertCauHinh(panel.getPhienban()-1,
-                            panel.getProduct().getMaSp(),
-                            thongsoList.get(i).getIdThongSo(),textFields[i].getText().trim(),
-                            false
-                        );
-                    }
-                    else{
-                    inserted = productBUS.insertCauHinh( panel.getProduct().getDanhSachPhienBan().size(),
-                        panel.getProduct(  ).getMaSp(),
-                        thongsoList.get(i).getIdThongSo(),textFields[i].getText().trim(),
-                       false
-                    );}
-                
-                    System.out.println("Insert Laptop cấu hình " + i + ": " + (inserted ? "✅ Thành công" : "❌ Thất bại"));
-                    Save=inserted? true:false;
-                }
-            }
-        
-        
-            
-
-            // Lấy thông số dựa vào tên thông số  -> Lấy ra được id Thongtin  -> Tính STTPL -> IDSP
-        //    Với pc  -> Lấy ra id Linh kiện dựa vào tên linh kiện
-         if (Save) {
-    String priceText = priceField.getText().trim(); // Lấy giá trị từ ô nhập
-
-    try {
-        double price = Double.parseDouble(priceText); // Chuyển đổi giá trị thành kiểu double
-        
-        // Tiến hành xử lý với giá trị price
-        System.out.println("Giá sản phẩm: " + price);
-
-        if (variant != null) {
-            // Cập nhật thông tin sản phẩm và phien bản
-            productDAO.updateTrangThaiplsp(
-                panel.getProduct().getDanhSachPhienBan().get(panel.getPhienban() - 1).getIdVariant(),  
-                false
-            );
-            productDAO.insertplsp(
-                panel.getProduct().getMaSp(),
-                panel.getPhienban() - 1,
-                price,  // Ghi giá trị đã chuyển đổi
-                0
-            );
-        } else {
-            // Chèn thông tin cho sản phẩm mới không có variant
-            productDAO.insertplsp(
-                panel.getProduct().getMaSp(),
-                panel.getProduct().getDanhSachPhienBan().size(),
-                price,  // Ghi giá trị đã chuyển đổi
-                0
-            );
+            System.out.println("Insert PC cấu hình " + i + ": " + (inserted ? "✅ Thành công" : "❌ Thất bại"));
+            Save = inserted || Save;
         }
 
-  } catch (NumberFormatException ex) {
-    // Hiển thị thông báo lỗi và thông tin chi tiết về ngoại lệ (nếu cần)
-    JOptionPane.showMessageDialog(this, "Vui lòng nhập giá hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-    ex.printStackTrace();  // In thông tin chi tiết về ngoại lệ ra console để debug
-}
+    } else {
+        // Xử lý cho Laptop
+        productDAO.deleteCauhinhLaptop(panel.getProduct().getMaSp(), panel.getPhienban() - 1);
 
-}
+        for (int i = 0; i < textFields.length; i++) {
+            String value = textFields[i].getText().trim();
+            System.out.println(thongsoList.get(i).getTenThongSo() + ": " + value);
+            System.out.println(panel.getProduct().getMaSp() + " " + thongsoList.get(i).getIdThongSo() + " " + value);
 
-            JOptionPane.showMessageDialog(this, "Thêm cấu hình thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            dispose();
-            // panel.updateCauhinh(panel.getProduct().getMaSp());
-            panel.reloadPanel();
-        });
+            if (value.isEmpty()) continue;
+
+            boolean inserted;
+            if (variant != null) {
+                System.out.println("ID cấu hình nè " + variant.getIdVariant());
+                inserted = productBUS.insertCauHinh(
+                        panel.getPhienban() - 1,
+                        panel.getProduct().getMaSp(),
+                        thongsoList.get(i).getIdThongSo(),
+                        value,
+                        false
+                );
+            } else {
+                inserted = productBUS.insertCauHinh(
+                        panel.getProduct().getDanhSachPhienBan().size(),
+                        panel.getProduct().getMaSp(),
+                        thongsoList.get(i).getIdThongSo(),
+                        value,
+                        false
+                );
+            }
+
+            System.out.println("Insert Laptop cấu hình " + i + ": " + (inserted ? "✅ Thành công" : "❌ Thất bại"));
+            Save = inserted || Save;
+        }
+    }
+
+    // Kiểm tra và xử lý giá sản phẩm
+    if (Save) {
+        String priceText = priceField.getText().trim();
+
+        try {
+            double price = Double.parseDouble(priceText);
+
+            if (price < 0) {
+                JOptionPane.showMessageDialog(this, "Giá không được nhỏ hơn 0!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            System.out.println("Giá sản phẩm: " + price);
+
+            if (variant != null) {
+                // Cập nhật trạng thái cũ trước khi thêm mới
+                // productDAO.updateTrangThaiplsp(
+                //         panel.getProduct().getDanhSachPhienBan().get(panel.getPhienban() - 1).getIdVariant(),
+                //         false
+                // );
+                // productDAO.insertplsp(
+                //         panel.getProduct().getMaSp(),
+                //         panel.getPhienban() - 1,
+                //         price,
+                //         0
+                // );
+            } else {
+                productDAO.insertplsp(null,
+                        panel.getProduct().getMaSp(),
+                        panel.getProduct().getDanhSachPhienBan().size(),
+                        price,
+                        0
+                );
+            }
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập giá hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+                   dispose(); 
+            return;
+        }
+
+        // Thông báo và làm mới giao diện
+        JOptionPane.showMessageDialog(this, "Thêm cấu hình thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        dispose(); 
+        panel.reloadPanel();
+    }
+});
 
 
         setMinimumSize(new Dimension(800, 600));

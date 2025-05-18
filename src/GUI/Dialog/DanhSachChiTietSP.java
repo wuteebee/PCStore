@@ -17,6 +17,7 @@ import BUS.PhieuNhapBUS;
 import BUS.ProductBUS;
 import DTO.ChiTietDonNhap;
 import DTO.Customer;
+import DTO.Product;
 import DTO.ProductDetail;
 import GUI.Panel.ProductDetailPanel;
 
@@ -26,11 +27,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.Component;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 public class DanhSachChiTietSP extends JDialog {
     DefaultTableModel tableModel;
     ProductDetailPanel productDetailPanel;
-    PhieuNhapBUS bus=new PhieuNhapBUS();
-    List <ChiTietDonNhap> danhsach=new ArrayList<>();
+    PhieuNhapBUS bus = new PhieuNhapBUS();
+    List<ChiTietDonNhap> danhsach = new ArrayList<>();
 
     public DanhSachChiTietSP(ProductDetailPanel productDetailPanel) {
         this.productDetailPanel = productDetailPanel;
@@ -42,18 +51,11 @@ public class DanhSachChiTietSP extends JDialog {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // Header
+        // Table
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weighty = 0;
-        gbc.weightx = 1;
-        gbc.insets = new Insets(0, 0, 5, 0);
-        add(header(), gbc);
-
-        // Table
-        gbc.gridy = 1;
-        gbc.weighty = 1;
+        gbc.weightx = 1; // Quan trọng để full chiều ngang
+        gbc.weighty = 1; // Full chiều dọc
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(0, 0, 0, 0);
         add(table(), gbc);
@@ -63,86 +65,38 @@ public class DanhSachChiTietSP extends JDialog {
         setVisible(true);
     }
 
-    public JPanel header() {
-        JPanel header = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        header.setBackground(Color.decode("#E3F2FD")); // Xanh dương sáng pastel
-        header.setPreferredSize(new Dimension(800, 80));
-
-        Font labelFont = new Font("Segoe UI", Font.PLAIN, 14);
-        Font inputFont = new Font("Segoe UI", Font.PLAIN, 14);
-
-        JPanel tinhTrangPanel = new JPanel();
-        tinhTrangPanel.setOpaque(false);
-        tinhTrangPanel.add(new JLabel("Tình trạng"));
-        String[] tinhTrangOptions = {"Tất cả", "Tồn kho", "Đã bán"};
-        JComboBox<String> comboBox = new JComboBox<>(tinhTrangOptions);
-        comboBox.setFont(inputFont);
-        comboBox.setBackground(Color.decode("#FFFFFF"));
-        tinhTrangPanel.add(comboBox);
-
-        JPanel soLuongPanel = new JPanel();
-        soLuongPanel.setOpaque(false);
-        soLuongPanel.add(new JLabel("Số lượng"));
-        JTextField sl = new JTextField(6);
-        sl.setFont(inputFont);
-        sl.setEditable(false);
-        sl.setBackground(Color.decode("#F5F5F5"));
-        soLuongPanel.add(sl);
-
-        JPanel timKiemPanel = new JPanel();
-        timKiemPanel.setOpaque(false);
-        timKiemPanel.add(new JLabel("Tìm kiếm"));
-        JTextField search = new JTextField(12);
-        search.setFont(inputFont);
-        search.setBackground(Color.decode("#FFFFFF"));
-        timKiemPanel.add(search);
-
-        // Gán font cho label
-        for (Component c : tinhTrangPanel.getComponents()) {
-            if (c instanceof JLabel) c.setFont(labelFont);
-        }
-        for (Component c : soLuongPanel.getComponents()) {
-            if (c instanceof JLabel) c.setFont(labelFont);
-        }
-        for (Component c : timKiemPanel.getComponents()) {
-            if (c instanceof JLabel) c.setFont(labelFont);
-        }
-
-        // Thêm vào header
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(0, 10, 0, 10);
-        gbc.gridy = 0;
-
-        gbc.gridx = 0;
-        header.add(tinhTrangPanel, gbc);
-
-        gbc.gridx = 1;
-        header.add(soLuongPanel, gbc);
-
-        gbc.gridx = 2;
-        header.add(timKiemPanel, gbc);
-
-        return header;
-    }
-
     public JPanel table() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.decode("#FFFFFF"));
+
         ProductBUS productBUS = new ProductBUS();
-        productBUS.getProductDetailList(productDetailPanel.getPhienban());
-        List<ChiTietDonNhap> danhsach=bus.getAll_ChiTietDonNhap();
-        String[] columnNames = {"SerialNumber", "Giá Nhập", "Mã phiếu nhập", "Mã phiếu xuất", "Trạng thái"};
-        Object[][] data = {
-            {"SN001", 1000.0, "PN001", "PX001", true},
-            {"SN002", 2000.0, "PN002", "PX002", false},
-            {"SN003", 1500.0, "PN003", "PX003", true},
-            {"SN004", 2500.0, "PN004", "PX004", false},
-            {"SN005", 3000.0, "PN005", "PX005", true}
-        };
+        Product product = productDetailPanel.getProduct();
+        int phienban = productDetailPanel.getPhienban();
 
+        List<ProductDetail> listpd = productBUS.getProductDetailList(
+                product.getDanhSachPhienBan().get(phienban - 1).getIdVariant()
+        );
+
+        String[] columnNames = {"SerialNumber", "Giá Nhập", "Mã phiếu nhập", "Mã phiếu xuất", "Tình trạng"};
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN")); // Format VND
+
+        List<Object[]> dataList = new ArrayList<>();
+        for (ProductDetail pd : listpd) {
+            String maPhieuXuatText = pd.getMaPhieuXuat().equals("-1") ? "Chưa xuất kho" : pd.getMaPhieuXuat();
+            String tinhTrang = pd.getMaPhieuXuat().equals("-1") ? "Tồn kho" : "Đã bán";
+            double giaNhap = productBUS.getGiaNhap(pd.getSerialNumber());
+
+            dataList.add(new Object[]{
+                    pd.getSerialNumber(),
+                    formatter.format(giaNhap),
+                    pd.getMaPhieuNhap(),
+                    maPhieuXuatText,
+                    tinhTrang
+            });
+        }
+
+        Object[][] data = dataList.toArray(new Object[0][]);
         tableModel = new DefaultTableModel(data, columnNames);
-
         JTable table = new JTable(tableModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -150,7 +104,6 @@ public class DanhSachChiTietSP extends JDialog {
             }
         };
 
-        // Style cho bảng
         table.setFillsViewportHeight(true);
         table.setRowHeight(30);
         table.getTableHeader().setReorderingAllowed(false);
@@ -161,6 +114,8 @@ public class DanhSachChiTietSP extends JDialog {
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setPreferredSize(null);
+        scrollPane.setMinimumSize(new Dimension(0, 0));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -171,22 +126,5 @@ public class DanhSachChiTietSP extends JDialog {
         panel.add(scrollPane, gbc);
 
         return panel;
-    }
-
-
-        public void loadTable() {
-        tableModel.setRowCount(0); 
-        danhsach = bus.getAll_ChiTietDonNhap();
-        // for (ChiTietDonNhaps : customers) {
-        //     System.out.println(customer.getName());
-        //     Object[] rowData = {
-        //         customer.getId(),
-        //         customer.getName(),
-        //         customer.getPhoneNumber(),
-        //         customer.getEmail(),
-        //         customer.getDateOfJoining()
-        //     };
-        //     tableModel.addRow(rowData);
-        // }
     }
 }

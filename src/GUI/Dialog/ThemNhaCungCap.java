@@ -31,9 +31,13 @@ public class ThemNhaCungCap {
         String[] labels = {"Tên nhà cung cấp", "Số điện thoại", "Email", "Địa chỉ"};
 
         txtName = new JTextField(20);
+        txtName.setToolTipText("Nhập tên và nhấn Enter để tiếp tục");
         txtPhone = new JTextField(20);
+        txtPhone.setToolTipText("Nhập số điện thoại và nhấn Enter để tiếp tục");
         txtEmail = new JTextField(20);
+        txtEmail.setToolTipText("Nhập email và nhấn Enter để tiếp tục");
         txtAddress = new JTextField(20);
+        txtAddress.setToolTipText("Nhập địa chỉ và nhấn Enter để hoàn tất");
 
         JComponent[] components = {txtName, txtPhone, txtEmail, txtAddress};
 
@@ -55,9 +59,16 @@ public class ThemNhaCungCap {
             txtAddress.setText(supplier.getAddress());
         }
 
+
         JButton btnSubmit = new JButton(buttonText);
+        btnSubmit.setBackground(new Color(100, 149, 237));
+        btnSubmit.setForeground(Color.WHITE);
+        btnSubmit.setFocusPainted(false);
+        btnSubmit.setFont(new Font("Arial", Font.BOLD, 14));
         gbc.gridx = 0;
         gbc.gridy = labels.length;
+        gbc.gridy++;
+
         gbc.gridwidth = 2;
         dialog.add(btnSubmit, gbc);
 
@@ -82,6 +93,16 @@ public class ThemNhaCungCap {
             }
         });
 
+        
+        // Focus chuột vào ô đầu tiên khi mở form
+        SwingUtilities.invokeLater(() -> txtName.requestFocusInWindow());
+
+        // Tự động chuyển focus khi nhấn Enter
+        txtName.addActionListener(e -> txtPhone.requestFocusInWindow());
+        txtPhone.addActionListener(e -> txtEmail.requestFocusInWindow());
+        txtEmail.addActionListener(e -> txtAddress.requestFocusInWindow());
+
         dialog.setVisible(true);
     }
+
 }

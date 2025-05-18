@@ -98,7 +98,16 @@ public class ThemTaiKhoanDialog extends JDialog {
         rightPanel.add(new JLabel("Mật khẩu:"), gbc);
         gbc.gridx = 1;
         txtMatKhau = new JTextField(isEditMode ? account.getMatKhau() : "");
-        txtMatKhau.setPreferredSize(new Dimension(200, 30));
+        
+
+        txtMaTK.setToolTipText("Nhập mã tài khoản và nhấn Enter để tiếp tục");
+        txtMaTK.addActionListener(e -> txtTenDangNhap.requestFocus());
+
+        txtTenDangNhap.setToolTipText("Nhập tên đăng nhập và nhấn Enter để tiếp tục");
+        txtTenDangNhap.addActionListener(e -> txtMatKhau.requestFocus());
+
+        txtMatKhau.setToolTipText("Nhập mật khẩu và nhấn Enter để kết thúc");
+txtMatKhau.setPreferredSize(new Dimension(200, 30));
         rightPanel.add(txtMatKhau, gbc);
 
         // Nhân viên (Combobox)
