@@ -388,7 +388,6 @@ public class PhieuXuatDialog extends JDialog {
                     }
                     }
                     afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", s.getTotalPayment()));
-                    price.revalidate();
                 }
             }
         }
@@ -409,6 +408,12 @@ public class PhieuXuatDialog extends JDialog {
             xacNhanThem.setVisible(false);
             xacNhanXoa.setVisible(false);
             xacNhanTao.setVisible(false);
+            JButton xuatHoaDon = new JButton("Xuất hóa đơn");
+            grid.gridx = 3;
+            grid.weightx = 0.1;
+            xuatHoaDon.setFont(text);
+            xuatHoaDon.setBorder(new RoundedBorder());
+            add(xuatHoaDon, grid);
         }
     }
 
@@ -455,7 +460,6 @@ public class PhieuXuatDialog extends JDialog {
                         } else {
                             boolean exist = false;
                             for (DetailedSalesInvoice y : addedList) {
-                                System.out.println(y.getSeri());
                                 if (x.getSerialNumber().equals(y.getSeri())) {
                                     exist = true;
                                 }
@@ -474,24 +478,25 @@ public class PhieuXuatDialog extends JDialog {
             if (tenSanPham.getSelectedIndex() == 0 || serialNumber == null)
                 return;
             List<String> selectedList = serialNumber.getSelectedList();
+            int id = Integer.valueOf(existingList.getLast().getDetailedSalesInvoices().getLast().getId()) + 1;
             if (selectedList.size() != 0) {
                 for (ProductDetail x : productDetailList) {
                     for (String sn : selectedList) {
                         if (x.getSerialNumber().equals(sn)) {
                             DetailedSalesInvoice newDetail = new DetailedSalesInvoice();
-                            System.out.println(Integer.valueOf(existingList.getLast().getDetailedSalesInvoices().getLast().getId()) + 1);
-                            newDetail.setId(String.valueOf(Integer.valueOf(existingList.getLast().getDetailedSalesInvoices().getLast().getId()) + 1));
+                            newDetail.setId(String.valueOf(id));
+                            id++;
                             if (mode == 1)
                                 newDetail.setFid(String.valueOf(existingList.size()));
                             if (mode == 0)
                             newDetail.setFid(String.valueOf(existingList.size() + 1));
+                            System.out.println("new Detail idCT" + newDetail.getId());
                             newDetail.setSeri(x.getSerialNumber());
                             newDetail.setDonGia(productBUS.getPriceByIdPL(x.getIdPhanLoai()));
                             total += newDetail.getDonGia();
                             totalLabel.setText(String.format("Tổng tiền: %,.0f đồng", total));
                             afterDiscount = total * (1 - discount / 100);
                             afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", afterDiscount));
-                            price.revalidate();
                             addedList.add(newDetail);
                             Object[] row = {
                                     addedList.size(),
@@ -499,7 +504,7 @@ public class PhieuXuatDialog extends JDialog {
                                     tenSanPham.getSelectedItem(),
                                     String.format("%f đồng", newDetail.getDonGia()),
                             };
-                    tableModel.addRow(row);
+                            tableModel.addRow(row);
                         }
                     }
                 }
@@ -513,7 +518,6 @@ public class PhieuXuatDialog extends JDialog {
                    totalLabel.setText(String.format("Tổng tiền: %,.0f đồng", total));
                    afterDiscount = total * (1 - discount / 100);
                    afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", afterDiscount));
-                   price.revalidate();
                    if (mode == 1)
                    toDeleteList.add(addedList.get(selectedRow));
                    addedList.remove(selectedRow);
@@ -548,13 +552,11 @@ public class PhieuXuatDialog extends JDialog {
                     discountLabel.setText("Chiết khấu: " + discount + "%");
                     afterDiscount = total * (1 - discount / 100);
                     afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", afterDiscount));
-                    price.revalidate();
                     return;
                 }
             }
             discountLabel.setText("Chiết khấu: 0%");
             afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", total));
-            price.revalidate();
         });
     }
 
