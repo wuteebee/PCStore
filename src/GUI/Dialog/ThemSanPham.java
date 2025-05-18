@@ -68,6 +68,12 @@ public class ThemSanPham extends JDialog {
     private void createFields() {
         txtTen = new JTextField(18);
         gia = new JTextField(18);
+        
+
+        txtTen.setToolTipText("Nhập tên sản phẩm và nhấn Enter để tiếp tục");
+        txtTen.addActionListener(e -> gia.requestFocus());
+
+        gia.setToolTipText("Nhập giá sản phẩm và nhấn Enter để kết thúc");
         loaisanpham = new JComboBox<>();
         danhmuc = new JComboBox<>();
         thuonghieu = new JComboBox<>();

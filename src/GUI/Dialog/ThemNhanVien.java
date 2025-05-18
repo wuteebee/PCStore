@@ -43,7 +43,24 @@ public class ThemNhanVien {
         txtPhone = new JTextField(18);
         dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("yyyy/MM/dd");  // Định dạng ngày
-        txtSalary = new JTextField(18); // Trường nhập lương
+        txtSalary = new JTextField(18); 
+
+
+        txtName.setToolTipText("Nhập họ tên và nhấn Enter để tiếp tục");
+        txtName.addActionListener(e -> txtEmail.requestFocus());
+
+        txtEmail.setToolTipText("Nhập email và nhấn Enter để tiếp tục");
+        txtEmail.addActionListener(e -> txtPosition.requestFocus());
+
+        txtPosition.setToolTipText("Nhập chức vụ và nhấn Enter để tiếp tục");
+        txtPosition.addActionListener(e -> txtPhone.requestFocus());
+
+        txtPhone.setToolTipText("Nhập số điện thoại và nhấn Enter để tiếp tục");
+        txtPhone.addActionListener(e -> txtSalary.requestFocus());
+
+        txtSalary.setToolTipText("Nhập lương và nhấn Enter để kết thúc");
+
+// Trường nhập lương
 
         JComponent[] components = {txtName, txtEmail, txtPosition, txtPhone, dateChooser, txtSalary};
 

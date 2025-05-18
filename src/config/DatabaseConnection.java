@@ -10,6 +10,7 @@ public class DatabaseConnection {
     private static final String PASSWORD = "";
     // private static final String PASSWORD ="";
 
+
     // Password 507061
 
     public static Connection getConnection() {

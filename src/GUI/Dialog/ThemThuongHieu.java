@@ -43,7 +43,8 @@ public class ThemThuongHieu extends JDialog {
 
         txtTen = new JTextField(20);
 
-        // Tạo combo box danh mục
+        
+        txtTen.setToolTipText("Nhập tên thương hiệu và nhấn Enter để tiếp tục");// Tạo combo box danh mục
         comboDanhMuc = new JComboBox<>();
         comboDanhMuc.setPreferredSize(new Dimension(200, 25));
         BrandBUS bus = new BrandBUS();

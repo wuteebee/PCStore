@@ -79,7 +79,16 @@ public class ThemKhuyenMaiDialog extends JDialog {
         txtMaKM.setEditable(false); // Không cho chỉnh sửa mã KM trong mọi trường hợp
         txtTenKM = new JTextField(isEditMode ? promotion.getTenKhuyenMai() : "");
         txtPhanTramKM = new JTextField(isEditMode ? String.valueOf(promotion.getGiaTri()) : "");
-        dateChooserNgayBD = new JDateChooser();
+        
+
+        txtMaKM.setToolTipText("Nhập mã khuyến mãi và nhấn Enter để tiếp tục");
+        txtMaKM.addActionListener(e -> txtTenKM.requestFocus());
+
+        txtTenKM.setToolTipText("Nhập tên khuyến mãi và nhấn Enter để tiếp tục");
+        txtTenKM.addActionListener(e -> txtPhanTramKM.requestFocus());
+
+        txtPhanTramKM.setToolTipText("Nhập phần trăm khuyến mãi và nhấn Enter để kết thúc");
+dateChooserNgayBD = new JDateChooser();
         dateChooserNgayBD.setDateFormatString("yyyy-MM-dd");
         if (isEditMode && promotion.getNgayBatDau() != null) {
             dateChooserNgayBD.setDate(java.sql.Date.valueOf(promotion.getNgayBatDau()));

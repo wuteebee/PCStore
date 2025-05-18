@@ -44,6 +44,13 @@ public class ThongKeDoanhThuTungNam extends JPanel implements ActionListener {
         this.dataset = thongKeBUS.getDoanhThuTheoTungNam(currentYear - 5, currentYear);
         initComponents();
         loadDataTable(dataset);
+
+        yearChooserStart.setToolTipText("Nhập năm bắt đầu và nhấn Enter để tiếp tục");
+        yearChooserStart.addActionListener(e -> yearChooserEnd.requestFocus());
+
+        yearChooserEnd.setToolTipText("Nhập năm kết thúc và nhấn Enter để xem kết quả");
+
+        javax.swing.SwingUtilities.invokeLater(() -> yearChooserStart.requestFocus());
     }
 
     private void initComponents() {

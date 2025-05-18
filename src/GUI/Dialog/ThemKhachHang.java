@@ -43,9 +43,14 @@ public class ThemKhachHang {
         String []labels={"Họ và tên","Số điện thoại","Email","Ngày tham gia"};
 
         txtName=new JTextField(18);
-        txtEmail=new JTextField(18);
-        txtPhone=new JTextField(18);
-        dateChooser=new com.toedter.calendar.JDateChooser();
+        
+        txtName.setToolTipText("Nhập họ tên và nhấn Enter để tiếp tục");
+        txtName.addActionListener(e -> txtPhone.requestFocus());txtEmail=new JTextField(18);
+        
+        txtEmail.setToolTipText("Nhập email và nhấn Enter để tiếp tục");txtPhone=new JTextField(18);
+        
+        txtPhone.setToolTipText("Nhập số điện thoại và nhấn Enter để tiếp tục");
+        txtPhone.addActionListener(e -> txtEmail.requestFocus());dateChooser=new com.toedter.calendar.JDateChooser();
         dateChooser.setDateFormatString("yyyy/MM/dd"); // Định dạng ngày
 
         JComponent[] components={txtName,txtPhone,txtEmail,dateChooser};
