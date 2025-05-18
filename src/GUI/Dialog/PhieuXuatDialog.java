@@ -453,6 +453,7 @@ public class PhieuXuatDialog extends JDialog {
         chonSoSeri.addActionListener(e -> {
             if (tenSanPham.getSelectedIndex() != 0) {
                 List<String> serialList = new ArrayList<>();
+                productDetailList = productBUS.getProductDetailForInvoice();
                 for (ProductDetail x : productDetailList) {
                     if (productBUS.getNamebyIdPL(x.getIdPhanLoai()).equals(tenSanPham.getSelectedItem().toString())) {
                         if (addedList.size() == 0) {
@@ -487,9 +488,9 @@ public class PhieuXuatDialog extends JDialog {
                             newDetail.setId(String.valueOf(id));
                             id++;
                             if (mode == 1)
-                                newDetail.setFid(String.valueOf(existingList.size()));
+                                newDetail.setFid(selectedID);
                             if (mode == 0)
-                            newDetail.setFid(String.valueOf(existingList.size() + 1));
+                            newDetail.setFid(String.valueOf(Integer.valueOf(existingList.getLast().getId()) + 1));
                             System.out.println("new Detail idCT" + newDetail.getId());
                             newDetail.setSeri(x.getSerialNumber());
                             newDetail.setDonGia(productBUS.getPriceByIdPL(x.getIdPhanLoai()));
@@ -562,8 +563,9 @@ public class PhieuXuatDialog extends JDialog {
 
     private SalesInvoice fetchInput() {
         SalesInvoice adding = new SalesInvoice();
+        existingList = invoiceBUS.fetchSalesInvoice();
         if (mode == 0)
-        adding.setId(String.valueOf(existingList.size() + 1));
+        adding.setId(String.valueOf(Integer.valueOf(existingList.getLast().getId()) + 1));
         if (mode == 1) {
             adding.setId(selectedID);
             System.out.println(adding.getId());
