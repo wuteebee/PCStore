@@ -36,6 +36,7 @@ public class SaleInvoiceActionListener implements ActionListener {
                     dialog = new PhieuXuatDialog(MainFrame, panel, 1, panel.getSelectedPhieuId());
                     dialog.setVisible(true);
                 }
+                else JOptionPane.showMessageDialog(panel, "Chọn một phiếu trong bảng để sửa");
                 break;
             case "Xóa":
                 System.out.println("Thêm dialog xóa");

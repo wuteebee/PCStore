@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import DAO.ProductDAO;
-import DTO.CauHinhLaptop;
-import DTO.CauHinhPC;
 import DTO.ChiTietCauHinh;
 import DTO.Product;
 import DTO.ProductDetail;
@@ -210,5 +206,17 @@ public Product getProductByIdHthi(String id) {
    {
        ProductDAO productDAO=new ProductDAO();
        return productDAO.getAvailProductForInvoice();
+   }
+
+    public List<ProductDetail> getProductDetailForInvoiceEdit()
+    {
+        ProductDAO productDAO=new ProductDAO();
+        return productDAO.getAvailProductForInvoiceEdit();
+    }
+
+   public boolean updateMaPhieuXuatChoChiTiet(String serialNumber, String idPhieuXuat)
+   {
+       ProductDAO productDAO=new ProductDAO();
+       return productDAO.updateChiTietMaPhieuXuat(serialNumber, idPhieuXuat);
    }
 }

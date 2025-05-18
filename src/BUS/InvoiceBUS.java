@@ -29,8 +29,8 @@ public class InvoiceBUS {
         return invoiceDAO.addSalesInvoice(salesInvoice);
     }
 
-    public boolean updateSalesInvoice(List<DetailedSalesInvoice> detailedSalesInvoices) {
-        return invoiceDAO.updateSalesInvoice(detailedSalesInvoices);
+    public boolean updateSalesInvoice(SalesInvoice salesInvoice, List<DetailedSalesInvoice> toDeleteList) {
+        return invoiceDAO.updateSalesInvoice(salesInvoice, toDeleteList);
     }
 
     public boolean deleteSalesInvoice(String id) {
@@ -53,10 +53,5 @@ public class InvoiceBUS {
 
     public List<String> getSNbyidPL(String id){
         return invoiceDAO.getSNbyIDPhanLoai(id);
-    }
-
-    public int getDetailCount()
-    {
-        return invoiceDAO.getDetailCount();
     }
 }

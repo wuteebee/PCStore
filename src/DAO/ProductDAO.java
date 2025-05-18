@@ -697,6 +697,35 @@ public int getIDPhanLoai(String idsp, int STTPL) {
         return list;
     }
 
+    public List<ProductDetail> getAvailProductForInvoiceEdit()
+    {
+        List<ProductDetail> list = new ArrayList<>();
+        String sql = "SELECT * FROM chitietsp WHERE maphieuxuat != -1";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                String serialNumber = rs.getString("SerialNumber");
+                int idPhanLoai = rs.getInt("idPhanLoai");
+                String maphieuxuat = rs.getString("maphieuxuat");
+                String maphieunhap = rs.getString("maphieunhap");
+                boolean trangThai = rs.getBoolean("trangThai");
+                ProductDetail productDetail = new ProductDetail(serialNumber, idPhanLoai, 0,  trangThai, maphieunhap, maphieuxuat);
+                list.add(productDetail);
+            }
+
+            conn.close();
+            stmt.close();
+            rs.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     //Lay ten san pham theo ID phan loai
     public String getProductNamebyMaPhanLoai(int idPhanLoai){
         String sql = "SELECT tenSanPham FROM sanpham, phanloaisp where idphanloai = ? and phanloaisp.idsanpham = sanpham.idsanpham;";
@@ -737,5 +766,22 @@ public int getIDPhanLoai(String idsp, int STTPL) {
             e.printStackTrace();
         }
         return gia;
+    }
+
+    public boolean updateChiTietMaPhieuXuat(String serialNumber, String idPhieuXuat) {
+        String sql = "UPDATE chitietsp SET maphieuxuat = ? WHERE SerialNumber = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idPhieuXuat);
+            stmt.setString(2, serialNumber);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

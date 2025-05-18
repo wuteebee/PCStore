@@ -276,4 +276,8 @@ private String getNhanVien(SalesInvoice p) {
     public String getSelectedPhieuId() {
         return selectedPhieuId;
     }
+
+    public String setSelectedPhieuId(String id) {
+        return selectedPhieuId = id;
+    }
 }

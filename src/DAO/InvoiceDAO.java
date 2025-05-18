@@ -2,7 +2,10 @@ package DAO;
 
 import DTO.DetailedSalesInvoice;
 import DTO.SalesInvoice;
+import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import config.DatabaseConnection;
+import org.apache.xmlbeans.impl.soap.Detail;
+
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -12,7 +15,6 @@ public class InvoiceDAO {
     private Connection conn;
     static private Map<String, SalesInvoice> salesInvoiceMap = new HashMap<>();
     static private Map<String, DetailedSalesInvoice> detailedSalesInvoiceMap = new HashMap<>();
-
 
     public InvoiceDAO() {
         conn = DatabaseConnection.getConnection();
@@ -118,36 +120,60 @@ public class InvoiceDAO {
         }
     }
 
-    public boolean updateSalesInvoice(List<DetailedSalesInvoice> detailedSalesInvoices) {
-        String chiTietHoaDonXuatsql = "UPDATE chitiethoadonxuat SET seri = ? donGia = ? WHERE idChiTietHoaDonXuat = ?";
-        String hoaDonXuatsql = "UPDATE hoadonxuat SET tongTien = ? WHERE id = ?";
-
+    public boolean updateSalesInvoice(SalesInvoice salesInvoice, List<DetailedSalesInvoice> toDeleteList) {
+        String hoaDonXuatsql = "UPDATE hoadonxuat SET idNhanVien = ?, idKhachHang = ?, ngayTao = ?, tongTien = ?, idKhuyenMai = ?  WHERE idHoaDonXuat = ?;";
         try {
-            PreparedStatement ps = conn.prepareStatement(chiTietHoaDonXuatsql);
-            for (DetailedSalesInvoice detailedSalesInvoice : detailedSalesInvoices) {
-                ps.setString(1, detailedSalesInvoice.getSeri());
-                ps.setDouble(2, detailedSalesInvoice.getDonGia());
-                ps.setString(3, detailedSalesInvoice.getFid());
-                System.out.println("Cập nhật chi tiết hóa đơn xuất: " + detailedSalesInvoice);
-                if (!(ps.executeUpdate() > 0)) return false;
-            }
-
-            double totalPayment = 0;
-            SalesInvoice tmp = salesInvoiceMap.get(detailedSalesInvoices.get(0).getFid());
-            for (DetailedSalesInvoice dsi : tmp.getDetailedSalesInvoices()) {
-                totalPayment += dsi.getDonGia();
-            }
-            if (totalPayment != tmp.getTotalPayment()) {
-                tmp.setTotalPayment(totalPayment);
-                PreparedStatement pss = conn.prepareStatement(hoaDonXuatsql);
-                pss.setDouble(1, totalPayment);
-                pss.setString(2, tmp.getId());
-                System.out.println("Cập nhật thành công hóa đơn xuất: " + salesInvoiceMap.get(detailedSalesInvoices.get(0).getFid()));
-                return ps.executeUpdate() > 0 && pss.executeUpdate() > 0;
-            }
-            return ps.executeUpdate() > 0;
+            PreparedStatement ps = conn.prepareStatement(hoaDonXuatsql);
+            ps.setString(1, salesInvoice.getEid());
+            ps.setString(2, salesInvoice.getCid());
+            ps.setDate(3, Date.valueOf(salesInvoice.getDate()));
+            ps.setDouble(4, salesInvoice.getTotalPayment());
+            ps.setString(5, salesInvoice.getDid());
+            ps.setString(6, salesInvoice.getId());
+            return (ps.executeUpdate() > 0 && updateDetailedSalesInvoice(salesInvoice, toDeleteList));
         } catch (SQLException e) {
             System.err.println("Lỗi khi cập nhật chi tiết hóa đơn xuất hoặc chi tiết hóa đơn xuất: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateDetailedSalesInvoice(SalesInvoice salesInvoice, List<DetailedSalesInvoice> toDeleteList) {
+        boolean flag = false;
+        String sql = "INSERT INTO chitiethoadonxuat (idChiTietHoaDonXuat, idHoaDonXuat, SN, donGia) VALUES (?, ?, ?, ?)";
+        String sql1 = "delete from chitiethoadonxuat where idchitiethoadonxuat = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps1 = conn.prepareStatement((sql1));
+            for (DetailedSalesInvoice e : toDeleteList) {
+                ps1.setString(1, e.getId());
+                if (ps1.executeUpdate() > 0) flag = true;
+            }
+            for (DetailedSalesInvoice e : salesInvoice.getDetailedSalesInvoices()) {
+                if (!hasDetailedSalesInvoice(e.getId())) {
+                    System.out.println(e.getFid());
+                    ps.setString(1, e.getId());
+                    ps.setString(2, e.getFid());
+                    ps.setString(3, e.getSeri());
+                    ps.setString(4, String.valueOf(e.getDonGia()));
+                    if (ps.executeUpdate() > 0) flag = true;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi cập nhật chi tiết hóa đơn xuất: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return flag;
+    }
+
+    public boolean hasDetailedSalesInvoice(String id) {
+        String sql = "Select * from chitiethoadonxuat where idChiTietHoaDonXuat = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, id);
+            return ps.executeQuery().next();
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
@@ -206,39 +232,23 @@ public class InvoiceDAO {
 
     }
 
-public List<String> getSNbyIDPhanLoai(String id) {
-    List<String> result = new ArrayList<>();
-    String sql = "SELECT SerialNumber FROM chitietsp WHERE idPhanLoai = ? AND maPhieuXuat = -1";
+    public List<String> getSNbyIDPhanLoai(String id) {
+        List<String> result = new ArrayList<>();
+        String sql = "SELECT SerialNumber FROM chitietsp WHERE idPhanLoai = ? AND maPhieuXuat = -1";
 
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        ps.setString(1, id);
-        ResultSet rs = ps.executeQuery();
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
 
-        while (rs.next()) {
-            result.add(rs.getString("SerialNumber"));
+            while (rs.next()) {
+                result.add(rs.getString("SerialNumber"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Hoặc log lỗi
         }
-
-    } catch (Exception e) {
-        e.printStackTrace(); // Hoặc log lỗi
+        return result;
     }
-    return result;
-}
-
-public int getDetailCount()
-{
-    String sql = "SELECT COUNT(idChiTietHoaDonXuat) as count from chitiethoadonxuat;";
-    int count = 0;
-    try {
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
-        while (rs.next())
-        count = rs.getInt("count");
-        return count;
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return 0;
-    }
-}
 }
