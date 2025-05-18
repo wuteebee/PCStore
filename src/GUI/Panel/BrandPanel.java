@@ -43,7 +43,7 @@ public class BrandPanel extends JPanel {
     public JPanel createCustomToolbar() {
         JPanel toolbar = new JPanel(new GridLayout(1, 2, 10, 10));
         toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        toolbar.setPreferredSize(new Dimension(950, 110));
+        toolbar.setPreferredSize(new Dimension(980, 90));
 
         MenuChucNang menu = new MenuChucNang();
         toolbar.add(menu.createActionPanel(this, mainFrame));

@@ -29,6 +29,10 @@ public class ProductBUS {
         
         return product;
     }
+    public List<Product> getAllProducts(){
+        ProductDAO productDAO=new ProductDAO();
+        return productDAO.getAllProducts();
+    }
 
     public List<ChiTietCauHinh> getProductInfoconfig(String id, String version) {
      

@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 
+import BUS.ProductBUS;
 import DAO.ProductDAO;
 import DTO.Product;
 import GUI.Main;
@@ -42,7 +43,7 @@ public class ProductPanel extends JPanel {
         tableModel.addRow(newRow);
     }
     public JPanel createCustomToolbar() {
-   JPanel toolbar = new JPanel(new GridLayout(1, 2, 10, 10));
+        JPanel toolbar = new JPanel(new GridLayout(1, 2, 10, 10));
         toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         toolbar.setPreferredSize(new Dimension(980, 90));
         toolbar.setBackground(Color.WHITE);
@@ -86,8 +87,9 @@ public class ProductPanel extends JPanel {
 
     tableModel.setRowCount(0); // Xóa dữ liệu cũ
 
-    ProductDAO productDAO = new ProductDAO();
-    List<Product> products = productDAO.getAllProducts(); // lấy lại dữ liệu
+    ProductBUS productBUS=new ProductBUS();
+  
+    List<Product> products =  productBUS.getAllProducts(); // lấy lại dữ liệu
 
     for (Product product : products) {
         if (!product.isTrangThai()) continue;
@@ -108,8 +110,9 @@ public class ProductPanel extends JPanel {
 }
 
 private void loadData() {
-    ProductDAO productDAO = new ProductDAO();
-    products = productDAO.getAllProducts(); // Lưu danh sách vào biến class
+    ProductBUS productBUS=new ProductBUS();
+
+    products = productBUS.getAllProducts(); 
 
     tableModel.setRowCount(0); // Xoá hết dữ liệu cũ
 
@@ -131,8 +134,8 @@ private void loadData() {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setBackground(Color.WHITE);
 
-    ProductDAO productDAO = new ProductDAO();
-   products = productDAO.getAllProducts();
+    ProductBUS productBUS = new ProductBUS();
+   products = productBUS.getAllProducts();
 
     String[] columnNames = { "Mã sản phẩm", "Tên sản phẩm", "Loại sản phẩm", "Thương hiệu", "Mô tả" };
     tableModel = new DefaultTableModel(columnNames, 0);
@@ -158,15 +161,14 @@ private void loadData() {
     };
 
 
-    productTable.setFillsViewportHeight(true);
-    productTable.setRowHeight(28);
-    productTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-    productTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-    productTable.getTableHeader().setBackground(new Color(240, 240, 240));
-    productTable.setGridColor(new Color(230, 230, 230));
-    productTable.setShowVerticalLines(false);
-    productTable.setShowHorizontalLines(true);
-    productTable.setSelectionBackground(new Color(204, 229, 255));
+  productTable.setFillsViewportHeight(true);
+    productTable.setRowHeight(30); // Đổi sang 30px để giống Supplier
+    productTable.setFont(new Font("Segoe UI", Font.PLAIN, 13)); // Giữ font Segoe UI cho nội dung
+    productTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14)); // Đổi sang Arial cho tiêu đề
+    productTable.getTableHeader().setBackground(new Color(100, 149, 237)); // Nền xanh dương giống Supplier
+    productTable.getTableHeader().setForeground(Color.BLACK); // Giữ chữ đen như Product
+    productTable.setShowGrid(false); // Ẩn lưới giống Supplier
+    productTable.setSelectionBackground(new Color(173, 216, 230)); // Màu chọn giống Supplier
     productTable.setSelectionForeground(Color.BLACK);
     productTable.setRowMargin(3);
 
@@ -180,7 +182,7 @@ private void loadData() {
         }
     });
 
-    // Bo góc bảng bằng JPanel bọc bên ngoài (nếu cần)
+ 
     JPanel tableWrapper = new JPanel(new BorderLayout());
     tableWrapper.setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
