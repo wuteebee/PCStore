@@ -37,6 +37,9 @@ public class Variant {
     public void setSoLuong(int soLuong) {
         this.soLuong = soLuong;
     }
+    public void setTrangThai(boolean trangThai) {
+        this.trangThai = trangThai;
+    }
 
     public List<ChiTietCauHinh> getChitiet() {
         return chitiet;

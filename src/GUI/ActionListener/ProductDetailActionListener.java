@@ -32,7 +32,7 @@ public class ProductDetailActionListener implements ActionListener{
               ThemCauHinh tch1=new ThemCauHinh(productPanel,productPanel.getProduct().getDanhSachPhienBan().get(productPanel.getPhienban()-1));
             break;
         case "Xóa":
-        System.out.println("Xoá cấu hình nè");
+              productPanel.xoaCauHinh(productPanel.getPhienban());
             //  id = panel.getSelectedCustomerId();
             // if(id != "-1") {
             //     int result = JOptionPane.showConfirmDialog(

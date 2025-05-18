@@ -122,10 +122,10 @@ public class ProductDetailPanel extends JPanel {
         gbc.gridwidth = 2;
         gbc.weightx = 1;
         gbc.weighty = 0.4;
-  if(!product.getDanhSachPhienBan().isEmpty()) {
+
             JPanel panelConfigWrapper = createConfigButtons();
             panel.add(panelConfigWrapper, gbc);
-        }
+
         
 
         updateActivebutton();
@@ -184,6 +184,7 @@ public class ProductDetailPanel extends JPanel {
             mapCauHinh.put(ct.getIdThongTin(), ct);
         }
 
+          if(!product.getDanhSachPhienBan().isEmpty()) {
         for (ThongSoKyThuat tskt : thongSoList) {
             ChiTietCauHinh chitiet = mapCauHinh.get(tskt.getIdThongSo());
             String labelText = tskt.getTenThongSo() + ": ";
@@ -196,7 +197,7 @@ public class ProductDetailPanel extends JPanel {
             }
 
             panelConfig.add(new JLabel(labelText));
-        }
+        }}
 
         return panelConfig;
     }
@@ -287,5 +288,26 @@ public Product getProduct(){
     mainFrame.setMainPanel(new ProductDetailPanel(mainFrame, this.id));
 }
 
+public boolean xoaCauHinh(int phienban){
+    boolean save=true;
+    System.out.println("Phiên bản cần xoá là "+phienban);
+    System.out.println("Trạng thái" +product.getDanhSachPhienBan().get(phienban - 1).isTrangThai());
+    product.getDanhSachPhienBan().get(phienban-1).setTrangThai(false);
+       productDAO.updateTrangThaiplsp(
+                        product.getDanhSachPhienBan().get(phienban - 1).getIdVariant(),
+                        false
+                );
+    ProductDAO pDao = new ProductDAO();
+    String dmc = pDao.getDanhMucCha(product.getDanhMuc().getMaDanhMuc());
+    if(dmc.equals("DM002")){
+
+    }
+    else{
+        
+    }
+    
+    reloadPanel();
+    return true;
+}
 
 }
