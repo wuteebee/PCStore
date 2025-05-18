@@ -6,7 +6,6 @@ import DAO.ProductDAO;
 import DTO.*;
 import GUI.Main;
 import GUI.Panel.SaleInvoicePanel;
-import org.apache.xmlbeans.impl.soap.Detail;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import javax.swing.*;
@@ -41,7 +40,6 @@ public class PhieuXuatDialog extends JDialog {
     private SaleInvoicePanel panel;
     private JComboBox idNhanVien;
     private JComboBox idKhachHang;
-    private JLabel tongTien;
     private JFormattedTextField ngayTao;
     private JComboBox idKhuyenMai;
     private JComboBox tenSanPham = new JComboBox();
@@ -55,6 +53,7 @@ public class PhieuXuatDialog extends JDialog {
     private JButton xacNhanTao = new JButton();
     private JButton huy = new JButton("Hủy");
 
+    // Keep original font sizes
     private Font text = new Font("Segoe UI", Font.PLAIN, 15);
     private Font title = new Font("Segoe UI", Font.BOLD, 15);
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -71,27 +70,31 @@ public class PhieuXuatDialog extends JDialog {
     private EmployeeBUS employeeBus = new EmployeeBUS(employeeDAO);
     private CustomerBUS customerBUS = new CustomerBUS();
     private PromotionBUS promoBUS = new PromotionBUS();
-    private ProductDAO productDAO= new ProductDAO();
+    private ProductDAO productDAO = new ProductDAO();
     private ProductBUS productBUS = new ProductBUS();
     private InvoiceBUS invoiceBUS = new InvoiceBUS();
 
     private List<Employee> employeeList;
     private List<Customer> customerList;
     private List<Promotion> promoList;
-    private List <ProductDetail> productDetailList;
+    private List<ProductDetail> productDetailList;
     private List<Product> productList;
     private List<SalesInvoice> existingList;
     private List<DetailedSalesInvoice> addedList = new ArrayList<>();
     private List<DetailedSalesInvoice> toDeleteList = new ArrayList<>();
+    private double scaleFactor; // Scaling factor for non-font elements
+
     public PhieuXuatDialog(Main Frame, SaleInvoicePanel panel, int mode, String selectedID) {
         super(Frame, true);
-        switch (mode)
-        {
-            case 0: setTitle("Thêm hóa đơn");
-            break;
-            case 1: setTitle("Sửa hóa đơn " + selectedID);
-            break;
-            case 2: setTitle("Chi tiết hóa đơn " + selectedID);
+        switch (mode) {
+            case 0:
+                setTitle("Thêm hóa đơn");
+                break;
+            case 1:
+                setTitle("Sửa hóa đơn " + selectedID);
+                break;
+            case 2:
+                setTitle("Chi tiết hóa đơn " + selectedID);
                 UIManager.put("ComboBox.disabledBackground", Color.WHITE);
                 UIManager.put("ComboBox.disabledForeground", Color.BLACK);
                 UIManager.put("TextField.inactiveForeground", Color.BLACK);
@@ -101,10 +104,20 @@ public class PhieuXuatDialog extends JDialog {
         this.panel = panel;
         this.mode = mode;
         this.selectedID = selectedID;
-        setSize(1600, 900);
+
+        // Calculate scale factor based on screen size (less aggressive)
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        scaleFactor = Math.min(screenSize.getWidth() / (1920 * 0.85), screenSize.getHeight() / (1080 * 0.85));
+
+        // Set dialog size to 85% of screen size
+        int dialogWidth = (int) (screenSize.width * 0.85); // 85% of screen width
+        int dialogHeight = (int) (screenSize.height * 0.85); // 85% of screen height
+        setSize(dialogWidth, dialogHeight);
+        setMinimumSize(new Dimension(900, 700)); // Larger minimum size
         setLocationRelativeTo(null);
         setResizable(true);
         getContentPane().setBackground(Color.white);
+
         initDialog();
         actionProcessing();
     }
@@ -113,9 +126,9 @@ public class PhieuXuatDialog extends JDialog {
         setLayout(new GridBagLayout());
         GridBagConstraints grid = new GridBagConstraints();
         grid.fill = GridBagConstraints.BOTH;
+        grid.insets = new Insets((int) (10 * scaleFactor), (int) (20 * scaleFactor), (int) (10 * scaleFactor), (int) (20 * scaleFactor));
 
-        switch (mode)
-        {
+        switch (mode) {
             case 0:
                 xacNhanTao.setText("Tạo");
                 break;
@@ -131,7 +144,7 @@ public class PhieuXuatDialog extends JDialog {
         }
 
         existingList = invoiceBUS.fetchSalesInvoice();
-        //Init field nhân viên
+        // Init field nhân viên
         employeeList = employeeBus.getAllEmployees();
         String[] employeeName = {"Nhập tên nhân viên"};
         int n = 1;
@@ -140,13 +153,13 @@ public class PhieuXuatDialog extends JDialog {
             employeeName[n] = e.getName();
             n++;
         }
-        n -= 1;  //Giảm do dư một index
+        n -= 1; // Giảm do dư một index
         employeeName = Arrays.copyOf(employeeName, n);
         idNhanVien = new JComboBox(employeeName);
         idNhanVien.setEditable(true);
         AutoCompleteDecorator.decorate(idNhanVien);
 
-        //Init field khach hang
+        // Init field khách hàng
         customerList = customerBUS.getAllCustomers();
         String[] customerName = {"Nhập tên khách hàng"};
         int n1 = 1;
@@ -159,7 +172,7 @@ public class PhieuXuatDialog extends JDialog {
         idKhachHang.setEditable(true);
         AutoCompleteDecorator.decorate(idKhachHang);
 
-        //init ngay tao
+        // Init ngày tạo
         MaskFormatter maskFormatter;
         try {
             maskFormatter = new MaskFormatter("##/##/####");
@@ -170,7 +183,7 @@ public class PhieuXuatDialog extends JDialog {
         ngayTao = new JFormattedTextField(maskFormatter);
         ngayTao.setHorizontalAlignment(JFormattedTextField.CENTER);
 
-        //Init field khuyen mai
+        // Init field khuyến mãi
         promoList = promoBUS.getAllPromotions();
         String[] promoName = {"Không áp dụng"};
         int n2 = 1;
@@ -183,9 +196,9 @@ public class PhieuXuatDialog extends JDialog {
         idKhuyenMai.setEditable(true);
         AutoCompleteDecorator.decorate(idKhuyenMai);
 
-        //Init combobox sanPham
+        // Init combobox sản phẩm
         productDetailList = productBUS.getProductDetailForInvoice();
-        List<String> tenSP = new ArrayList<String>();
+        List<String> tenSP = new ArrayList<>();
         tenSP.add("Nhập tên sản phẩm");
         int n4 = 1;
         for (ProductDetail e : productDetailList) {
@@ -199,10 +212,8 @@ public class PhieuXuatDialog extends JDialog {
         tenSanPham.setEditable(true);
         AutoCompleteDecorator.decorate(tenSanPham);
 
+        // Price panel setup
         price.setLayout(new GridLayout(1, 3));
-        totalLabel.setPreferredSize(new Dimension(325, 25));
-        discountLabel.setPreferredSize(new Dimension(325, 25));
-        afterDiscountLabel.setPreferredSize(new Dimension(325, 25));
         price.add(totalLabel);
         price.add(discountLabel);
         price.add(afterDiscountLabel);
@@ -215,7 +226,12 @@ public class PhieuXuatDialog extends JDialog {
         discountLabel.setHorizontalAlignment(JLabel.CENTER);
         afterDiscountLabel.setHorizontalAlignment(JLabel.CENTER);
 
-        //Init Border
+        // Set fonts for labels
+        totalLabel.setFont(title);
+        discountLabel.setFont(title);
+        afterDiscountLabel.setFont(title);
+
+        // Set borders
         idNhanVien.setBorder(new RoundedBorder());
         idKhachHang.setBorder(new RoundedBorder());
         ngayTao.setBorder(new RoundedBorder());
@@ -228,7 +244,7 @@ public class PhieuXuatDialog extends JDialog {
         price.setBorder(new RoundedBorder());
         huy.setBorder(new RoundedBorder());
 
-        //Init font
+        // Set fonts for components
         idNhanVien.setFont(text);
         idKhachHang.setFont(text);
         ngayTao.setFont(text);
@@ -248,56 +264,61 @@ public class PhieuXuatDialog extends JDialog {
         titleSN.setFont(title);
         titleTable.setFont(title);
 
-        totalLabel.setFont(title);
-        discountLabel.setFont(title);
-        afterDiscountLabel.setFont(title);
-
-        //Init layout
-        grid.insets = new Insets(0, 15, 5, 15);
+        // Layout components
         grid.gridy = 0;
+        grid.weightx = 0.35;
         add(titleNhanVien, grid);
+        grid.gridx = 1;
         add(titleKhachHang, grid);
+        grid.gridx = 2;
+        grid.weightx = 0.1;
         add(titleNgayTao, grid);
+        grid.gridx = 3;
+        grid.weightx = 0.2;
         grid.gridwidth = 2;
         add(titleKM, grid);
 
-        grid.insets = new Insets(20, 15, 5, 15);
-        grid.gridy = 2;
-        grid.gridwidth = 2;
-        add(titleSP, grid);
-        grid.gridwidth = 1;
-        add(titleSN, grid);
-
-        grid.gridy = 4;
-        add(titleTable,grid);
-
-        grid.insets = new Insets(0, 15, 0, 15);
-        grid.ipady = 20;
+        grid.gridx = 0;
         grid.gridy = 1;
-        grid.weightx = 0.35;
+        grid.gridwidth = 1;
         add(idNhanVien, grid);
-        grid.weightx = 0.35;
+        grid.gridx = 1;
         add(idKhachHang, grid);
-        grid.weightx = 0.1;
+        grid.gridx = 2;
         add(ngayTao, grid);
-        grid.weightx = 0.2;
+        grid.gridx = 3;
         grid.gridwidth = 2;
         add(idKhuyenMai, grid);
 
+        grid.gridx = 0;
+        grid.gridy = 2;
+        grid.gridwidth = 2;
         grid.weightx = 0.7;
-        grid.gridy = 3;
-        add(tenSanPham, grid);
+        add(titleSP, grid);
+        grid.gridx = 2;
         grid.gridwidth = 1;
         grid.weightx = 0.1;
+        add(titleSN, grid);
+
+        grid.gridy = 3;
+        grid.gridx = 0;
+        grid.gridwidth = 2;
+        add(tenSanPham, grid);
+        grid.gridx = 2;
+        grid.gridwidth = 1;
         add(chonSoSeri, grid);
+        grid.gridx = 3;
         add(xacNhanThem, grid);
+        grid.gridx = 4;
         add(xacNhanXoa, grid);
 
-        grid.ipady = 0;
-        grid.gridy = 5;
+        grid.gridy = 4;
+        grid.gridx = 0;
         grid.gridwidth = 5;
-        grid.weightx = 1;
+        add(titleTable, grid);
 
+        grid.gridy = 5;
+        grid.weighty = 1.0; // Table takes most vertical space
         String[] columns = {"STT", "So seri", "Tên sản phẩm", "Đơn giá"};
         tableModel = new DefaultTableModel(columns, 0);
         sanPhamDaThem = new JTable(tableModel) {
@@ -314,22 +335,21 @@ public class PhieuXuatDialog extends JDialog {
             sanPhamDaThem.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
-        sanPhamDaThem.getColumnModel().getColumn(2).setPreferredWidth(700);
+        // Scale column width dynamically
+        sanPhamDaThem.getColumnModel().getColumn(2).setPreferredWidth((int) (800 * scaleFactor));
         sanPhamDaThem.setShowHorizontalLines(true);
-
         sanPhamDaThem.setFillsViewportHeight(true);
-        sanPhamDaThem.setRowHeight(30);
+        sanPhamDaThem.setRowHeight((int) (35 * scaleFactor));
         sanPhamDaThem.getTableHeader().setReorderingAllowed(false);
         scrollPane = new JScrollPane(sanPhamDaThem);
         scrollPane.setBorder(new RoundedBorder());
         add(scrollPane, grid);
 
-        grid.insets = new Insets(20, 15, 0, 15);
-        grid.ipady = 20;
         grid.gridy = 6;
         grid.gridx = 0;
-        grid.weightx = 0.0;
         grid.gridwidth = 2;
+        grid.weightx = 0.0;
+        grid.weighty = 0.0;
         add(price, grid);
         grid.gridx = 3;
         grid.gridwidth = 1;
@@ -341,26 +361,20 @@ public class PhieuXuatDialog extends JDialog {
         if (mode == 1 || mode == 2) {
             for (SalesInvoice s : existingList) {
                 if (s.getId().equals(selectedID)) {
-                    for (Employee e : employeeList)
-                    {
-                        if (e.getId().equals(s.getEid()))
-                        {
+                    for (Employee e : employeeList) {
+                        if (e.getId().equals(s.getEid())) {
                             idNhanVien.setSelectedIndex(employeeList.indexOf(e) + 1);
                         }
                     }
 
-                    for (Customer e : customerList)
-                    {
-                        if (e.getId().equals(s.getCid()))
-                        {
+                    for (Customer e : customerList) {
+                        if (e.getId().equals(s.getCid())) {
                             idKhachHang.setSelectedIndex(customerList.indexOf(e) + 1);
                         }
                     }
 
-                    for (Promotion e : promoList)
-                    {
-                        if (e.getIdKhuyenMai().equals(s.getDid()))
-                        {
+                    for (Promotion e : promoList) {
+                        if (e.getIdKhuyenMai().equals(s.getDid())) {
                             idKhuyenMai.setSelectedIndex(promoList.indexOf(e) + 1);
                             discount = e.getGiaTri();
                             discountLabel.setText("Chiết khấu: " + discount + "%");
@@ -369,31 +383,28 @@ public class PhieuXuatDialog extends JDialog {
                     ngayTao.setText(dateFormatter.format(s.getDate()));
                     addedList = s.getDetailedSalesInvoices();
 
-                    List <ProductDetail> prodListForEdit = productBUS.getProductDetailForInvoiceEdit();
-                    for (DetailedSalesInvoice d : addedList)
-                    {
+                    List<ProductDetail> prodListForEdit = productBUS.getProductDetailForInvoiceEdit();
+                    for (DetailedSalesInvoice d : addedList) {
                         total += d.getDonGia();
                         totalLabel.setText(String.format("Tổng tiền: %,.0f đồng", total));
-                    for (ProductDetail x : prodListForEdit)
-                    {
-                        if (d.getSeri().equals(x.getSerialNumber())) {
-                            Object[] row = {
-                                    tableModel.getRowCount() + 1,
-                                    d.getSeri(),
-                                    productBUS.getNamebyIdPL(x.getIdPhanLoai()),
-                                    String.format("%,.0f đồng", d.getDonGia()),
-                            };
-                            tableModel.addRow(row);
+                        for (ProductDetail x : prodListForEdit) {
+                            if (d.getSeri().equals(x.getSerialNumber())) {
+                                Object[] row = {
+                                        tableModel.getRowCount() + 1,
+                                        d.getSeri(),
+                                        productBUS.getNamebyIdPL(x.getIdPhanLoai()),
+                                        String.format("%,.0f đồng", d.getDonGia()),
+                                };
+                                tableModel.addRow(row);
+                            }
                         }
-                    }
                     }
                     afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", s.getTotalPayment()));
                 }
             }
         }
 
-        if (mode == 2)
-        {
+        if (mode == 2) {
             idNhanVien.setEnabled(false);
             idKhachHang.setEnabled(false);
             ngayTao.setEnabled(false);
@@ -417,8 +428,7 @@ public class PhieuXuatDialog extends JDialog {
         }
     }
 
-    private void actionProcessing()
-    {
+    private void actionProcessing() {
         huy.addActionListener(e -> dispose());
 
         sanPhamDaThem.getSelectionModel().addListSelectionListener(e -> {
@@ -431,8 +441,7 @@ public class PhieuXuatDialog extends JDialog {
             if (validHoaDonInput()) {
                 System.out.println("Add");
                 SalesInvoice add = fetchInput();
-                for (DetailedSalesInvoice x : add.getDetailedSalesInvoices())
-                {
+                for (DetailedSalesInvoice x : add.getDetailedSalesInvoices()) {
                     if (!productBUS.updateMaPhieuXuatChoChiTiet(x.getSeri(), add.getId()))
                         return;
                 }
@@ -465,13 +474,13 @@ public class PhieuXuatDialog extends JDialog {
                                     exist = true;
                                 }
                             }
-                            if (exist == false)
-                            serialList.add(x.getSerialNumber());
+                            if (!exist)
+                                serialList.add(x.getSerialNumber());
                         }
                     }
                 }
                 if (serialList.size() != 0)
-                serialNumber = new PhieuXuatDialog1(this, serialList);
+                    serialNumber = new PhieuXuatDialog1(this, serialList);
             }
         });
 
@@ -479,7 +488,7 @@ public class PhieuXuatDialog extends JDialog {
             if (tenSanPham.getSelectedIndex() == 0 || serialNumber == null)
                 return;
             List<String> selectedList = serialNumber.getSelectedList();
-            int id = Integer.valueOf(existingList.getLast().getDetailedSalesInvoices().getLast().getId()) + 1;
+            int id = Integer.parseInt(existingList.get(existingList.size() - 1).getDetailedSalesInvoices().getLast().getId()) + 1;
             if (selectedList.size() != 0) {
                 for (ProductDetail x : productDetailList) {
                     for (String sn : selectedList) {
@@ -490,8 +499,7 @@ public class PhieuXuatDialog extends JDialog {
                             if (mode == 1)
                                 newDetail.setFid(selectedID);
                             if (mode == 0)
-                            newDetail.setFid(String.valueOf(Integer.valueOf(existingList.getLast().getId()) + 1));
-                            System.out.println("new Detail idCT" + newDetail.getId());
+                                newDetail.setFid(String.valueOf(Integer.parseInt(existingList.get(existingList.size() - 1).getId()) + 1));
                             newDetail.setSeri(x.getSerialNumber());
                             newDetail.setDonGia(productBUS.getPriceByIdPL(x.getIdPhanLoai()));
                             total += newDetail.getDonGia();
@@ -503,50 +511,42 @@ public class PhieuXuatDialog extends JDialog {
                                     addedList.size(),
                                     newDetail.getSeri(),
                                     tenSanPham.getSelectedItem(),
-                                    String.format("%f đồng", newDetail.getDonGia()),
+                                    String.format("%,.0f đồng", newDetail.getDonGia()),
                             };
                             tableModel.addRow(row);
                         }
                     }
                 }
-                selectedList.removeAll(selectedList);
+                selectedList.clear();
             }
         });
 
-            xacNhanXoa.addActionListener(e -> {
-               if (selectedRow != -1) {
-                   total -= addedList.get(selectedRow).getDonGia();
-                   totalLabel.setText(String.format("Tổng tiền: %,.0f đồng", total));
-                   afterDiscount = total * (1 - discount / 100);
-                   afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", afterDiscount));
-                   if (mode == 1)
-                   toDeleteList.add(addedList.get(selectedRow));
-                   addedList.remove(selectedRow);
-                   tableModel.removeRow(selectedRow);
-                   for (DetailedSalesInvoice x : addedList) {
-                       if (addedList.indexOf(x) >= selectedRow)
-                       {
-                           x.setId(String.valueOf(addedList.indexOf(x) + 1));
-                           tableModel.setValueAt(addedList.indexOf(x) + 1,addedList.indexOf(x), 0);
-                       }
-                   }
-               }
+        xacNhanXoa.addActionListener(e -> {
+            if (selectedRow != -1) {
+                total -= addedList.get(selectedRow).getDonGia();
+                totalLabel.setText(String.format("Tổng tiền: %,.0f đồng", total));
+                afterDiscount = total * (1 - discount / 100);
+                afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", afterDiscount));
+                if (mode == 1)
+                    toDeleteList.add(addedList.get(selectedRow));
+                addedList.remove(selectedRow);
+                tableModel.removeRow(selectedRow);
+                for (int i = 0; i < addedList.size(); i++) {
+                    tableModel.setValueAt(i + 1, i, 0);
+                }
+            }
         });
 
         ngayTao.addPropertyChangeListener(e -> {
-            //Kiem tra loi dinh dang ngay
-                try
-                {
-                    LocalDate.parse(ngayTao.getText(), dateFormatter);
-                    flag = true;
-                }
-                catch (DateTimeParseException d) {
-                    flag = false;
-                }
+            try {
+                LocalDate.parse(ngayTao.getText(), dateFormatter);
+                flag = true;
+            } catch (DateTimeParseException d) {
+                flag = false;
+            }
         });
 
-        idKhuyenMai.addActionListener(e ->
-        {
+        idKhuyenMai.addActionListener(e -> {
             for (Promotion x : promoList) {
                 if (idKhuyenMai.getSelectedItem().toString().equals(x.getTenKhuyenMai())) {
                     discount = x.getGiaTri();
@@ -556,6 +556,7 @@ public class PhieuXuatDialog extends JDialog {
                     return;
                 }
             }
+            discount = 0;
             discountLabel.setText("Chiết khấu: 0%");
             afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", total));
         });
@@ -565,10 +566,9 @@ public class PhieuXuatDialog extends JDialog {
         SalesInvoice adding = new SalesInvoice();
         existingList = invoiceBUS.fetchSalesInvoice();
         if (mode == 0)
-        adding.setId(String.valueOf(Integer.valueOf(existingList.getLast().getId()) + 1));
+            adding.setId(String.valueOf(Integer.parseInt(existingList.get(existingList.size() - 1).getId()) + 1));
         if (mode == 1) {
             adding.setId(selectedID);
-            System.out.println(adding.getId());
         }
         for (Employee e : employeeList) {
             if (idNhanVien.getSelectedItem().toString().equals(e.getName())) {
@@ -587,8 +587,7 @@ public class PhieuXuatDialog extends JDialog {
         adding.setDate(LocalDate.parse(ngayTao.getText(), dateFormatter));
 
         double total = 0;
-        for (DetailedSalesInvoice x : addedList)
-        {
+        for (DetailedSalesInvoice x : addedList) {
             total += x.getDonGia();
         }
 
@@ -604,8 +603,7 @@ public class PhieuXuatDialog extends JDialog {
         return adding;
     }
 
-    private boolean validHoaDonInput()
-    {
+    private boolean validHoaDonInput() {
         JTextPane message = new JTextPane();
         String error = "";
         message.setFont(title);
@@ -613,14 +611,14 @@ public class PhieuXuatDialog extends JDialog {
             error = error.concat("Thiếu tên khách hàng\n");
         if (idNhanVien.getSelectedIndex() == 0)
             error = error.concat("Thiếu tên nhân viên\n");
-        if (flag == false)
+        if (!flag)
             error = error.concat("Ngày không hợp lệ\n");
         if (addedList.size() == 0)
             error = error.concat("Chưa chọn sản phẩm\n");
         message.setText(error);
         message.setBackground(JOptionPane.getRootFrame().getBackground());
-        if (error.equals(""))
-        return true;
+        if (error.isEmpty())
+            return true;
         JOptionPane.showMessageDialog(this, message);
         return false;
     }
@@ -630,7 +628,7 @@ public class PhieuXuatDialog extends JDialog {
         private Color color;
 
         public RoundedBorder() {
-            this.radius = 25;
+            this.radius = Math.max((int) (25 * scaleFactor), 20); // Ensure minimum radius
             this.color = Color.black;
         }
 
@@ -647,12 +645,14 @@ public class PhieuXuatDialog extends JDialog {
 
         @Override
         public Insets getBorderInsets(Component c) {
-            return new Insets(5, 5, 5, 5);
+            int inset = (int) (8 * scaleFactor);
+            return new Insets(inset, inset, inset, inset);
         }
 
         @Override
         public Insets getBorderInsets(Component c, Insets insets) {
-            insets.left = insets.right = insets.top = insets.bottom = 5;
+            int inset = (int) (8 * scaleFactor);
+            insets.left = insets.right = insets.top = insets.bottom = inset;
             return insets;
         }
     }
@@ -662,7 +662,6 @@ public class PhieuXuatDialog extends JDialog {
     }
 
     public Dimension getButtonSize() {
-        System.out.println(chonSoSeri.getSize());
         return chonSoSeri.getSize();
     }
 }
