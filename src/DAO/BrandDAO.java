@@ -46,9 +46,16 @@ public class BrandDAO {
         String sql = "UPDATE ThuongHieu SET tenThuongHieu = ?, idDanhMuc = ?, trangThai = ? WHERE idThuongHieu = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, brand.getTenThuongHieu());
-            ps.setString(2, brand.getmaDanhMuc());
+
+            if (brand.getmaDanhMuc() == null) {
+                ps.setNull(2, java.sql.Types.VARCHAR);
+            } else {
+                ps.setString(2, brand.getmaDanhMuc());
+            }
+
             ps.setInt(3, brand.isTrangThai() ? 1 : 0);
             ps.setString(4, brand.getMaThuongHieu());
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

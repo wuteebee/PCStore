@@ -48,9 +48,12 @@ public class ThemThuongHieu extends JDialog {
         comboDanhMuc = new JComboBox<>();
         comboDanhMuc.setPreferredSize(new Dimension(200, 25));
         BrandBUS bus = new BrandBUS();
+        comboDanhMuc.addItem("Tất cả"); // thêm tùy chọn đầu tiên
+
         for (String id : bus.getAllDanhMucIds()) {
-            comboDanhMuc.addItem(id);
+            comboDanhMuc.addItem(id); // thêm các mã danh mục
         }
+
 
         chkTrangThai = new JCheckBox("Hoạt động");
         chkTrangThai.setBackground(Color.WHITE);
@@ -98,17 +101,20 @@ public class ThemThuongHieu extends JDialog {
     private void saveBrand() {
         String id = txtId.getText().trim();
         String ten = txtTen.getText().trim();
-        String dm = (String) comboDanhMuc.getSelectedItem();  // Lấy từ combo box
+        String dm = (String) comboDanhMuc.getSelectedItem();
+        if ("Tất cả".equals(dm)) {
+            dm = null; // khi chọn "Tất cả", gán null
+        }
+
         boolean tt = chkTrangThai.isSelected();
 
-        if (ten.isEmpty() || dm == null || dm.isEmpty()) {
+        if (ten.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.", "Lỗi", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         Brand brand = new Brand(id, ten, dm, tt);
         boolean success = isEdit ? new BrandBUS().updateBrand(brand) : new BrandBUS().addBrand(brand);
-
         if (success) {
             JOptionPane.showMessageDialog(this, isEdit ? "Cập nhật thành công." : "Thêm thành công.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             parent.loadBrandTable();
