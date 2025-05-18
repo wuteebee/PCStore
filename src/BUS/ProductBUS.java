@@ -93,7 +93,10 @@ return danhsach;
         return productDetails;
     }
 
-
+    public double getGiaNhap(String id){
+        ProductDAO productDAO =new ProductDAO();
+        return productDAO.getGiaNhap(id);
+    }
 
     // public String insertSP(Product sp) {
     //     if (sp.getTenSp() == null || sp.getTenSp().trim().isEmpty()) {

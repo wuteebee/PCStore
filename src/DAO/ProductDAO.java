@@ -281,6 +281,7 @@ public class ProductDAO {
                     String serialNumber = rs.getString("SerialNumber");
                     int idSP = rs.getInt("idPhanLoai");
                     boolean trangThai = rs.getBoolean("trangThai");
+                    
                     String maphieunhap = rs.getString("maphieunhap");
                     String maphieuxuat = rs.getString("maphieuxuat");
 
@@ -306,6 +307,37 @@ public class ProductDAO {
 
         return danhsach;
     }
+
+    public double getGiaNhap(String id) {
+    double giaNhap = 0;
+    Connection conn = null;
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+
+    try {
+        conn = DatabaseConnection.getConnection(); // Kết nối DB, bạn thay bằng hàm của bạn nếu khác
+        String sql = "SELECT donGia FROM ChiTietDonNhap WHERE SN = ?";
+        stmt = conn.prepareStatement(sql);
+        stmt.setString(1, id);
+        rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            giaNhap = rs.getDouble("donGia");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    return giaNhap;
+}
 
     public boolean isProductExist(String idSanPham) {
         String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
