@@ -200,9 +200,13 @@ public class PhieuXuatDialog extends JDialog {
         AutoCompleteDecorator.decorate(tenSanPham);
 
         price.setLayout(new GridLayout(1, 3));
+        totalLabel.setPreferredSize(new Dimension(325, 25));
+        discountLabel.setPreferredSize(new Dimension(325, 25));
+        afterDiscountLabel.setPreferredSize(new Dimension(325, 25));
         price.add(totalLabel);
         price.add(discountLabel);
         price.add(afterDiscountLabel);
+
         totalLabel.setText("Tổng tiền: 0 đồng");
         discountLabel.setText("Chiết khấu: 0%");
         afterDiscountLabel.setText("Sau chiết khẩu: 0 đồng");
@@ -258,18 +262,18 @@ public class PhieuXuatDialog extends JDialog {
         add(titleKM, grid);
 
         grid.insets = new Insets(20, 15, 5, 15);
-        grid.gridy = 3;
+        grid.gridy = 2;
         grid.gridwidth = 2;
         add(titleSP, grid);
         grid.gridwidth = 1;
         add(titleSN, grid);
 
-        grid.gridy = 5;
+        grid.gridy = 4;
         add(titleTable,grid);
 
         grid.insets = new Insets(0, 15, 0, 15);
         grid.ipady = 20;
-        grid.gridy = 2;
+        grid.gridy = 1;
         grid.weightx = 0.35;
         add(idNhanVien, grid);
         grid.weightx = 0.35;
@@ -281,7 +285,7 @@ public class PhieuXuatDialog extends JDialog {
         add(idKhuyenMai, grid);
 
         grid.weightx = 0.7;
-        grid.gridy = 4;
+        grid.gridy = 3;
         add(tenSanPham, grid);
         grid.gridwidth = 1;
         grid.weightx = 0.1;
@@ -290,7 +294,7 @@ public class PhieuXuatDialog extends JDialog {
         add(xacNhanXoa, grid);
 
         grid.ipady = 0;
-        grid.gridy = 6;
+        grid.gridy = 5;
         grid.gridwidth = 5;
         grid.weightx = 1;
 
@@ -322,8 +326,9 @@ public class PhieuXuatDialog extends JDialog {
 
         grid.insets = new Insets(20, 15, 0, 15);
         grid.ipady = 20;
-        grid.gridy = 7;
+        grid.gridy = 6;
         grid.gridx = 0;
+        grid.weightx = 0.0;
         grid.gridwidth = 2;
         add(price, grid);
         grid.gridx = 3;
@@ -383,6 +388,7 @@ public class PhieuXuatDialog extends JDialog {
                     }
                     }
                     afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", s.getTotalPayment()));
+                    price.revalidate();
                 }
             }
         }
@@ -485,6 +491,7 @@ public class PhieuXuatDialog extends JDialog {
                             totalLabel.setText(String.format("Tổng tiền: %,.0f đồng", total));
                             afterDiscount = total * (1 - discount / 100);
                             afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", afterDiscount));
+                            price.revalidate();
                             addedList.add(newDetail);
                             Object[] row = {
                                     addedList.size(),
@@ -506,6 +513,7 @@ public class PhieuXuatDialog extends JDialog {
                    totalLabel.setText(String.format("Tổng tiền: %,.0f đồng", total));
                    afterDiscount = total * (1 - discount / 100);
                    afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", afterDiscount));
+                   price.revalidate();
                    if (mode == 1)
                    toDeleteList.add(addedList.get(selectedRow));
                    addedList.remove(selectedRow);
@@ -540,11 +548,13 @@ public class PhieuXuatDialog extends JDialog {
                     discountLabel.setText("Chiết khấu: " + discount + "%");
                     afterDiscount = total * (1 - discount / 100);
                     afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", afterDiscount));
+                    price.revalidate();
                     return;
                 }
             }
             discountLabel.setText("Chiết khấu: 0%");
             afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", total));
+            price.revalidate();
         });
     }
 
