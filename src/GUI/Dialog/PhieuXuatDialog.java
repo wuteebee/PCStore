@@ -414,13 +414,7 @@ public class PhieuXuatDialog extends JDialog {
             xuatHoaDon.setFont(text);
             xuatHoaDon.setBorder(new RoundedBorder());
             add(xuatHoaDon, grid);
-            xuatHoaDon.addActionListener(e->{
-                PDFExporter pdf=new PDFExporter();
-                pdf.HoaDonXuat(null);
-            });
         }
-
-       
     }
 
     private void actionProcessing()
