@@ -24,28 +24,14 @@ public class InvoiceBUS {
         return invoiceDAO.getAllSalesInvoice();
     }
 
-    // public boolean addSalesInvoice(SalesInvoice salesInvoice) {
-    //     System.out.println("Thêm hóa đơn xuất vào hệ thống");
+    public boolean addSalesInvoice(SalesInvoice salesInvoice) {
+        System.out.println("Thêm hóa đơn xuất vào hệ thống");
+        return invoiceDAO.addSalesInvoice(salesInvoice);
+    }
 
-    //     // thêm truy vấn kiểm tra
-
-    //     SalesInvoice newSalesInvoice = new SalesInvoice(
-    //             generateSalesInvoiceUniqueID(invoiceDAO.getSalesInvoiceMap()) ,
-    //             salesInvoice.getEid(),
-    //             salesInvoice.getCid(),
-    //             salesInvoice.getDate(),
-    //             salesInvoice.getTotalPayment(),
-    //             salesInvoice.getDetailedSalesInvoices(),
-    //             salesInvoice.getDid()
-    //     );
-
-    //     System.out.println(newSalesInvoice);
-    //     return invoiceDAO.addSalesInvoice(newSalesInvoice);
-    // }
-
-    // public boolean updateSalesInvoice(List<DetailedSalesInvoice> detailedSalesInvoices) {
-    //     return invoiceDAO.updateSalesInvoice(detailedSalesInvoices);
-    // }
+    public boolean updateSalesInvoice(SalesInvoice salesInvoice, List<DetailedSalesInvoice> toDeleteList) {
+        return invoiceDAO.updateSalesInvoice(salesInvoice, toDeleteList);
+    }
 
     public boolean deleteSalesInvoice(String id) {
         return invoiceDAO.deleteSalesInvoice(id);
@@ -68,5 +54,4 @@ public class InvoiceBUS {
     public List<String> getSNbyidPL(String id){
         return invoiceDAO.getSNbyIDPhanLoai(id);
     }
-
 }

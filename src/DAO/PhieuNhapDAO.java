@@ -325,10 +325,10 @@ public HoaDonNhap getPhieuNhapbyId(String id) {
             String idNCC=(rs.getString("idNhaCungCap"));
             hdn.setNhanVien(employeeDAO.getEmployeeById(maNhanVien));
             hdn.setNhaCungCap(supplierDAO.getSupplierById(idNCC));
-           
+
        hdn.setNgayTao(rs.getDate("ngayTao"));
                 hdn.setTongTien(rs.getDouble("tongTien"));
-          
+
         }
     } catch (SQLException e) {
         e.printStackTrace();

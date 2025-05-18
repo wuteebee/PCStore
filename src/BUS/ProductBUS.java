@@ -209,5 +209,31 @@ public Product getProductByIdHthi(String id) {
     return productDAO.getphienbanbyIdPL(id);
    }
 
- 
+   public String getNamebyIdPL(int id){
+        ProductDAO productDAO=new ProductDAO();
+        return productDAO.getProductNamebyMaPhanLoai(id);
+    }
+
+    public double getPriceByIdPL(int id){
+        ProductDAO productDAO=new ProductDAO();
+        return productDAO.getProductPricebyMaPhanLoai(id);
+    }
+
+   public List<ProductDetail> getProductDetailForInvoice()
+   {
+       ProductDAO productDAO=new ProductDAO();
+       return productDAO.getAvailProductForInvoice();
+   }
+
+    public List<ProductDetail> getProductDetailForInvoiceEdit()
+    {
+        ProductDAO productDAO=new ProductDAO();
+        return productDAO.getAvailProductForInvoiceEdit();
+    }
+
+   public boolean updateMaPhieuXuatChoChiTiet(String serialNumber, String idPhieuXuat)
+   {
+       ProductDAO productDAO=new ProductDAO();
+       return productDAO.updateChiTietMaPhieuXuat(serialNumber, idPhieuXuat);
+   }
 }

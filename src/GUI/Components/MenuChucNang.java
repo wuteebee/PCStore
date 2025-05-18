@@ -164,22 +164,19 @@ public class MenuChucNang {
             actionPanel.add(btnExport);
             actionPanel.add(btnDetail);
         } else if (panel instanceof SaleInvoicePanel) {
-            SaleInvoicePanel SalePanel=(SaleInvoicePanel)panel;
-                SaleInvoiceActionListener actionListener=new SaleInvoiceActionListener(SalePanel, MainFrame);
-            btnAdd.addActionListener(actionListener);
-            btnEdit.addActionListener(actionListener);
-            btnDelete.addActionListener(actionListener);
-            btnExport.addActionListener(actionListener);
-            btnDetail.addActionListener(actionListener);
-
             checkAndDisableButton(btnAdd, idNhomQuyen, "Phiếu xuất", "Tao");
             checkAndDisableButton(btnEdit, idNhomQuyen, "Phiếu xuất", "Sua");
             checkAndDisableButton(btnDelete, idNhomQuyen, "Phiếu xuất", "Xoa");
             checkAndDisableButton(btnDS, idNhomQuyen, "Phiếu xuất", "Xem");
+            SaleInvoiceActionListener actionListener = new SaleInvoiceActionListener((SaleInvoicePanel) panel, MainFrame);
+            btnAdd.addActionListener(actionListener);
+            btnEdit.addActionListener(actionListener);
+            btnDelete.addActionListener(actionListener);
+            btnDetail.addActionListener(actionListener);
             actionPanel.add(btnAdd);
             actionPanel.add(btnEdit);
             actionPanel.add(btnDelete);
-            actionPanel.add(btnDS);
+            actionPanel.add(btnDetail);
         } else if (panel instanceof BrandPanel) {
             BrandPanel brandPanel = (BrandPanel) panel;
             BrandActionListener actionListener = new BrandActionListener(brandPanel, MainFrame);
@@ -249,7 +246,7 @@ public class MenuChucNang {
         searchPanel.add(btnReset);
         searchPanel.add(searchField);
         searchPanel.add(btnSearch);
-        
+
         searchPanel.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(new Color(100, 149, 237), 1),
             "Tìm kiếm",
@@ -258,7 +255,7 @@ public class MenuChucNang {
             new Color(100, 149, 237)
         ));
 
-        
+
         return searchPanel;
     }
 
