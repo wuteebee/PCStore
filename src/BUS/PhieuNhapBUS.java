@@ -1,6 +1,7 @@
 package BUS;
 
 import DAO.PhieuNhapDAO;
+import DAO.ProductDAO;
 import DTO.ChiTietDonNhap;
 import DTO.HoaDonNhap;
 import DTO.ProductDetail;
@@ -65,12 +66,16 @@ public class PhieuNhapBUS {
     public boolean deleteFull(String id){
         boolean deleted=false;
         PhieuNhapDAO phieuNhapDAO=new PhieuNhapDAO();
-
+        
+        
+        // update phanloaisp
+        ProductDAO productDAO=new ProductDAO();
+ 
         deleted=phieuNhapDAO.xoaChiTietPhieuNhap(id);
         
         deleted=phieuNhapDAO.xoaChiTietSPTheoPhieuNhap(id);
         deleted=phieuNhapDAO.xoaHoaDonNhap(id);
-
+       productDAO.updateTatCaSoLuongTonKho();
 
         return deleted;
 

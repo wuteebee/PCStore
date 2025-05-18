@@ -5,7 +5,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
-
+import BUS.PDFExporter;
 import BUS.PhieuNhapBUS;
 import BUS.ProductBUS;
 import DAO.ProductDAO;
@@ -13,6 +13,7 @@ import DTO.HoaDonNhap;
 import DTO.Product;
 import DTO.ProductDetail;
 import GUI.Main;
+import GUI.Components.Excel;
 import GUI.Panel.PhieuNhapPanel;
 
 import java.awt.*;
@@ -97,7 +98,7 @@ public class CTNhap extends JDialog {
    Map<String,Integer> Danhsach= phieuNhapBUS.getSoLuongTheoPhanLoai(maphieunhap);
    
     String[] colsSP = {"STT", "Mã SP", "Tên Sản phẩm", "Cấu hình", "Đơn giá", "Số lượng"};
-Object[][] dataSP = new Object[Danhsach.size()][6]; // 8 cột
+Object[][] dataSP = new Object[Danhsach.size()][6];
 int stt = 1;
 int index = 0;
 ProductDAO productDAO=new ProductDAO();
@@ -185,16 +186,20 @@ for (Map.Entry<String, Integer> entry : Danhsach.entrySet()) {
     // === ACTIONS ===
     btnHuy.addActionListener(e -> dispose());
     btnXuatPDF.addActionListener(e -> {
-        JOptionPane.showMessageDialog(this, "Tính năng xuất PDF chưa được cài đặt.");
+       PDFExporter pdf=new PDFExporter();
+        pdf.xuatHoaDon(hdn);
+       
+
+     
+
+  
+       
     });
 
-    // === ACTION: Cập nhật danh sách IMEI khi chọn sản phẩm ===
 tableSanPham.getSelectionModel().addListSelectionListener(e -> {
     if (!e.getValueIsAdjusting() && tableSanPham.getSelectedRow() != -1) {
         int selectedRow = tableSanPham.getSelectedRow();
         String idPhanLoai = null;
-
-        // Duyệt lại map để lấy idPhanLoai tương ứng với dòng được chọn
         int currentIndex = 0;
         for (String key : map.keySet()) {
             if (currentIndex == selectedRow) {
@@ -204,18 +209,27 @@ tableSanPham.getSelectionModel().addListSelectionListener(e -> {
             currentIndex++;
         }
 
-        if (idPhanLoai != null) {
-            List<ProductDetail> listIMEI = map.get(idPhanLoai);
-            String[] cols = {"STT", "Mã IMEI"};
-            Object[][] data = new Object[listIMEI.size()][2];
-            for (int i = 0; i < listIMEI.size(); i++) {
-                data[i][0] = i + 1;
-                data[i][1] = listIMEI.get(i).getSerialNumber();
-            }
+if (idPhanLoai != null) {
+    List<ProductDetail> listIMEI = map.get(idPhanLoai);
+    String[] cols = {"STT", "Mã IMEI"};
+    List<Object[]> validRows = new ArrayList<>();
+    int dong = 1;
 
-            DefaultTableModel model = new DefaultTableModel(data, cols);
-            tableIMEI.setModel(model);
+    for (ProductDetail pd : listIMEI) {
+        if (pd.getMaPhieuNhap().equals(maphieunhap)) {
+            validRows.add(new Object[]{dong++, pd.getSerialNumber()});
         }
+    }
+
+    Object[][] data = new Object[validRows.size()][2];
+    for (int i = 0; i < validRows.size(); i++) {
+        data[i] = validRows.get(i);
+    }
+
+    DefaultTableModel model = new DefaultTableModel(data, cols);
+    tableIMEI.setModel(model);
+}
+
     }
 });
 

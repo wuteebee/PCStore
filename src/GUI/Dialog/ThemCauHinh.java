@@ -294,18 +294,18 @@ priceField.setText(plainFormat.format(variant.getGia()));
 
             if (variant != null) {
                 // Cập nhật trạng thái cũ trước khi thêm mới
-                productDAO.updateTrangThaiplsp(
-                        panel.getProduct().getDanhSachPhienBan().get(panel.getPhienban() - 1).getIdVariant(),
-                        false
-                );
-                productDAO.insertplsp(
-                        panel.getProduct().getMaSp(),
-                        panel.getPhienban() - 1,
-                        price,
-                        0
-                );
+                // productDAO.updateTrangThaiplsp(
+                //         panel.getProduct().getDanhSachPhienBan().get(panel.getPhienban() - 1).getIdVariant(),
+                //         false
+                // );
+                // productDAO.insertplsp(
+                //         panel.getProduct().getMaSp(),
+                //         panel.getPhienban() - 1,
+                //         price,
+                //         0
+                // );
             } else {
-                productDAO.insertplsp(
+                productDAO.insertplsp(null,
                         panel.getProduct().getMaSp(),
                         panel.getProduct().getDanhSachPhienBan().size(),
                         price,

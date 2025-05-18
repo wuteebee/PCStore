@@ -27,7 +27,7 @@ public class PanelShadow extends JPanel {
         this.setBorder(new EmptyBorder(0,10,50,0));
 
         iconBackground = new JPanel();
-        iconBackground.setPreferredSize(new Dimension(200, 125));
+        iconBackground.setPreferredSize(new Dimension(200, 105));
         iconBackground.setBackground(BackgroundColor);
         iconBackground.putClientProperty( FlatClientProperties.STYLE, "arc: 30" );
         iconBackground.setLayout(new FlowLayout(1,20,10));
