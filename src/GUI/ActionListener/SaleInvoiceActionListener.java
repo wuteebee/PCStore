@@ -1,5 +1,6 @@
 package GUI.ActionListener;
 
+import BUS.InvoiceBUS;
 import GUI.Dialog.PhieuXuatDialog;
 import GUI.Main;
 import GUI.Panel.SaleInvoicePanel;
@@ -40,13 +41,26 @@ public class SaleInvoiceActionListener implements ActionListener {
                 break;
             case "Xóa":
                 System.out.println("Thêm dialog xóa");
+                if (panel.getSelectedPhieuId() != "-1") {
+                    int confirm = JOptionPane.showConfirmDialog(panel, "Chắc chắn muốn xóa phiếu này?", "Confirmation", JOptionPane.YES_NO_OPTION);
+                    if (confirm == 0) {
+                        InvoiceBUS invoiceBUS = new InvoiceBUS();
+                        if (invoiceBUS.deleteSalesInvoice(panel.getSelectedPhieuId())) {
+                            JOptionPane.showMessageDialog(panel, "Phiếu đã xóa");
+                            panel.refreshTable();
+                        }
+                    }
+                }
+                else
+                    JOptionPane.showMessageDialog(panel, "Chọn một phiếu trong bảng để xóa");
                 break;
             case "Chi tiết":
-                System.out.println("Thêm DS chi tiết");
+                System.out.println("Coi chi tiet hoa don xuat");
                 if (panel.getSelectedPhieuId() != "-1") {
                     dialog = new PhieuXuatDialog(MainFrame, panel, 2, panel.getSelectedPhieuId());
                     dialog.setVisible(true);
                 }
+                else JOptionPane.showMessageDialog(panel, "Chọn một phiếu để xem chi tiết");
                 break;
             default:
                 return;

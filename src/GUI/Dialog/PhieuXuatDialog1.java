@@ -44,6 +44,8 @@ public class PhieuXuatDialog1 extends JDialog {
                     selectedList.add(value);
                 else
                     selectedList.remove(value);
+                if (isAllSelected())
+                    checkAll.setSelected(true);
             });
             panel.add(check);;
         }
@@ -87,6 +89,17 @@ public class PhieuXuatDialog1 extends JDialog {
         });
     }
 
+    private boolean isAllSelected()
+    {
+        for (Component e : panel.getComponents())
+        {
+            if (e instanceof JCheckBox && ((JCheckBox) e).getText().equals("Select all") && ((JCheckBox) e).isSelected() == true)
+                return true;
+            else if (e instanceof JCheckBox && !((JCheckBox) e).isSelected() && !((JCheckBox) e).getText().equals("Select all"))
+                return false;
+        }
+        return true;
+    }
     public List<String> getSelectedList()
     {
             return selectedList;

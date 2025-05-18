@@ -92,7 +92,11 @@ public class PhieuXuatDialog extends JDialog {
             case 1: setTitle("Sửa hóa đơn " + selectedID);
             break;
             case 2: setTitle("Chi tiết hóa đơn " + selectedID);
-            break;
+                UIManager.put("ComboBox.disabledBackground", Color.WHITE);
+                UIManager.put("ComboBox.disabledForeground", Color.BLACK);
+                UIManager.put("TextField.inactiveForeground", Color.BLACK);
+                UIManager.put("TextField.inactiveBackground", Color.WHITE);
+                break;
         }
         this.panel = panel;
         this.mode = mode;
@@ -329,7 +333,7 @@ public class PhieuXuatDialog extends JDialog {
         grid.gridx = 4;
         add(huy, grid);
 
-        if (mode == 1) {
+        if (mode == 1 || mode == 2) {
             for (SalesInvoice s : existingList) {
                 if (s.getId().equals(selectedID)) {
                     for (Employee e : employeeList)
@@ -381,6 +385,24 @@ public class PhieuXuatDialog extends JDialog {
                     afterDiscountLabel.setText(String.format("Sau chiết khấu: %,.0f đồng", s.getTotalPayment()));
                 }
             }
+        }
+
+        if (mode == 2)
+        {
+            idNhanVien.setEnabled(false);
+            idKhachHang.setEnabled(false);
+            ngayTao.setEnabled(false);
+            ngayTao.setBackground(Color.white);
+            ngayTao.setOpaque(true);
+            ngayTao.setDisabledTextColor(Color.black);
+            idKhuyenMai.setEnabled(false);
+            tenSanPham.setVisible(false);
+            titleSP.setVisible(false);
+            chonSoSeri.setVisible(false);
+            titleSN.setVisible(false);
+            xacNhanThem.setVisible(false);
+            xacNhanXoa.setVisible(false);
+            xacNhanTao.setVisible(false);
         }
     }
 
