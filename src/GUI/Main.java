@@ -10,7 +10,8 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 public class Main extends JFrame {
     private final Account user;
     public JPanel MainContent;
-    Color MainColor = new Color(250, 250, 250);
+  Color MainColor = new Color(255, 255, 255);
+
     private MenuLeft menuTaskbar;
 
     public Main(Account user) {

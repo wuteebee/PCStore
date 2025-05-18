@@ -21,6 +21,7 @@ import DTO.CauHinhLaptop;
 import DTO.CauHinhPC;
 import DTO.ChiTietCauHinh;
 import DTO.Product;
+import DTO.ProductDetail;
 import DTO.ThongSoKyThuat;
 import GUI.Components.MenuChucNang;
 import GUI.Main;
@@ -309,5 +310,6 @@ public boolean xoaCauHinh(int phienban){
     reloadPanel();
     return true;
 }
+
 
 }

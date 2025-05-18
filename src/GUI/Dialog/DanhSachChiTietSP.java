@@ -17,6 +17,7 @@ import BUS.PhieuNhapBUS;
 import BUS.ProductBUS;
 import DTO.ChiTietDonNhap;
 import DTO.Customer;
+import DTO.Product;
 import DTO.ProductDetail;
 import GUI.Panel.ProductDetailPanel;
 
@@ -126,67 +127,76 @@ public class DanhSachChiTietSP extends JDialog {
         return header;
     }
 
-    public JPanel table() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.decode("#FFFFFF"));
-        ProductBUS productBUS = new ProductBUS();
-        productBUS.getProductDetailList(productDetailPanel.getPhienban());
-        List<ChiTietDonNhap> danhsach=bus.getAll_ChiTietDonNhap();
-        String[] columnNames = {"SerialNumber", "Giá Nhập", "Mã phiếu nhập", "Mã phiếu xuất", "Trạng thái"};
-        Object[][] data = {
-            {"SN001", 1000.0, "PN001", "PX001", true},
-            {"SN002", 2000.0, "PN002", "PX002", false},
-            {"SN003", 1500.0, "PN003", "PX003", true},
-            {"SN004", 2500.0, "PN004", "PX004", false},
-            {"SN005", 3000.0, "PN005", "PX005", true}
-        };
+   public JPanel table() {
+    JPanel panel = new JPanel(new GridBagLayout());
+    panel.setBackground(Color.decode("#FFFFFF"));
 
-        tableModel = new DefaultTableModel(data, columnNames);
+    ProductBUS productBUS = new ProductBUS();
+    Product product = productDetailPanel.getProduct();
+    int phienban = productDetailPanel.getPhienban();
 
-        JTable table = new JTable(tableModel) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+    System.out.println("Id sản phẩm hiện tại: " + product.getMaSp());
+    System.out.println("id phiên bản hiện tại: " + phienban);
+    System.out.println("Số lượng: " + product.getDanhSachPhienBan().get(phienban - 1).getIdVariant() + 
+                       "   " + product.getDanhSachPhienBan().get(phienban - 1).getSoLuong());
 
-        // Style cho bảng
-        table.setFillsViewportHeight(true);
-        table.setRowHeight(30);
-        table.getTableHeader().setReorderingAllowed(false);
-        table.setBackground(Color.decode("#FFFFFF"));
-        table.setGridColor(Color.decode("#90CAF9"));
-        table.setSelectionBackground(Color.decode("#BBDEFB"));
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+    // Lấy danh sách chi tiết
+    List<ProductDetail> listpd = productBUS.getProductDetailList(
+        product.getDanhSachPhienBan().get(phienban - 1).getIdVariant()
+    );
 
-        JScrollPane scrollPane = new JScrollPane(table);
+// Tên cột
+String[] columnNames = {"SerialNumber", "Giá Nhập", "Mã phiếu nhập", "Mã phiếu xuất", "Tình trạng"};
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        panel.add(scrollPane, gbc);
-
-        return panel;
-    }
+// Chuyển dữ liệu thành mảng Object[][]
+List<Object[]> dataList = new ArrayList<>();
+for (ProductDetail pd : listpd) {
+    String maPhieuXuatText = pd.getMaPhieuXuat().equals("-1") ? "Chưa xuất kho" : String.valueOf(pd.getMaPhieuXuat());
+    String tinhTrang = pd.getMaPhieuXuat().equals("-1") ? "Tồn kho" : "Đã bán";
+    System.out.println("Giá nhập nè: "+pd.getGiaNhap());
+    dataList.add(new Object[]{
+        pd.getSerialNumber(),
+        pd.getGiaNhap(),
+        pd.getMaPhieuNhap(),
+        maPhieuXuatText,
+        tinhTrang
+    });
+}
 
 
-        public void loadTable() {
-        tableModel.setRowCount(0); 
-        danhsach = bus.getAll_ChiTietDonNhap();
-        // for (ChiTietDonNhaps : customers) {
-        //     System.out.println(customer.getName());
-        //     Object[] rowData = {
-        //         customer.getId(),
-        //         customer.getName(),
-        //         customer.getPhoneNumber(),
-        //         customer.getEmail(),
-        //         customer.getDateOfJoining()
-        //     };
-        //     tableModel.addRow(rowData);
-        // }
-    }
+    Object[][] data = new Object[dataList.size()][];
+    data = dataList.toArray(data);
+
+    // Tạo model và bảng
+    tableModel = new DefaultTableModel(data, columnNames);
+    JTable table = new JTable(tableModel) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+
+    // Style bảng
+    table.setFillsViewportHeight(true);
+    table.setRowHeight(30);
+    table.getTableHeader().setReorderingAllowed(false);
+    table.setBackground(Color.decode("#FFFFFF"));
+    table.setGridColor(Color.decode("#90CAF9"));
+    table.setSelectionBackground(Color.decode("#BBDEFB"));
+    table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+    table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+    // ScrollPane
+    JScrollPane scrollPane = new JScrollPane(table);
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.weightx = 1;
+    gbc.weighty = 1;
+    panel.add(scrollPane, gbc);
+
+    return panel;
+}
+
 }
