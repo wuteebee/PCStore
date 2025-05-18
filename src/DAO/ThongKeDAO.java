@@ -102,33 +102,36 @@ public class ThongKeDAO {
         return result;
 }
 
-    public ArrayList<ThongKeTheoThangDTO> getThongKeTungNgayTrongThang(int nam) {
-        ArrayList<ThongKeTheoThangDTO> result = new ArrayList<>();
-        String sql = "SELECT thang, SUM(chiphi) AS chiphi, SUM(doanhthu) AS doanhthu, SUM(doanhthu - chiphi) AS loinhuan " +
+    public ArrayList<ThongKeTungNgayDTO> getThongKeTungNgayTrongThang(int thang, int nam) {
+        ArrayList<ThongKeTungNgayDTO> result = new ArrayList<>();
+        String sql = "SELECT ngay, SUM(chiphi) AS chiphi, SUM(doanhthu) AS doanhthu, SUM(doanhthu - chiphi) AS loinhuan " +
                     "FROM ( " +
-                    "    SELECT MONTH(hdn.ngayTao) AS thang, " +
+                    "    SELECT DATE(hdn.ngayTao) AS ngay, " +
                     "           COALESCE(SUM(hdn.tongTien), 0) AS chiphi, " +
                     "           0 AS doanhthu " +
                     "    FROM HoaDonNhap hdn " +
-                    "    WHERE YEAR(hdn.ngayTao) = ? " +
-                    "    GROUP BY MONTH(hdn.ngayTao) " +
+                    "    WHERE YEAR(hdn.ngayTao) = ? AND MONTH(hdn.ngayTao) = ? " +
+                    "    GROUP BY DATE(hdn.ngayTao) " +
                     "    UNION ALL " +
-                    "    SELECT MONTH(hdx.ngayTao) AS thang, " +
+                    "    SELECT DATE(hdx.ngayTao) AS ngay, " +
                     "           0 AS chiphi, " +
                     "           COALESCE(SUM(hdx.tongTien), 0) AS doanhthu " +
                     "    FROM HoaDonXuat hdx " +
-                    "    WHERE YEAR(hdx.ngayTao) = ? " +
-                    "    GROUP BY MONTH(hdx.ngayTao) " +
+                    "    WHERE YEAR(hdx.ngayTao) = ? AND MONTH(hdx.ngayTao) = ? " +
+                    "    GROUP BY DATE(hdx.ngayTao) " +
                     ") AS combined " +
-                    "GROUP BY thang " +
-                    "ORDER BY thang";
+                    "GROUP BY ngay " +
+                    "ORDER BY ngay";
+        
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, nam);
-            ps.setInt(2, nam);
+            ps.setInt(2, thang);
+            ps.setInt(3, nam);
+            ps.setInt(4, thang);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    ThongKeTheoThangDTO dto = new ThongKeTheoThangDTO(
-                        rs.getInt("thang"),
+                    ThongKeTungNgayDTO dto = new ThongKeTungNgayDTO(
+                        rs.getString("ngay"),
                         rs.getLong("chiphi"),
                         rs.getLong("doanhthu"),
                         rs.getLong("loinhuan")
@@ -140,7 +143,7 @@ public class ThongKeDAO {
             e.printStackTrace();
         }
         return result;
-}
+    }
 
     public ArrayList<ThongKeTungNgayDTO> getThongKeTuNgayDenNgay(String start, String end) {
         ArrayList<ThongKeTungNgayDTO> result = new ArrayList<>();
